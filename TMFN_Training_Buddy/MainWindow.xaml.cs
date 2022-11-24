@@ -33,17 +33,18 @@ namespace TMFN_Training_Buddy
         private Process _clientProcess;
         private bool networkConfigured = false;
         private bool clientConfigured = false;
-        private bool monitor = false;
 
-        private NetworkHandler _network = new NetworkHandler();
-        private DataHandler _data = new DataHandler();
-        private LogHandler _log;
-        private Importer _importer = new Importer();
+        private static NetworkHandler _network = new NetworkHandler();
+        private static DataHandler _data = new DataHandler();
+        private static LogHandler _log;
+        private static Importer _importer = new Importer();
+        private static MonitorHandler _monitor;
 
         public MainWindow()
         {
             InitializeComponent();
             _log = new LogHandler(tb_logBox, sv_log);
+            _monitor = new MonitorHandler(_log, _network);
             _log.AddLog("Initialising...");
 
             //Data init
@@ -205,16 +206,18 @@ namespace TMFN_Training_Buddy
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
-            monitor = true;
+            _monitor.start = true;
 
             _log.Clean();
             _log.AddLog("Buddy started!");
+
+            _monitor.ListenerStart(_device);
 
         }
 
         private void btn_monitorStop_Click(object sender, RoutedEventArgs e)
         {
-            monitor = false;
+            _monitor.start = false;
             _log.AddLog("Buddy stopped!");
         }
     }
