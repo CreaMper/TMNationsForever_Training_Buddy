@@ -5,19 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TMFN_Training_Buddy"
         mc:Ignorable="d"
-        Title="TNF Training Buddy by CreaMper" Height="636" Width="759" ResizeMode="NoResize">
+        Title="TNF Training Buddy by CreaMper" Height="492" Width="763" ResizeMode="NoResize">
     <Grid Margin="0,0,0,-6">
-        <Rectangle HorizontalAlignment="Center" Height="238" Margin="0,276,0,0" Stroke="Black" VerticalAlignment="Top" Width="714" Fill="#FFE8E8E8"/>
+        <Rectangle HorizontalAlignment="Center" Height="238" Margin="0,153,0,0" Stroke="Black" VerticalAlignment="Top" Width="714" Fill="#FFE8E8E8"/>
 
         <Rectangle HorizontalAlignment="Left" Height="122" Margin="23,17,0,0" VerticalAlignment="Top" Width="308" Stroke="Black" Fill="#FFCBCBCB" Opacity="0.445"/>
         <Label x:Name="lbl_internetInterfaces" Content="Internet Interface " HorizontalAlignment="Left" Margin="23,17,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="dd_internetInterfaces" HorizontalAlignment="Left" Margin="57,43,0,0" VerticalAlignment="Top" Width="240" Height="23" SelectionChanged="dd_internetInterfaces_SelectionChanged"/>
         <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="217,71,0,0" VerticalAlignment="Top" Width="80" Click="btn_interfaceAuto_Click"/>
         <CheckBox x:Name="chk_showAllInterfaces" Content="Show all Interfaces" HorizontalAlignment="Left" Margin="58,71,0,0" VerticalAlignment="Top" Checked="chk_showAllInterfaces_Checked" Unchecked="chk_showAllInterfaces_Checked" ClickMode="Release"/>
-        <ScrollViewer x:Name="sv_log" HorizontalScrollBarVisibility="Auto"  Margin="33,302,33,128">
+        <ScrollViewer x:Name="sv_log" VerticalScrollBarVisibility="Visible"  Margin="33,179,37,102">
             <TextBlock  x:Name="tb_logBox" Text="Program Initialise" TextWrapping="Wrap"  AllowDrop="False" Background="Black" Foreground="White"  FontFamily="Consolas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="True"/>
         </ScrollViewer>
-        <Label x:Name="lbl_logs" Content="Logs" HorizontalAlignment="Left" Margin="23,276,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbl_logs" Content="Logs" HorizontalAlignment="Left" Margin="23,153,0,0" VerticalAlignment="Top"/>
         <Button x:Name="btn_connectionTest" Content="Test Connection" HorizontalAlignment="Left" Margin="217,102,0,0" VerticalAlignment="Top" Click="btn_connectionTest_Click"/>
         <Label x:Name="lbl_connectionTest" Content="Connection Test :" HorizontalAlignment="Left" Margin="58,99,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lbl_connectionTestResult" Content="none" HorizontalAlignment="Left" Margin="159,99,0,0" VerticalAlignment="Top"/>
@@ -26,11 +26,8 @@
         <Label x:Name="lbl_executablePath" Content="Executable path: " HorizontalAlignment="Left" Margin="361,43,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lbl_filePath" Content="none" HorizontalAlignment="Left" Margin="461,43,0,0" VerticalAlignment="Top" Width="291" Height="23"/>
         <Button x:Name="btn_fileDialog" Content="Choose file" HorizontalAlignment="Left" Margin="367,69,0,0" VerticalAlignment="Top" Height="20" Width="70" Click="btn_fileDialog_Click"/>
-        <Button x:Name="btn_startExe" Content="Check client" HorizontalAlignment="Left" Margin="529,69,0,0" VerticalAlignment="Top" Height="20" Width="119" IsEnabled="False" Click="btn_startExe_Click"/>
-        <Rectangle HorizontalAlignment="Center" Height="106" Margin="0,154,0,0" VerticalAlignment="Top" Width="712" Stroke="Black" Fill="#FFCBCBCB" Opacity="0.445"/>
-        <Button x:Name="btn_monitorStart" Content="Start" HorizontalAlignment="Left" Margin="31,185,0,0" VerticalAlignment="Top" Height="22" Width="84" Click="btn_monitorStart_Click"/>
-        <Label x:Name="lbl_monitor" Content="Monitor Settings" HorizontalAlignment="Left" Margin="24,154,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="btn_monitorStop" Content="Stop" HorizontalAlignment="Left" Margin="31,224,0,0" VerticalAlignment="Top" Height="23" Width="84" Click="btn_monitorStop_Click"/>
+        <Button x:Name="btn_startExe" Content="Check client" HorizontalAlignment="Left" Margin="367,102,0,0" VerticalAlignment="Top" Height="20" Width="119" IsEnabled="False" Click="btn_startExe_Click"/>
+        <Button x:Name="btn_monitorStart" Content="Start buddy" HorizontalAlignment="Left" Margin="636,103,0,0" VerticalAlignment="Top" Height="22" Width="90" Click="btn_monitorStart_Click" IsEnabled="False"/>
 
     </Grid>
 </Window>

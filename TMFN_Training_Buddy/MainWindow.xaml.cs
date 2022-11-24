@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using TMFN_Training_Buddy.Handlers;
 using TMFN_Training_Buddy.Utils;
 
@@ -38,13 +39,11 @@ namespace TMFN_Training_Buddy
         private static DataHandler _data = new DataHandler();
         private static LogHandler _log;
         private static Importer _importer = new Importer();
-        private static MonitorHandler _monitor;
 
         public MainWindow()
         {
             InitializeComponent();
             _log = new LogHandler(tb_logBox, sv_log);
-            _monitor = new MonitorHandler(_log, _network);
             _log.AddLog("Initialising...");
 
             //Data init
@@ -201,24 +200,35 @@ namespace TMFN_Training_Buddy
                 _log.AddLog("You still need to configure an Game Executable before start!");
 
             if (networkConfigured && clientConfigured)
+            {
                 _log.AddLog("Everything seems to be configured. Please, start a normal game and click start!");
+                btn_monitorStart.IsEnabled = true;
+            }
+                
         }
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
-            _monitor.start = true;
+            if (MessageBox.Show("Buddy will now start his job in background. Stick to the README and you will be fine! Ready?",
+                    "Training Buddy",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                _log.Clean();
+                _log.AddLog("Buddy started!");
 
-            _log.Clean();
-            _log.AddLog("Buddy started!");
+                var process = new Process
+                {
+                    StartInfo =
+                {
+                    FileName = "Executor.exe",
+                    Arguments = $"{_clientProcess.Id} {_device.Name}"
+                }
+                };
+                process.Start();
 
-            _monitor.ListenerStart(_device);
-
-        }
-
-        private void btn_monitorStop_Click(object sender, RoutedEventArgs e)
-        {
-            _monitor.start = false;
-            _log.AddLog("Buddy stopped!");
+                this.Hide();
+            }
         }
     }
 }

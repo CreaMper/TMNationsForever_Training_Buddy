@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.32413.511
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMFN_Training_Buddy", "TMFN_Training_Buddy\TMFN_Training_Buddy.csproj", "{3614CE93-DB61-41E1-A5DC-7318A1462CA6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{740C4040-CC3B-4DA4-94F1-6544D8D074D4} = {740C4040-CC3B-4DA4-94F1-6544D8D074D4}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executor", "Executor\Executor.csproj", "{740C4040-CC3B-4DA4-94F1-6544D8D074D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{3614CE93-DB61-41E1-A5DC-7318A1462CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3614CE93-DB61-41E1-A5DC-7318A1462CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3614CE93-DB61-41E1-A5DC-7318A1462CA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{740C4040-CC3B-4DA4-94F1-6544D8D074D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{740C4040-CC3B-4DA4-94F1-6544D8D074D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{740C4040-CC3B-4DA4-94F1-6544D8D074D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{740C4040-CC3B-4DA4-94F1-6544D8D074D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
