@@ -19,7 +19,12 @@ namespace TMFN_Training_Buddy.Handlers
 
         public void AddLog(string log)
         {
-            _tb.Text = _tb.Text + $"{log} \r";
+            _tb.Text += $"{log} \r";
+        }
+
+        public void Clean()
+        {
+            _tb.Text = "";
         }
     }
 }

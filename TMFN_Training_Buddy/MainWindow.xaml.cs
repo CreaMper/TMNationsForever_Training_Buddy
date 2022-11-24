@@ -31,6 +31,9 @@ namespace TMFN_Training_Buddy
         private bool _showAllInterfaces = false;
         private string _exePath = "none";
         private Process _clientProcess;
+        private bool networkConfigured = false;
+        private bool clientConfigured = false;
+        private bool monitor = false;
 
         private NetworkHandler _network = new NetworkHandler();
         private DataHandler _data = new DataHandler();
@@ -45,7 +48,6 @@ namespace TMFN_Training_Buddy
 
             //Data init
             dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
-
         }
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -88,12 +90,14 @@ namespace TMFN_Training_Buddy
             {
                 lbl_connectionTestResult.Content = "OK";
                 lbl_connectionTestResult.Foreground = Brushes.Green;
-                _log.AddLog("Interface challange successful! Entering a listening mode...");
+                _log.AddLog("Interface challange successful!");
 
                 dd_internetInterfaces.IsEnabled = false;
                 chk_showAllInterfaces.IsEnabled = false;
                 btn_interfaceAuto.IsEnabled = false;
                 btn_connectionTest.IsEnabled = false;
+                networkConfigured = true;
+                ProgressChecker();
 
             }
             else
@@ -183,6 +187,35 @@ namespace TMFN_Training_Buddy
 
             btn_fileDialog.IsEnabled = false;
             btn_startExe.IsEnabled = false;
+            clientConfigured = true;
+            ProgressChecker();
+        }
+
+        private void ProgressChecker()
+        {
+            if (!networkConfigured)
+                _log.AddLog("You still need to configure an Internet Interface before start!");
+
+            if (!clientConfigured)
+                _log.AddLog("You still need to configure an Game Executable before start!");
+
+            if (networkConfigured && clientConfigured)
+                _log.AddLog("Everything seems to be configured. Please, start a normal game and click start!");
+        }
+
+        private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
+        {
+            monitor = true;
+
+            _log.Clean();
+            _log.AddLog("Buddy started!");
+
+        }
+
+        private void btn_monitorStop_Click(object sender, RoutedEventArgs e)
+        {
+            monitor = false;
+            _log.AddLog("Buddy stopped!");
         }
     }
 }
