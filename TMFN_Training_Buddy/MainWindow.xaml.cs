@@ -1,6 +1,8 @@
-﻿using SharpPcap;
+﻿using Microsoft.Win32;
+using SharpPcap;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +25,9 @@ namespace TMFN_Training_Buddy
     public partial class MainWindow : Window
     {
         private ILiveDevice _device;
-        private bool showAllInterfaces = false;
+        private bool _showAllInterfaces = false;
+        private string _exePath = "none"; 
+
         private NetworkHandler _network = new NetworkHandler();
         private DataHandler _data = new DataHandler();
         private LogHandler _log;
@@ -35,7 +39,7 @@ namespace TMFN_Training_Buddy
             _log.AddLog("Initialising...");
 
             //Data init
-            dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, showAllInterfaces);
+            dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
 
         }
 
@@ -50,17 +54,17 @@ namespace TMFN_Training_Buddy
         {
             if (chk_showAllInterfaces.IsChecked.Value)
             {
-                showAllInterfaces = true;
+                _showAllInterfaces = true;
                 dd_internetInterfaces.SelectedItem = null;
                 _device = null;
-                dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, showAllInterfaces);
+                dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
             } 
             else
             {
-                showAllInterfaces = false;
+                _showAllInterfaces = false;
                 dd_internetInterfaces.SelectedItem = null;
                 _device = null;
-                dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, showAllInterfaces);
+                dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
             }
 
         }
@@ -72,6 +76,8 @@ namespace TMFN_Training_Buddy
                 _log.AddLog("You need to select interface to test it's connection!");
                 return;
             }
+
+            _log.AddLog("Started interface challange...");
 
             if (_network.ChallangeInterface(_device))
             {
@@ -106,6 +112,27 @@ namespace TMFN_Training_Buddy
             dd_internetInterfaces.SelectedItem = temporaryDevice;
             _log.AddLog($"Auto select: {temporaryDevice}");
 
+        }
+
+        private void btn_fileDialog_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "Exe Files (.exe)|*.exe",
+                FilterIndex = 1
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                _exePath = dialog.FileName;
+                lbl_filePath.Content = dialog.FileName;
+            }
+                
+            if (!_exePath.Equals("none"))
+            {
+                _log.AddLog("Executable file choosed successfuly! You can run the game safely.");
+                btn_startExe.IsEnabled = true;
+            }
         }
     }
 }

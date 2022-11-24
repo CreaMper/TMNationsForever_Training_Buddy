@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TMFN_Training_Buddy"
         mc:Ignorable="d"
-        Title="TNF Training Buddy by CreaMper" Height="530" Width="960">
+        Title="TNF Training Buddy by CreaMper" Height="530" Width="960" ResizeMode="NoResize">
     <Grid Margin="0,0,0,-6">
         <Rectangle HorizontalAlignment="Left" Height="220" Margin="23,231,0,0" Stroke="Black" VerticalAlignment="Top" Width="714" Fill="#FFE8E8E8"/>
 
@@ -21,6 +21,12 @@
         <Button x:Name="btn_connectionTest" Content="Test Connection" HorizontalAlignment="Left" Margin="217,102,0,0" VerticalAlignment="Top" Click="btn_connectionTest_Click"/>
         <Label x:Name="lbl_connectionTest" Content="Connection Test :" HorizontalAlignment="Left" Margin="58,99,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lbl_connectionTestResult" Content="none" HorizontalAlignment="Left" Margin="159,99,0,0" VerticalAlignment="Top"/>
+        <Rectangle HorizontalAlignment="Left" Height="209" Margin="336,17,0,0" Stroke="Black" VerticalAlignment="Top" Width="441" Opacity="0.45" Fill="#FFCBCBCB"/>
+        <Label x:Name="lbl_gameExecutable" Content="Game Executable" HorizontalAlignment="Left" Margin="336,17,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbl_executablePath" Content="Executable path: " HorizontalAlignment="Left" Margin="361,43,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbl_filePath" Content="none" HorizontalAlignment="Left" Margin="461,43,0,0" VerticalAlignment="Top" Width="291" Height="23"/>
+        <Button x:Name="btn_fileDialog" Content="Choose file" HorizontalAlignment="Left" Margin="367,69,0,0" VerticalAlignment="Top" Height="20" Width="70" Click="btn_fileDialog_Click"/>
+        <Button x:Name="btn_startExe" Content="Start Trackmania" HorizontalAlignment="Left" Margin="529,69,0,0" VerticalAlignment="Top" Height="20" Width="119" IsEnabled="False"/>
 
     </Grid>
 </Window>
