@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TMFN_Training_Buddy.Handlers;
+using TMFN_Training_Buddy.Utils;
 
 namespace TMFN_Training_Buddy
 {
@@ -34,6 +35,7 @@ namespace TMFN_Training_Buddy
         private NetworkHandler _network = new NetworkHandler();
         private DataHandler _data = new DataHandler();
         private LogHandler _log;
+        private Importer _importer = new Importer();
 
         public MainWindow()
         {
@@ -143,6 +145,15 @@ namespace TMFN_Training_Buddy
 
         private void btn_startExe_Click(object sender, RoutedEventArgs e)
         {
+            var restarted = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();
+            if (restarted != null)
+            {
+                _clientProcess = restarted;
+                DisableGameExecutableSettings();
+
+                return;
+            }
+
             var standaloneClient = Process.GetProcessesByName(System.IO.Path.GetFileName("TmForever")).FirstOrDefault();
             if (standaloneClient != null)
             {
@@ -167,6 +178,8 @@ namespace TMFN_Training_Buddy
         private void DisableGameExecutableSettings()
         {
             _log.AddLog($"Found an Trackmania process! with PID {_clientProcess.Id}");
+            _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
+            _log.AddLog("Renamed a window name to make it easy for you!");
 
             btn_fileDialog.IsEnabled = false;
             btn_startExe.IsEnabled = false;
