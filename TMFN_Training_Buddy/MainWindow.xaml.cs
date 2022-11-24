@@ -2,9 +2,11 @@
 using SharpPcap;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +28,8 @@ namespace TMFN_Training_Buddy
     {
         private ILiveDevice _device;
         private bool _showAllInterfaces = false;
-        private string _exePath = "none"; 
+        private string _exePath = "none";
+        private Process _clientProcess;
 
         private NetworkHandler _network = new NetworkHandler();
         private DataHandler _data = new DataHandler();
@@ -122,17 +125,51 @@ namespace TMFN_Training_Buddy
                 FilterIndex = 1
             };
 
+            var selected = false;
+
             if (dialog.ShowDialog() == true)
             {
                 _exePath = dialog.FileName;
                 lbl_filePath.Content = dialog.FileName;
+                selected = true;
             }
                 
-            if (!_exePath.Equals("none"))
+            if (!_exePath.Equals("none") && selected)
             {
-                _log.AddLog("Executable file choosed successfuly! You can run the game safely.");
+                _log.AddLog("Executable file choosed successfuly! Please, run the game form executable!");
                 btn_startExe.IsEnabled = true;
             }
+        }
+
+        private void btn_startExe_Click(object sender, RoutedEventArgs e)
+        {
+            var standaloneClient = Process.GetProcessesByName(System.IO.Path.GetFileName("TmForever")).FirstOrDefault();
+            if (standaloneClient != null)
+            {
+                _clientProcess = standaloneClient;
+                DisableGameExecutableSettings();
+
+                return;
+            }
+
+            var steamClient = Process.GetProcessesByName(System.IO.Path.GetFileName("TrackMania Nations Forever")).FirstOrDefault();
+            if (steamClient != null)
+            {
+                _clientProcess = steamClient;
+                DisableGameExecutableSettings();
+                return;
+            }
+
+            _log.AddLog("Cannot find a Trackmania process! Please, re-run and try again!");
+            return;
+        }
+
+        private void DisableGameExecutableSettings()
+        {
+            _log.AddLog($"Found an Trackmania process! with PID {_clientProcess.Id}");
+
+            btn_fileDialog.IsEnabled = false;
+            btn_startExe.IsEnabled = false;
         }
     }
 }

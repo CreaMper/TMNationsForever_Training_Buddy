@@ -26,7 +26,7 @@
         <Label x:Name="lbl_executablePath" Content="Executable path: " HorizontalAlignment="Left" Margin="361,43,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lbl_filePath" Content="none" HorizontalAlignment="Left" Margin="461,43,0,0" VerticalAlignment="Top" Width="291" Height="23"/>
         <Button x:Name="btn_fileDialog" Content="Choose file" HorizontalAlignment="Left" Margin="367,69,0,0" VerticalAlignment="Top" Height="20" Width="70" Click="btn_fileDialog_Click"/>
-        <Button x:Name="btn_startExe" Content="Start Trackmania" HorizontalAlignment="Left" Margin="529,69,0,0" VerticalAlignment="Top" Height="20" Width="119" IsEnabled="False"/>
+        <Button x:Name="btn_startExe" Content="Check client" HorizontalAlignment="Left" Margin="529,69,0,0" VerticalAlignment="Top" Height="20" Width="119" IsEnabled="False" Click="btn_startExe_Click"/>
 
     </Grid>
 </Window>
