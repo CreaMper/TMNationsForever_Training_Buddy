@@ -17,11 +17,11 @@ namespace TMFN_Training_Buddy.Handlers
 
                 if (showAll)
                 {
-                    deviceNamesList.Add(device.ToString());
+                    deviceNamesList.Add(device.Name);
                 }
                 if (deviceString.Contains("Friendly") && deviceString.Contains("1) "))
                 {
-                    deviceNamesList.Add(device.ToString());
+                    deviceNamesList.Add(device.Name);
                 }
             }
 

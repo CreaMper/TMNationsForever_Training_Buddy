@@ -17,5 +17,28 @@ namespace TMFN_Training_Buddy.Handlers
         {
             return DeviceList.First();
         }
+
+        public bool ChallangeInterface(ILiveDevice device)
+        {
+            device.Open(DeviceModes.Promiscuous, 100);
+
+            var packetRecieved = 0;
+
+            for (int i = 1; i < 11; i++)
+            {
+                PacketCapture e;
+                var status = device.GetNextPacket(out e);
+
+                if (status != GetPacketStatus.PacketRead)
+                    continue;
+
+                packetRecieved++;
+            }
+
+            if (packetRecieved == 0)
+                return false;
+            else
+                return true;
+        }
     }
 }

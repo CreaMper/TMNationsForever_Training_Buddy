@@ -5,17 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TMFN_Training_Buddy"
         mc:Ignorable="d"
-        Title="TNF Training Buddy by CreaMper" Height="438" Width="830">
-    <Grid>
-        <Rectangle HorizontalAlignment="Left" Height="171" Margin="23,231,0,0" Stroke="Black" VerticalAlignment="Top" Width="553" Fill="#FFE8E8E8"/>
+        Title="TNF Training Buddy by CreaMper" Height="530" Width="960">
+    <Grid Margin="0,0,0,-6">
+        <Rectangle HorizontalAlignment="Left" Height="220" Margin="23,231,0,0" Stroke="Black" VerticalAlignment="Top" Width="714" Fill="#FFE8E8E8"/>
 
         <Rectangle HorizontalAlignment="Left" Height="209" Margin="23,17,0,0" VerticalAlignment="Top" Width="308" Stroke="Black" Fill="#FFCBCBCB" Opacity="0.445"/>
         <Label x:Name="lbl_internetInterfaces" Content="Internet Interface " HorizontalAlignment="Left" Margin="23,17,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="dd_internetInterfaces" HorizontalAlignment="Left" Margin="57,43,0,0" VerticalAlignment="Top" Width="240" Height="23" SelectionChanged="dd_internetInterfaces_SelectionChanged"/>
-        <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="217,71,0,0" VerticalAlignment="Top" Width="80"/>
+        <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="217,71,0,0" VerticalAlignment="Top" Width="80" Click="btn_interfaceAuto_Click"/>
         <CheckBox x:Name="chk_showAllInterfaces" Content="Show all Interfaces" HorizontalAlignment="Left" Margin="58,71,0,0" VerticalAlignment="Top" Checked="chk_showAllInterfaces_Checked" Unchecked="chk_showAllInterfaces_Checked" ClickMode="Release"/>
-        <TextBox x:Name="tb_logBox" Text="Program Initialise" TextWrapping="Wrap" Margin="35,258,270,35" IsEnabled="False" AllowDrop="False" Focusable="False" Background="Black" Foreground="White" SelectionBrush="White" FontFamily="Consolas"/>
+        <ScrollViewer x:Name="sv_log" HorizontalScrollBarVisibility="Auto"  Margin="35,258,238,78">
+            <TextBlock  x:Name="tb_logBox" Text="Program Initialise" TextWrapping="Wrap"  AllowDrop="False" Background="Black" Foreground="White"  FontFamily="Consolas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="True"/>
+        </ScrollViewer>
         <Label x:Name="lbl_logs" Content="Logs" HorizontalAlignment="Left" Margin="35,232,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btn_connectionTest" Content="Test Connection" HorizontalAlignment="Left" Margin="217,102,0,0" VerticalAlignment="Top" Click="btn_connectionTest_Click"/>
+        <Label x:Name="lbl_connectionTest" Content="Connection Test :" HorizontalAlignment="Left" Margin="58,99,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbl_connectionTestResult" Content="none" HorizontalAlignment="Left" Margin="159,99,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
