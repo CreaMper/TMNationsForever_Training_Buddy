@@ -5,12 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TMFN_Training_Buddy"
         mc:Ignorable="d"
-        Title="TNF Training Buddy by CreaMper" Height="450" Width="800">
+        Title="TNF Training Buddy by CreaMper" Height="438" Width="830">
     <Grid>
-        <Label x:Name="lbl_internetInterfaces" Content="Internet Interfaces" HorizontalAlignment="Left" Margin="23,17,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="dd_internetInterfaces" HorizontalAlignment="Left" Margin="23,48,0,0" VerticalAlignment="Top" Width="240" Height="23"/>
-        <Label x:Name="lbl_interfaceHelp" Content="Don't know which one? --&gt;" HorizontalAlignment="Left" Margin="23,76,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="183,82,0,0" VerticalAlignment="Top" Width="80"/>
+        <Rectangle HorizontalAlignment="Left" Height="171" Margin="23,231,0,0" Stroke="Black" VerticalAlignment="Top" Width="553" Fill="#FFE8E8E8"/>
+
+        <Rectangle HorizontalAlignment="Left" Height="209" Margin="23,17,0,0" VerticalAlignment="Top" Width="308" Stroke="Black" Fill="#FFCBCBCB" Opacity="0.445"/>
+        <Label x:Name="lbl_internetInterfaces" Content="Internet Interface " HorizontalAlignment="Left" Margin="23,17,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="dd_internetInterfaces" HorizontalAlignment="Left" Margin="57,43,0,0" VerticalAlignment="Top" Width="240" Height="23" SelectionChanged="dd_internetInterfaces_SelectionChanged"/>
+        <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="217,71,0,0" VerticalAlignment="Top" Width="80"/>
+        <CheckBox x:Name="chk_showAllInterfaces" Content="Show all Interfaces" HorizontalAlignment="Left" Margin="58,71,0,0" VerticalAlignment="Top" Checked="chk_showAllInterfaces_Checked" Unchecked="chk_showAllInterfaces_Checked" ClickMode="Release"/>
+        <TextBox x:Name="tb_logBox" Text="Program Initialise" TextWrapping="Wrap" Margin="35,258,270,35" IsEnabled="False" AllowDrop="False" Focusable="False" Background="Black" Foreground="White" SelectionBrush="White" FontFamily="Consolas"/>
+        <Label x:Name="lbl_logs" Content="Logs" HorizontalAlignment="Left" Margin="35,232,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
