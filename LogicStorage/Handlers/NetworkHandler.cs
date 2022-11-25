@@ -1,13 +1,7 @@
-﻿using PacketDotNet;
-using SharpPcap;
-using System;
-using System.IO;
+﻿using SharpPcap;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using TMFN_Training_Buddy.Utils;
 
-namespace TMFN_Training_Buddy.Handlers
+namespace LogicStorage.Handlers
 {
     public class NetworkHandler
     {
@@ -17,7 +11,6 @@ namespace TMFN_Training_Buddy.Handlers
         {
             DeviceList = CaptureDeviceList.Instance;
         }
-
 
         public ILiveDevice SelectDevice()
         {

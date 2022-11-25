@@ -1,4 +1,4 @@
-﻿using Executor.Dtos;
+﻿using LogicStorage.Dtos;
 using Newtonsoft.Json;
 using PacketDotNet;
 using SharpPcap;
@@ -203,7 +203,7 @@ namespace Executor
 
                 Console.WriteLine($"Status: {response.StatusCode}");
 
-                var root = JsonConvert.DeserializeObject<Root>(responseString);
+                var root = JsonConvert.DeserializeObject<TrackStatsDto>(responseString);
 
                 Console.WriteLine(root.Results.First().ReplayId);
 

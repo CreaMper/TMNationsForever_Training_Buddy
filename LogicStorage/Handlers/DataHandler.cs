@@ -1,9 +1,7 @@
 ﻿using SharpPcap;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace TMFN_Training_Buddy.Handlers
+namespace LogicStorage.Handlers
 {
     public class DataHandler
     {

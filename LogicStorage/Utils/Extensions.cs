@@ -1,20 +1,14 @@
 ﻿using PacketDotNet;
 using SharpPcap;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
-namespace TMFN_Training_Buddy.Utils
+namespace LogicStorage.Utils
 {
     public static class Extensions
     {
         private static readonly MethodInfo GetLinkLayerType;
 
-        /// <summary>
-        /// Initializes static members of the <see cref="RawCaptureExtensions" /> class.
-        /// </summary>
         static Extensions()
         {
             var propertyInfo = typeof(RawCapture).GetProperty("LinkLayerType", BindingFlags.Public | BindingFlags.Instance);

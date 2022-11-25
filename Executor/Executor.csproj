@@ -10,4 +10,8 @@
     <PackageReference Include="packetnet-connections" Version="1.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LogicStorage\LogicStorage.csproj" />
+  </ItemGroup>
+
 </Project>

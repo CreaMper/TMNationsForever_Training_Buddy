@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Executor
+﻿namespace LogicStorage.Dtos
 {
     public class TrackDataDto
     {
