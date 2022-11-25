@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace TMFN_Training_Buddy
+namespace Configurator
 {
     public class LogHandler
     {

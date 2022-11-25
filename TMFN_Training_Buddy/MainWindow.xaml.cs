@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using LogicStorage.Handlers;
 
-namespace TMFN_Training_Buddy
+namespace Configurator
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
