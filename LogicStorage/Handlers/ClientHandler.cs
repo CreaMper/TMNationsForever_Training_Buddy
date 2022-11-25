@@ -22,7 +22,6 @@ namespace LogicStorage.Handlers
             if (process != null)
                 return process;
 
-            _importer.UseSetWindowText(process.MainWindowHandle, "TM Training Buddy Client");
             return null;
         }
     }

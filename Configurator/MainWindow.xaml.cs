@@ -139,6 +139,7 @@ namespace Configurator
             _clientProcess = _client.GetProcessByName();
             if (_clientProcess != null)
             {
+                _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
                 DisableGameExecutableSettings();
                 return;
             }
