@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Executor": {
-      "commandName": "Project",
-      "commandLineArgs": "25092  \\Device\\NPF_{FB982BEF-7EEB-4FB4-B16B-8644872FE11C}"
-    }
-  }
-}

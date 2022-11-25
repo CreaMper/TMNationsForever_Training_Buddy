@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using LogicStorage.Handlers;
+using LogicStorage.Dtos;
 
 namespace Configurator
 {
@@ -16,16 +17,14 @@ namespace Configurator
     public partial class MainWindow : Window
     {
         private ILiveDevice _device;
-        private bool _showAllInterfaces = false;
-        private string _exePath = "none";
+        private ConfigurationDto _config;
         private Process _clientProcess;
-        private bool networkConfigured = false;
-        private bool clientConfigured = false;
 
         private static NetworkHandler _network = new NetworkHandler();
-        private static DataHandler _data = new DataHandler();
+        private static ClientHandler _client = new ClientHandler();
         private static LogHandler _log;
         private static DLLImporter _importer = new DLLImporter();
+        private static Serializer _serializer = new Serializer();
 
         public MainWindow()
         {
@@ -33,8 +32,9 @@ namespace Configurator
             _log = new LogHandler(tb_logBox, sv_log);
             _log.AddLog("Initialising...");
 
-            //Data init
-            dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
+            _config = new ConfigurationDto();
+
+            dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
         }
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -48,19 +48,18 @@ namespace Configurator
         {
             if (chk_showAllInterfaces.IsChecked.Value)
             {
-                _showAllInterfaces = true;
+                _config.ShowAllInterfaces = true;
                 dd_internetInterfaces.SelectedItem = null;
                 _device = null;
-                dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
+                dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
             }
             else
             {
-                _showAllInterfaces = false;
+                _config.ShowAllInterfaces = false;
                 dd_internetInterfaces.SelectedItem = null;
                 _device = null;
-                dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
+                dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
             }
-
         }
 
         private void btn_connectionTest_Click(object sender, RoutedEventArgs e)
@@ -83,7 +82,7 @@ namespace Configurator
                 chk_showAllInterfaces.IsEnabled = false;
                 btn_interfaceAuto.IsEnabled = false;
                 btn_connectionTest.IsEnabled = false;
-                networkConfigured = true;
+                _config.NetworkConfigured = true;
                 ProgressChecker();
 
             }
@@ -97,7 +96,7 @@ namespace Configurator
 
         private void btn_interfaceAuto_Click(object sender, RoutedEventArgs e)
         {
-            var temporaryDevice = _data.GetDeviceList(_network.DeviceList, false).FirstOrDefault();
+            var temporaryDevice = _network.GetDeviceList(false).FirstOrDefault();
             if (temporaryDevice == null)
             {
                 _log.AddLog("Cannot find interface automatically!");
@@ -122,12 +121,12 @@ namespace Configurator
 
             if (dialog.ShowDialog() == true)
             {
-                _exePath = dialog.FileName;
+                _config.ExePath = dialog.FileName;
                 lbl_filePath.Content = dialog.FileName;
                 selected = true;
             }
 
-            if (!_exePath.Equals("none") && selected)
+            if (!_config.ExePath.Equals("none") && selected)
             {
                 _log.AddLog("Executable file choosed successfuly! Please, run the game form executable!");
                 btn_startExe.IsEnabled = true;
@@ -136,28 +135,9 @@ namespace Configurator
 
         private void btn_startExe_Click(object sender, RoutedEventArgs e)
         {
-            var restarted = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();
-            if (restarted != null)
+            _clientProcess = _client.GetProcessByName();
+            if (_clientProcess != null)
             {
-                _clientProcess = restarted;
-                DisableGameExecutableSettings();
-
-                return;
-            }
-
-            var standaloneClient = Process.GetProcessesByName(System.IO.Path.GetFileName("TmForever")).FirstOrDefault();
-            if (standaloneClient != null)
-            {
-                _clientProcess = standaloneClient;
-                DisableGameExecutableSettings();
-
-                return;
-            }
-
-            var steamClient = Process.GetProcessesByName(System.IO.Path.GetFileName("TrackMania Nations Forever")).FirstOrDefault();
-            if (steamClient != null)
-            {
-                _clientProcess = steamClient;
                 DisableGameExecutableSettings();
                 return;
             }
@@ -174,24 +154,26 @@ namespace Configurator
 
             btn_fileDialog.IsEnabled = false;
             btn_startExe.IsEnabled = false;
-            clientConfigured = true;
+            _config.ClientConfigured = true;
             ProgressChecker();
         }
 
         private void ProgressChecker()
         {
-            if (!networkConfigured)
+            if (!_config.NetworkConfigured)
                 _log.AddLog("You still need to configure an Internet Interface before start!");
 
-            if (!clientConfigured)
+            if (!_config.ClientConfigured)
                 _log.AddLog("You still need to configure an Game Executable before start!");
 
-            if (networkConfigured && clientConfigured)
+            if (_config.NetworkConfigured && _config.ClientConfigured)
             {
                 _log.AddLog("Everything seems to be configured. Please, start a normal game and click start!");
                 btn_monitorStart.IsEnabled = true;
+                chk_minimaliseExecutor.IsEnabled = true;
+                chk_preserveSettings.IsEnabled = true;
+                chk_promptMsg.IsEnabled = true;
             }
-
         }
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
@@ -207,15 +189,43 @@ namespace Configurator
                 var process = new Process
                 {
                     StartInfo =
-                {
-                    FileName = "Executor.exe",
-                    Arguments = $"{_clientProcess.Id} {_device.Name}"
-                }
+                    {
+                        FileName = "Executor.exe"
+                    }
                 };
                 process.Start();
 
-                Hide();
+                _config.ClientPID = _clientProcess.Id;
+                _config.NetworkInterfaceName = _device.Name;
+
+                _serializer.SerializeExecutorConfig(_config);
+
+                System.Environment.Exit(1);
             }
+        }
+
+        private void chk_promptMsg_Checked(object sender, RoutedEventArgs e)
+        {
+            if (chk_promptMsg.IsChecked.Value)
+                _config.AllwaysPromptTextBox = true;
+            else
+                _config.AllwaysPromptTextBox = false;
+        }
+
+        private void chk_minimaliseExecutor_Checked(object sender, RoutedEventArgs e)
+        {
+            if(chk_minimaliseExecutor.IsChecked.Value)
+                _config.MinimaliseExecutor = true;
+            else
+                _config.MinimaliseExecutor = false;
+        }
+
+        private void chk_preserveSettings_Checked(object sender, RoutedEventArgs e)
+        {
+            if(chk_preserveSettings.IsChecked.Value)
+                _config.PreserveSettings = true;
+            else
+                _config.PreserveSettings = false;
         }
     }
 }
