@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using LogicStorage.Handlers;
 using LogicStorage.Dtos;
+using System.IO;
 
 namespace Configurator
 {
@@ -122,11 +123,11 @@ namespace Configurator
             if (dialog.ShowDialog() == true)
             {
                 _config.ExePath = dialog.FileName;
-                lbl_filePath.Content = dialog.FileName;
+                lbl_filePath.Content = Path.GetFileName(dialog.FileName);
                 selected = true;
             }
 
-            if (!_config.ExePath.Equals("none") && selected)
+            if (_config.ExePath != null && selected)
             {
                 _log.AddLog("Executable file choosed successfuly! Please, run the game form executable!");
                 btn_startExe.IsEnabled = true;
@@ -170,62 +171,31 @@ namespace Configurator
             {
                 _log.AddLog("Everything seems to be configured. Please, start a normal game and click start!");
                 btn_monitorStart.IsEnabled = true;
-                chk_minimaliseExecutor.IsEnabled = true;
-                chk_preserveSettings.IsEnabled = true;
-                chk_promptMsg.IsEnabled = true;
             }
         }
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Buddy will now start his job in background. Stick to the README and you will be fine! Ready?",
+            if (MessageBox.Show("Buddy will open an Executor. Do you want to proceed?",
                     "Training Buddy",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                _log.Clean();
-                _log.AddLog("Buddy started!");
+                _config.ClientPID = _clientProcess.Id;
+                _config.NetworkInterfaceName = _device.Name;
+                _serializer.SerializeExecutorConfig(_config);
 
                 var process = new Process
                 {
                     StartInfo =
                     {
-                        FileName = "Executor.exe"
+                        FileName = "Buddy_Executor.exe"
                     }
                 };
                 process.Start();
 
-                _config.ClientPID = _clientProcess.Id;
-                _config.NetworkInterfaceName = _device.Name;
-
-                _serializer.SerializeExecutorConfig(_config);
-
                 System.Environment.Exit(1);
             }
-        }
-
-        private void chk_promptMsg_Checked(object sender, RoutedEventArgs e)
-        {
-            if (chk_promptMsg.IsChecked.Value)
-                _config.AllwaysPromptTextBox = true;
-            else
-                _config.AllwaysPromptTextBox = false;
-        }
-
-        private void chk_minimaliseExecutor_Checked(object sender, RoutedEventArgs e)
-        {
-            if(chk_minimaliseExecutor.IsChecked.Value)
-                _config.MinimaliseExecutor = true;
-            else
-                _config.MinimaliseExecutor = false;
-        }
-
-        private void chk_preserveSettings_Checked(object sender, RoutedEventArgs e)
-        {
-            if(chk_preserveSettings.IsChecked.Value)
-                _config.PreserveSettings = true;
-            else
-                _config.PreserveSettings = false;
         }
     }
 }
