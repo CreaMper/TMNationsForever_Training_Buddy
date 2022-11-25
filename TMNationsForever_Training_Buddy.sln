@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32413.511
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurator", "TMFN_Training_Buddy\Configurator.csproj", "{3614CE93-DB61-41E1-A5DC-7318A1462CA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurator", "Configurator\Configurator.csproj", "{3614CE93-DB61-41E1-A5DC-7318A1462CA6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{740C4040-CC3B-4DA4-94F1-6544D8D074D4} = {740C4040-CC3B-4DA4-94F1-6544D8D074D4}
 		{BCE0D2D2-819E-402C-9E5B-352F63FBCB89} = {BCE0D2D2-819E-402C-9E5B-352F63FBCB89}

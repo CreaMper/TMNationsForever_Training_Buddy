@@ -52,7 +52,7 @@ namespace Configurator
                 dd_internetInterfaces.SelectedItem = null;
                 _device = null;
                 dd_internetInterfaces.ItemsSource = _data.GetDeviceList(_network.DeviceList, _showAllInterfaces);
-            } 
+            }
             else
             {
                 _showAllInterfaces = false;
@@ -126,7 +126,7 @@ namespace Configurator
                 lbl_filePath.Content = dialog.FileName;
                 selected = true;
             }
-                
+
             if (!_exePath.Equals("none") && selected)
             {
                 _log.AddLog("Executable file choosed successfuly! Please, run the game form executable!");
@@ -191,7 +191,7 @@ namespace Configurator
                 _log.AddLog("Everything seems to be configured. Please, start a normal game and click start!");
                 btn_monitorStart.IsEnabled = true;
             }
-                
+
         }
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
@@ -214,7 +214,7 @@ namespace Configurator
                 };
                 process.Start();
 
-                this.Hide();
+                Hide();
             }
         }
     }
