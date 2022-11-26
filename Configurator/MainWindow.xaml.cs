@@ -249,5 +249,14 @@ namespace Configurator
             else
                 _config.MinimaliseExecutor = false;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://ko-fi.com/A0A0GM3N0",
+                UseShellExecute = true
+            });
+        }
     }
 }

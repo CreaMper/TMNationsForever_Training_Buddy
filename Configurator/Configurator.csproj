@@ -25,6 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="kofi.png" />
     <None Remove="roboSprite.png" />
   </ItemGroup>
 
@@ -38,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="kofi.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roboSprite.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="TMNationsForever Training Buddy Configurator | Created by CreaMper" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    
     <Grid Height="317" VerticalAlignment="Center" Width="668">
         <Rectangle HorizontalAlignment="Left" Height="195" Margin="5,117,0,0" Stroke="Black" VerticalAlignment="Top" Width="489" Fill="#FFE8E8E8"/>
 
@@ -42,6 +43,11 @@
         <Label Content="Listetning intensivity" HorizontalAlignment="Left" Margin="510,0,0,0" VerticalAlignment="Center"/>
         <Label x:Name="lbl_listeningIntensivityLevel" Content="6" HorizontalAlignment="Left" Margin="628,0,0,0" VerticalAlignment="Center"/>
         <CheckBox x:Name="chk_minimaliseExecutor" Content="Don't show executor" HorizontalAlignment="Left" Margin="510,195,0,0" VerticalAlignment="Top" Checked="chk_minimaliseExecutor_Checked"/>
+        <Button Template="{StaticResource NoMouseOverButton}" Content="" HorizontalAlignment="Left" Margin="506,271,0,0" VerticalAlignment="Top" Height="35" Width="150" RenderTransformOrigin="0.5,0.5" Visibility="Visible" BorderThickness="0,1,1,1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="{x:Null}" Foreground="{x:Null}" Click="Button_Click" Focusable="False">
+            <Button.Background>
+                <ImageBrush ImageSource="/kofi.png" TileMode="FlipY" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox"/>
+            </Button.Background>
+        </Button>
 
     </Grid>
 </Window>
