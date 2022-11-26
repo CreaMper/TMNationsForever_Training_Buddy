@@ -81,8 +81,12 @@ namespace Executor
                 try
                 {
                     _clientProcess = Process.GetProcessById(_config.ClientPID);
-                    if (_clientProcess.HasExited == true)
+                    if (_clientProcess.HasExited)
+                    {
+                        _initFailMsg = "It seems that you closed a Buddy Client!";
                         return false;
+                    }
+                        
                     _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(_config.NetworkInterfaceName));
                 }
                 catch

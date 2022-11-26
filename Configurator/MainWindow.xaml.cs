@@ -2,6 +2,7 @@
 using LogicStorage.Handlers;
 using LogicStorage.Utils;
 using SharpPcap;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -32,7 +33,10 @@ namespace Configurator
             _log = new LogHandler(tb_logBox, sv_log);
             _log.AddLog("Initialising...");
 
-            _config = new ConfiguratorConfigDto();
+            _config = new ConfiguratorConfigDto()
+            {
+                ListeningIntensivityLevel = 6
+            };
 
             dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
             _log.AddLog("Initialising done! Please, configure network interface and executable settings!");
@@ -75,8 +79,8 @@ namespace Configurator
 
             if (_network.ChallangeInterface(_device))
             {
-                lbl_connectionTestResult.Content = "OK";
-                lbl_connectionTestResult.Foreground = Brushes.Green;
+                lbl_connectionConfigStatus.Content = "CONFIGURED";
+                lbl_connectionConfigStatus.Foreground = Brushes.Green;
                 _log.AddLog("Interface challange successful!");
 
                 dd_internetInterfaces.IsEnabled = false;
@@ -89,8 +93,8 @@ namespace Configurator
             }
             else
             {
-                lbl_connectionTestResult.Content = "ERROR";
-                lbl_connectionTestResult.Foreground = Brushes.Red;
+                lbl_connectionConfigStatus.Content = "ERROR";
+                lbl_connectionConfigStatus.Foreground = Brushes.Red;
                 _log.AddLog("Interface challange failed - please select different one!");
             }
         }
@@ -128,6 +132,9 @@ namespace Configurator
 
             if (!_clientProcess.HasExited)
             {
+                lbl_executableConfigStatus.Content = "CONFIGURED";
+                lbl_executableConfigStatus.Foreground = Brushes.Green;
+
                 DisableGameExecutableSettings();
                 return;
             }
@@ -142,7 +149,7 @@ namespace Configurator
             _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
             _log.AddLog("Please, make sure that game is in WINDOWED mode!");
 
-            btn_startExe.IsEnabled = false;
+            btn_startClient.IsEnabled = false;
             _config.ClientConfigured = true;
             ProgressChecker();
         }
@@ -158,16 +165,30 @@ namespace Configurator
             if (_config.NetworkConfigured && _config.ClientConfigured)
             {
                 _log.AddLog("Configuration sucessfull! You can start the buddy and run a normal game client!");
-                btn_monitorStart.IsEnabled = true;
+                btn_startBuddy.IsEnabled = true;
             }
         }
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Buddy will start to assist you! You can start your own client and start the training!",
+            var msgResult = MessageBox.Show("Configuration tooll will close and Buddy will start to assist you! Do you want me to open another game client for you?",
                 "Training Buddy",
-                MessageBoxButton.OK,
+                MessageBoxButton.YesNo,
                 MessageBoxImage.Information);
+
+            if (msgResult.Equals(MessageBoxResult.Yes))
+            {
+                var additionallClient = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = "TmForever.exe"
+                    }
+                };
+
+                additionallClient.Start();
+            }
+
 
             _config.ClientPID = _clientProcess.Id;
             _config.NetworkInterfaceName = _device.Name;
@@ -201,12 +222,29 @@ namespace Configurator
                 return;
             }
 
-            lbl_filePath.Foreground = Brushes.Green;
-            lbl_filePath.Content = "OK";
+            lbl_executableConfigStatus.Content = "CLIENT NOT FOUND";
             _log.AddLog("Client executable found! Please, start the client using button above!");
 
             btn_exeAutoDetect.IsEnabled = false;
-            btn_startExe.IsEnabled = true;
+            btn_startClient.IsEnabled = true;
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if(lbl_listeningIntensivityLevel != null)
+            {
+                lbl_listeningIntensivityLevel.Content = sld_intensivity.Value;
+                _config.ListeningIntensivityLevel = Int32.Parse(sld_intensivity.Value.ToString());
+            }
+                
+        }
+
+        private void chk_minimaliseExecutor_Checked(object sender, RoutedEventArgs e)
+        {
+            if (chk_minimaliseExecutor.IsChecked.Value)
+                _config.MinimaliseExecutor = true;
+            else
+                _config.MinimaliseExecutor = false;
         }
     }
 }

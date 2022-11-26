@@ -44,7 +44,9 @@ namespace LogicStorage.Utils
             return new ExecutorConfigDto()
             {
                 ClientPID = configurator.ClientPID,
-                NetworkInterfaceName = configurator.NetworkInterfaceName
+                NetworkInterfaceName = configurator.NetworkInterfaceName,
+                ListeningIntensivityLevel = configurator.ListeningIntensivityLevel,
+                MinimaliseExecutor = configurator.MinimaliseExecutor
             };
         }
     }

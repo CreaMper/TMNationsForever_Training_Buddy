@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
 	<PublishSingleFile>true</PublishSingleFile>
-	<ApplicationIcon>robot_128_44173.ico</ApplicationIcon>
+	<ApplicationIcon>roboIcon.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
     <AssemblyName>Buddy_Configurator</AssemblyName>
   </PropertyGroup>
@@ -25,12 +25,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="roboSprite.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="packetnet-connections" Version="1.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LogicStorage\LogicStorage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="roboSprite.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

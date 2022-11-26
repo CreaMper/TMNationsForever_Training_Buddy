@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>Buddy_Executor</AssemblyName>
-    <ApplicationIcon>robot_128_44173.ico</ApplicationIcon>
+    <ApplicationIcon>roboIcon.ico</ApplicationIcon>
 	<PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
 
