@@ -203,6 +203,13 @@ namespace Executor
                 Console.WriteLine("Request failed! Loading aborted...");
                 return null;
             }
+
+            if (response.Contains("This UId cannot be found on TMX"))
+            {
+                Console.WriteLine("Unfortunatelly, TMX data is not mapped in dedimania! :(");
+                return null;
+            }
+
             var splitedContent = response.Split("&id=");
             var split = splitedContent[1].Split("\">TMX");
             var onlyId = split[0];
