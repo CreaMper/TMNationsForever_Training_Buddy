@@ -6,6 +6,11 @@
     <AssemblyName>Buddy_Executor</AssemblyName>
     <ApplicationIcon>roboIcon.ico</ApplicationIcon>
 	<PublishSingleFile>true</PublishSingleFile>
+	<AssemblyVersion>1.1.0.0</AssemblyVersion>
+	<FileVersion>1.1.0.0</FileVersion>
+	<Product>TMNationsForever Training Buddy Executor</Product>
+	<Authors>CreaMper</Authors>
+	<Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -16,6 +21,7 @@
     <ErrorReport>none</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
 
   <ItemGroup>

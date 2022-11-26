@@ -8,6 +8,11 @@
 	<ApplicationIcon>roboIcon.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
     <AssemblyName>Buddy_Configurator</AssemblyName>
+    <Authors>CreaMper</Authors>
+    <Product>TMNationsForever Training Buddy Configurator</Product>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,12 +21,13 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants />
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <ErrorReport>none</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
 
   <ItemGroup>

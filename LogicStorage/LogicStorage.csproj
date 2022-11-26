@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	<PublishSingleFile>true</PublishSingleFile>
+	<Version>1.1.0</Version>
+	<AssemblyVersion>1.1.0.0</AssemblyVersion>
+	<Product>TMNationsForever Training Buddy Logic</Product>
+	<Authors>CreaMper</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -12,6 +16,7 @@
     <ErrorReport>none</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
