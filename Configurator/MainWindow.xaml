@@ -36,7 +36,7 @@
         <Rectangle HorizontalAlignment="Left" Height="47" Margin="534,51,0,0" VerticalAlignment="Top" Width="1" Fill="Black"/>
         <Button x:Name="btn_exeAutoDetect" Content="Auto Detect" HorizontalAlignment="Left" Margin="407,43,0,0" VerticalAlignment="Top" Height="28" Width="119" Click="btn_exeAutoDetect_Click"/>
         <Rectangle HorizontalAlignment="Left" Height="43" Margin="22,83,0,0" VerticalAlignment="Top" Width="0" Fill="Black"/>
-        <Image HorizontalAlignment="Left" Height="46" Margin="572,28,0,0" VerticalAlignment="Top" Width="52" Source="/roboSprite.png"/>
+        <Image HorizontalAlignment="Left" Height="46" Margin="572,28,0,0" VerticalAlignment="Top" Width="52" Source="/Assests/roboSprite.png"/>
         <Rectangle HorizontalAlignment="Left" Height="195" Margin="499,117,0,0" Stroke="Black" VerticalAlignment="Top" Width="163" Opacity="0.45" Fill="#FFCBCBCB"/>
         <Label Content="Options" HorizontalAlignment="Left" Margin="499,117,0,0" VerticalAlignment="Top" FontSize="18"/>
         <Slider x:Name="sld_intensivity" HorizontalAlignment="Left" Margin="510,171,0,0" VerticalAlignment="Top" Width="134" Value="6" ValueChanged="Slider_ValueChanged" IsSnapToTickEnabled="True" SmallChange="1" TickPlacement="BottomRight" Minimum="1"/>
@@ -45,7 +45,7 @@
         <CheckBox x:Name="chk_minimaliseExecutor" Content="Don't show executor" HorizontalAlignment="Left" Margin="510,195,0,0" VerticalAlignment="Top" Checked="chk_minimaliseExecutor_Checked"/>
         <Button Template="{StaticResource NoMouseOverButton}" Content="" HorizontalAlignment="Left" Margin="506,271,0,0" VerticalAlignment="Top" Height="35" Width="150" RenderTransformOrigin="0.5,0.5" Visibility="Visible" BorderThickness="0,1,1,1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="{x:Null}" Foreground="{x:Null}" Click="Button_Click" Focusable="False">
             <Button.Background>
-                <ImageBrush ImageSource="/kofi.png" TileMode="FlipY" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox"/>
+                <ImageBrush ImageSource="/Assests/kofi.png" TileMode="FlipY" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox"/>
             </Button.Background>
         </Button>
 

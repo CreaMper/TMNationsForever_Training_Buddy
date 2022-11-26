@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
 	<PublishSingleFile>true</PublishSingleFile>
-	<ApplicationIcon>roboIcon.ico</ApplicationIcon>
+	<ApplicationIcon>Assests\roboIcon.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
     <AssemblyName>Buddy_Configurator</AssemblyName>
     <Authors>CreaMper</Authors>
@@ -45,10 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="kofi.png">
+    <Content Include="Assests\kofi.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roboSprite.png">
+    <Content Include="Assests\roboSprite.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
