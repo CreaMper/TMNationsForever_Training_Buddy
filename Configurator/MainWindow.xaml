@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="TMNationsForever Buddy Config by CreaMper" Height="277" Width="605" ResizeMode="NoResize">
+        Title="TMNationsForever Training Buddy Configurator | Created by CreaMper" Height="277" Width="605" ResizeMode="NoResize">
     <Grid Margin="0,0,0,-6">
         <Rectangle HorizontalAlignment="Left" Height="119" Margin="5,131,0,0" Stroke="Black" VerticalAlignment="Top" Width="587" Fill="#FFE8E8E8"/>
 

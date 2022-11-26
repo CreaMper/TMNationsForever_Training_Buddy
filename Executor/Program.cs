@@ -2,6 +2,7 @@
 using PacketDotNet;
 using SharpPcap;
 using System;
+using System.Threading;
 
 namespace Executor
 {
@@ -14,6 +15,7 @@ namespace Executor
                 Console.WriteLine("Program Initialize Failed!");
                 Console.WriteLine(_initFailMsg);
                 Console.WriteLine("Please, run the configuration tool... Exiting in 5 seconds...");
+                Thread.Sleep(5000);
 
                 System.Environment.Exit(1);
             }

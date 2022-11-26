@@ -34,6 +34,8 @@ namespace Executor
             _client = new ClientHandler();
             _importer = new DLLImporter();
 
+            Console.Title = "TMNationsForever Training Buddy Executor | Created by CreaMper";
+
             _config = _serializer.DeserializeExecutorConfig();
             if (_config == null)
             {
@@ -79,6 +81,8 @@ namespace Executor
                 try
                 {
                     _clientProcess = Process.GetProcessById(_config.ClientPID);
+                    if (_clientProcess.HasExited == true)
+                        return false;
                     _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(_config.NetworkInterfaceName));
                 }
                 catch
