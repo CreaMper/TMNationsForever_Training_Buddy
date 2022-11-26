@@ -1,29 +1,23 @@
+# TMNationForever Training Buddy! [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/) 
 
-# TMNationForever Training Buddy!
-
-Best tool for new players that want to start with some help!
-With this tool, you are able to see a replay of a TOP1 player in this map using a seperate game client!
-
-
-
-## License
-[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-
-## Installation
-
-This project does not need an installation. 
-To run this project simply start an configuration tool and follow an instructions. 
-```bash
-  Buddy_Configurator.exe
-```
-
+Best tool for new players that wants to start with some help!
+With this tool, you are able to see a replay of a TOP1 player in a map using a separate game client!
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A0GM3N0)
+This project does not need an installation. Extract all files into the game client directory and run Configurator!
 ## FAQ
 
-#### Why do I need a seperatre client? Where can I get one?
+#### I cannot set a game client!
 
-Another game client is required to smoothly run a replay and do not interupt your server ranked game :)
-Second client exe can be the same as a normal one.
+At this moment Buddy supports only a standalone client as well as the steam version. Support for other types of client will be added in the future.
 
-#### I do not like how packets are using in this implementation. Is there a workaround?
+#### Is Buddy safe to play with? 
 
-No. This application monitors all incomming packets from selected internet interface. The only workaround would be an injecting a method directly to the client and retrieve a current track inforormation BUT it would result with marking this herlper as a heat. I want to have this application as safe as it possible.
+Yes! Nothing in client executable is being modified while using Buddy, therefore, there is no reason to be afraid of a ban. Every action that Buddy does can be easily done by hand by downloading a replay from TMX directly.
+
+#### I have joined a map and there is no replay loaded. Why?
+
+Map data is fetched using dedimania.net. Not every map is mapped in therefore not every can be loaded. 
+
+#### Why sometimes replay does not load automatically and I have to re-join my race?
+
+Try to change a packet listening intensity. The higher value you set, the more accuracy Buddy will have with reading all map information but remember - more intensity requires more CPU resources. 
