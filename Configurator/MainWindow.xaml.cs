@@ -201,6 +201,10 @@ namespace Configurator
                     FileName = "Buddy_Executor.exe"
                 }
             };
+
+            if (_config.MinimaliseExecutor)
+                process.StartInfo.CreateNoWindow = true;
+
             process.Start();
 
             System.Environment.Exit(1);
@@ -236,7 +240,6 @@ namespace Configurator
                 lbl_listeningIntensivityLevel.Content = sld_intensivity.Value;
                 _config.ListeningIntensivityLevel = Int32.Parse(sld_intensivity.Value.ToString());
             }
-                
         }
 
         private void chk_minimaliseExecutor_Checked(object sender, RoutedEventArgs e)

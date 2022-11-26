@@ -20,10 +20,17 @@ namespace Executor
                 System.Environment.Exit(1);
             }
 
-            _device.Open(DeviceModes.Promiscuous, 1000);
+            _device.Open(DeviceModes.Promiscuous, (100 * _config.ListeningIntensivityLevel) - 1100);
 
             while (true)
             {
+                if (_clientProcess.HasExited)
+                {
+                    Console.WriteLine("Client buddy has been closed! Exiting executor in 5 seconds...");
+                    Thread.Sleep(5000);
+                    System.Environment.Exit(1);
+                }
+
                 var packetStatus = _device.GetNextPacket(out PacketCapture pc);
                 if (packetStatus != GetPacketStatus.PacketRead)
                     continue;

@@ -15,7 +15,7 @@ namespace Executor
 {
     public class Helper
     {
-        private static ExecutorConfigDto _config;
+        public static ExecutorConfigDto _config;
         private static Serializer _serializer;
         private static NetworkHandler _network;
         private static DLLImporter _importer;
@@ -71,8 +71,12 @@ namespace Executor
                 _config = new ExecutorConfigDto()
                 {
                     ClientPID = process.Id,
-                    NetworkInterfaceName = device.Name
+                    NetworkInterfaceName = device.Name,
+                    ListeningIntensivityLevel = 5,
+                    MinimaliseExecutor = false
                 };
+
+                Console.WriteLine("Since configuration files was not found, executor will stay un-minimalised!");
             } 
             else
             {
