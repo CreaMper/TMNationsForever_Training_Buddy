@@ -54,7 +54,7 @@ namespace Executor
                     return false;
                 }
 
-                var process = _client.GetProcessByName();
+                var process = _client.GetGameClientProcess();
                 if (process == null)
                 {
                     _initFailMsg = "Cannot find a game client!";

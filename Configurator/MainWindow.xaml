@@ -11,7 +11,7 @@
         <Rectangle HorizontalAlignment="Left" Height="122" Margin="5,4,0,0" VerticalAlignment="Top" Width="308" Stroke="Black" Fill="#FFCBCBCB" Opacity="0.445"/>
         <Label x:Name="lbl_internetInterfaces" Content="Internet Interface " HorizontalAlignment="Left" Margin="5,4,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="dd_internetInterfaces" HorizontalAlignment="Left" Margin="39,30,0,0" VerticalAlignment="Top" Width="240" Height="23" SelectionChanged="dd_internetInterfaces_SelectionChanged"/>
-        <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="199,58,0,0" VerticalAlignment="Top" Width="80" Click="btn_interfaceAuto_Click"/>
+        <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="199,65,0,0" VerticalAlignment="Top" Width="88" Click="btn_interfaceAuto_Click" Height="19"/>
         <CheckBox x:Name="chk_showAllInterfaces" Content="Show all Interfaces" HorizontalAlignment="Left" Margin="40,58,0,0" VerticalAlignment="Top" Checked="chk_showAllInterfaces_Checked" Unchecked="chk_showAllInterfaces_Checked" ClickMode="Release"/>
         <ScrollViewer x:Name="sv_log" VerticalScrollBarVisibility="Visible"  Margin="15,140,20,26">
             <TextBlock  x:Name="tb_logBox" Text="Program Initialise" TextWrapping="Wrap"  AllowDrop="False" Background="Black" Foreground="White"  FontFamily="Consolas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="True" RenderTransformOrigin="0.5,0.5" FontSize="10">
@@ -30,12 +30,12 @@
         <Label x:Name="lbl_connectionTestResult" Content="none" HorizontalAlignment="Left" Margin="141,86,0,0" VerticalAlignment="Top"/>
         <Rectangle HorizontalAlignment="Left" Height="121" Margin="320,5,0,0" Stroke="Black" VerticalAlignment="Top" Width="272" Opacity="0.45" Fill="#FFCBCBCB"/>
         <Label x:Name="lbl_gameExecutable" Content="Game Executable" HorizontalAlignment="Left" Margin="320,5,0,0" VerticalAlignment="Top" Width="109"/>
-        <Label x:Name="lbl_executablePath" Content="Executable path: " HorizontalAlignment="Left" Margin="329,31,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lbl_filePath" Content="none" HorizontalAlignment="Left" Margin="429,32,0,0" VerticalAlignment="Top" Width="291" Height="23"/>
-        <Button x:Name="btn_fileDialog" Content="Choose file" HorizontalAlignment="Left" Margin="338,65,0,0" VerticalAlignment="Top" Height="20" Width="119" Click="btn_fileDialog_Click"/>
-        <Button x:Name="btn_startExe" Content="Check client" HorizontalAlignment="Left" Margin="338,92,0,0" VerticalAlignment="Top" Height="20" Width="119" IsEnabled="False" Click="btn_startExe_Click"/>
+        <Label x:Name="lbl_executable" Content="Executable:" HorizontalAlignment="Left" Margin="329,31,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbl_filePath" Content="none" HorizontalAlignment="Left" Margin="398,31,0,0" VerticalAlignment="Top" Width="54" Height="25"/>
+        <Button x:Name="btn_startExe" Content="Start Client" HorizontalAlignment="Left" Margin="337,92,0,0" VerticalAlignment="Top" Height="20" Width="119" IsEnabled="False" Click="btn_startExe_Click"/>
         <Button x:Name="btn_monitorStart" Content="Start buddy" HorizontalAlignment="Left" Margin="479,65,0,0" VerticalAlignment="Top" Height="47" Width="94" Click="btn_monitorStart_Click" IsEnabled="False"/>
         <Rectangle HorizontalAlignment="Left" Height="51" Margin="469,66,0,0" VerticalAlignment="Top" Width="1" Fill="Black"/>
+        <Button x:Name="btn_exeAutoDetect" Content="Auto Detect" HorizontalAlignment="Left" Margin="337,68,0,0" VerticalAlignment="Top" Height="20" Width="119" Click="btn_exeAutoDetect_Click"/>
 
     </Grid>
 </Window>

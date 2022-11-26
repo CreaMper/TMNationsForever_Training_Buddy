@@ -1,5 +1,6 @@
 ﻿using LogicStorage.Utils;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace LogicStorage.Handlers
@@ -8,7 +9,7 @@ namespace LogicStorage.Handlers
     {
         private static DLLImporter _importer =  new DLLImporter();
         
-        public Process GetProcessByName()
+        public Process GetGameClientProcess()
         {
             var legacy = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();
             if (legacy != null)
@@ -23,6 +24,17 @@ namespace LogicStorage.Handlers
                 return process;
 
             return null;
+        }
+
+        public bool VerifyClientFileStructure()
+        {
+            if (!Directory.Exists("GameData") || !Directory.Exists("Packs"))
+                return false;
+
+            if (!File.Exists("TmForever.exe") || !File.Exists("Nadeo.ini"))
+                return false;
+
+            return true;
         }
     }
 }

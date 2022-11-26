@@ -1,14 +1,13 @@
-﻿using LogicStorage.Utils;
-using Microsoft.Win32;
+﻿using LogicStorage.Dtos;
+using LogicStorage.Handlers;
+using LogicStorage.Utils;
 using SharpPcap;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using LogicStorage.Handlers;
-using LogicStorage.Dtos;
-using System.IO;
 
 namespace Configurator
 {
@@ -36,6 +35,7 @@ namespace Configurator
             _config = new ConfigurationDto();
 
             dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
+            _log.AddLog("Initialising done! Please, configure network interface and executable settings!");
         }
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -110,36 +110,24 @@ namespace Configurator
 
         }
 
-        private void btn_fileDialog_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new OpenFileDialog
-            {
-                Filter = "Exe Files (.exe)|*.exe",
-                FilterIndex = 1
-            };
-
-            var selected = false;
-
-            if (dialog.ShowDialog() == true)
-            {
-                _config.ExePath = dialog.FileName;
-                lbl_filePath.Content = Path.GetFileName(dialog.FileName);
-                selected = true;
-            }
-
-            if (_config.ExePath != null && selected)
-            {
-                _log.AddLog("Executable file choosed successfuly! Please, run the game form executable!");
-                btn_startExe.IsEnabled = true;
-            }
-        }
-
         private void btn_startExe_Click(object sender, RoutedEventArgs e)
         {
-            _clientProcess = _client.GetProcessByName();
-            if (_clientProcess != null)
+            _log.AddLog("Starting client...");
+
+            _clientProcess = new Process
             {
-                _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
+                StartInfo =
+                    {
+                        FileName = "TmForever.exe"
+                    }
+            };
+            _clientProcess.Start();
+
+            _log.AddLog("Awaiting for client to fully load...");
+            Thread.Sleep(5000);
+
+            if (!_clientProcess.HasExited)
+            {
                 DisableGameExecutableSettings();
                 return;
             }
@@ -154,7 +142,6 @@ namespace Configurator
             _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
             _log.AddLog("Renamed a window name to make it easy for you!");
 
-            btn_fileDialog.IsEnabled = false;
             btn_startExe.IsEnabled = false;
             _config.ClientConfigured = true;
             ProgressChecker();
@@ -170,33 +157,56 @@ namespace Configurator
 
             if (_config.NetworkConfigured && _config.ClientConfigured)
             {
-                _log.AddLog("Everything seems to be configured. Please, start a normal game and click start!");
+                _log.AddLog("Configuration sucessfull! You can start the buddy and run a normal game client!");
                 btn_monitorStart.IsEnabled = true;
             }
         }
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Buddy will open an Executor. Do you want to proceed?",
-                    "Training Buddy",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+            MessageBox.Show("Buddy will start to assist you! You can start your own client and start the training!",
+                "Training Buddy",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            _config.ClientPID = _clientProcess.Id;
+            _config.NetworkInterfaceName = _device.Name;
+            _serializer.SerializeExecutorConfig(_config);
+
+            var process = new Process
             {
-                _config.ClientPID = _clientProcess.Id;
-                _config.NetworkInterfaceName = _device.Name;
-                _serializer.SerializeExecutorConfig(_config);
-
-                var process = new Process
+                StartInfo =
                 {
-                    StartInfo =
-                    {
-                        FileName = "Buddy_Executor.exe"
-                    }
-                };
-                process.Start();
+                    FileName = "Buddy_Executor.exe"
+                }
+            };
+            process.Start();
 
-                System.Environment.Exit(1);
+            System.Environment.Exit(1);
+        }
+
+        private void btn_exeAutoDetect_Click(object sender, RoutedEventArgs e)
+        {
+            var dataStructure = _client.VerifyClientFileStructure();
+            if (!dataStructure)
+            {
+                _log.AddLog("Cannot find a game client! Please make sure that Training Buddy is in the same directory as game client!");
+                return;
             }
+
+            var obsoleteGameClients = _client.GetGameClientProcess();
+            if (obsoleteGameClients != null)
+            {
+                _log.AddLog("Please, exit all trackmania clients before proceed!");
+                return;
+            }
+
+            lbl_filePath.Foreground = Brushes.Green;
+            lbl_filePath.Content = "OK";
+            _log.AddLog("Client executable found! Please, start the client using button above!");
+
+            btn_exeAutoDetect.IsEnabled = false;
+            btn_startExe.IsEnabled = true;
         }
     }
 }
