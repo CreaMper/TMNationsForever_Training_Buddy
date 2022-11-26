@@ -17,7 +17,7 @@ namespace Configurator
     public partial class MainWindow : Window
     {
         private ILiveDevice _device;
-        private ConfigurationDto _config;
+        private ConfiguratorConfigDto _config;
         private Process _clientProcess;
 
         private static NetworkHandler _network = new NetworkHandler();
@@ -32,7 +32,7 @@ namespace Configurator
             _log = new LogHandler(tb_logBox, sv_log);
             _log.AddLog("Initialising...");
 
-            _config = new ConfigurationDto();
+            _config = new ConfiguratorConfigDto();
 
             dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
             _log.AddLog("Initialising done! Please, configure network interface and executable settings!");
@@ -140,7 +140,7 @@ namespace Configurator
         {
             _log.AddLog($"Found an Trackmania process! with PID {_clientProcess.Id}");
             _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
-            _log.AddLog("Renamed a window name to make it easy for you!");
+            _log.AddLog("Please, make sure that game is in WINDOWED mode!");
 
             btn_startExe.IsEnabled = false;
             _config.ClientConfigured = true;

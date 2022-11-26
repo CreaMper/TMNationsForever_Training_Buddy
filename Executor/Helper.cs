@@ -15,7 +15,7 @@ namespace Executor
 {
     public class Helper
     {
-        private static ConfigurationDto _config;
+        private static ExecutorConfigDto _config;
         private static Serializer _serializer;
         private static NetworkHandler _network;
         private static DLLImporter _importer;
@@ -66,7 +66,7 @@ namespace Executor
                 _device = device;
                 _clientProcess = process;
 
-                _config = new ConfigurationDto()
+                _config = new ExecutorConfigDto()
                 {
                     ClientPID = process.Id,
                     NetworkInterfaceName = device.Name

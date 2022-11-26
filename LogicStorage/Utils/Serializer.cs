@@ -9,17 +9,19 @@ namespace LogicStorage.Utils
     {
         private string _configFileName = "config.json";
 
-        public void SerializeExecutorConfig(ConfigurationDto configuration)
+        public void SerializeExecutorConfig(ConfiguratorConfigDto configurator)
         {
+            var executorConfiguration = Converter(configurator);
+
             if (File.Exists(_configFileName))
                 File.Delete(_configFileName);
 
             using var streamWriter = File.CreateText(_configFileName);
             using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer.CreateDefault().Serialize(jsonWriter, configuration);
+            JsonSerializer.CreateDefault().Serialize(jsonWriter, executorConfiguration);
         }
 
-        public ConfigurationDto DeserializeExecutorConfig()
+        public ExecutorConfigDto DeserializeExecutorConfig()
         {
             if (!File.Exists(_configFileName))
                 return null;
@@ -27,7 +29,7 @@ namespace LogicStorage.Utils
             try
             {
                 var fileStream = File.ReadAllText(_configFileName);
-                var configuration = JsonConvert.DeserializeObject<ConfigurationDto>(fileStream);
+                var configuration = JsonConvert.DeserializeObject<ExecutorConfigDto>(fileStream);
                 return configuration;
             }
             catch
@@ -35,6 +37,15 @@ namespace LogicStorage.Utils
                 Console.WriteLine("Exception occured while deserialize config file!");
                 return null;
             }
+        }
+
+        private ExecutorConfigDto Converter(ConfiguratorConfigDto configurator)
+        {
+            return new ExecutorConfigDto()
+            {
+                ClientPID = configurator.ClientPID,
+                NetworkInterfaceName = configurator.NetworkInterfaceName
+            };
         }
     }
 }
