@@ -2,7 +2,9 @@
 
 Best tool for new players that wants to start with some help!
 With this tool, you are able to see a replay of a TOP1 player in a map using a separate game client!
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A0GM3N0)
+# Installation
 This project does not need an installation. Extract all files into the game client directory and run Configurator!
 ## FAQ
 
