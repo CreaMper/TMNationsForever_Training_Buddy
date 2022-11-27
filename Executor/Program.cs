@@ -52,21 +52,16 @@ namespace Executor
                     continue;
                 }
 
-                var trackId = XasecoCheck(trackInfo);
-                if (trackId == null)
+/*                var xasecoApproach = DownloadReplayUsingXasecoApproach(trackInfo);
+                if (xasecoApproach)
                 {
-                    Console.WriteLine("Failed to find an TMX ID data.");
+                    Console.WriteLine("Downloading replay usign Xaseco data fetch sucessful!");
+                    InjectReplay();
                     continue;
-                }
+                }*/
 
-                var download = DownloadReplayFromTMX(trackId);
-                if (!download)
-                {
-                    Console.WriteLine("Package download failed!");
-                    continue;
-                }
+                var tmxApproach = DownloadReplayUsingTMXApproach(trackInfo);
 
-                InjectReplay();
             }
         }
 

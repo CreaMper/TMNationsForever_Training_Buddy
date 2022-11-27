@@ -206,7 +206,7 @@ namespace Executor
 
             if (response.Contains("This UId cannot be found on TMX"))
             {
-                Console.WriteLine("Unfortunatelly, TMX data is not mapped in dedimania! :(");
+                Console.WriteLine("Unfortunatelly, Xaseco does not have this map mapped to TMX data :(");
                 return null;
             }
 
@@ -278,6 +278,97 @@ namespace Executor
                     return streamReader.ReadToEnd();
                 }
             }
+        }
+
+        public static bool DownloadReplayUsingXasecoApproach(TrackDataDto trackInfo)
+        {
+            var trackId = XasecoCheck(trackInfo);
+            if (trackId == null)
+            {
+                Console.WriteLine("Failed to find an TMX ID data.");
+                return false;
+            }
+
+            var download = DownloadReplayFromTMX(trackId);
+            if (!download)
+            {
+                Console.WriteLine("Package download failed!");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static string ConvertTrackName(string name)
+        {
+            var filter = new List<string>()
+            {
+                "$w",
+                "$n",
+                "$o",
+                "$i",
+                "$t",
+                "$s",
+                "$g",
+                "$z"
+            };
+
+            foreach (var item in filter)
+            {
+                name.Replace(item, "");
+            }
+
+            if (name.Contains("$$"))
+                name.Replace("$$", "$");
+
+            var splittedName = name.Split("$");
+            if (splittedName.Count() == 0)
+                return name;
+
+            var parsedName = "";
+            foreach (var split in splittedName)
+            {
+                var parseColor = $"{split[0]}{split[1]}{split[2]}";
+                if (IsHex(parseColor))
+                    split.Remove(0, 2);
+
+                parsedName += split;
+            }
+
+            return parsedName;
+        }
+
+        private static bool IsHex(IEnumerable<char> chars)
+        {
+            bool isHex;
+            foreach (var c in chars)
+            {
+                isHex = ((c >= '0' && c <= '9') ||
+                         (c >= 'a' && c <= 'f') ||
+                         (c >= 'A' && c <= 'F'));
+
+                if (!isHex)
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool DownloadReplayUsingTMXApproach(TrackDataDto trackInfo)
+        {
+            var convertedTrackName = ConvertTrackName(trackInfo.TrackName);
+            Console.WriteLine($"Parsed Track name: {convertedTrackName}");
+
+            Console.WriteLine("Fetching data from TMX...");
+
+            var tmxSearchResult = $"https://nations.tm-exchange.com/tracksearch?query={convertedTrackName}";
+
+            var response = _network.HttpRequestAsStringSync(tmxSearchResult);
+            if (response == null)
+                return false;
+
+            //TODO: Split response by /trackshow/XXXXX">, get it and download replay
+
+            return true;
         }
     }
 }
