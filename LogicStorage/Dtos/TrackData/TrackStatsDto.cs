@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace LogicStorage.Dtos
+namespace LogicStorage.Dtos.TrackData
 {
     public class TrackStatsDto
     {

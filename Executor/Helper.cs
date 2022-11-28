@@ -1,4 +1,6 @@
 ﻿using LogicStorage.Dtos;
+using LogicStorage.Dtos.SearchQuery;
+using LogicStorage.Dtos.TrackData;
 using LogicStorage.Handlers;
 using LogicStorage.Utils;
 using Newtonsoft.Json;
@@ -301,7 +303,7 @@ namespace Executor
 
         public static string ConvertTrackName(string name)
         {
-            var filter = new List<string>()
+            var specialCharToFilter = new List<string>()
             {
                 "$w",
                 "$n",
@@ -313,16 +315,14 @@ namespace Executor
                 "$z"
             };
 
-            foreach (var item in filter)
-            {
-                name.Replace(item, "");
-            }
+            foreach (var item in specialCharToFilter)
+                name = name.Replace(item, "");
 
             if (name.Contains("$$"))
-                name.Replace("$$", "$");
+                name = name.Replace("$$", "$");
 
-            var splittedName = name.Split("$");
-            if (splittedName.Count() == 0)
+            var splittedName = name.Split("$", StringSplitOptions.RemoveEmptyEntries);
+            if (splittedName.Count() == 1)
                 return name;
 
             var parsedName = "";
@@ -335,7 +335,19 @@ namespace Executor
                 parsedName += split;
             }
 
-            return parsedName;
+            for (int i = 0; i < splittedName.Count(); i++)
+            {
+                var parseColor = $"{splittedName[i][0]}{splittedName[i][1]}{splittedName[i][2]}";
+                if (IsHex(parseColor))
+                    splittedName[i] = splittedName[i].Remove(0, 3);
+            }
+
+            var gluedName = "";
+
+            foreach (var item in splittedName)
+                gluedName += item;
+
+            return gluedName;
         }
 
         private static bool IsHex(IEnumerable<char> chars)
@@ -358,17 +370,80 @@ namespace Executor
             var convertedTrackName = ConvertTrackName(trackInfo.TrackName);
             Console.WriteLine($"Parsed Track name: {convertedTrackName}");
 
+            var trackId = TMXCheck(convertedTrackName);
+            if (trackId == null)
+            {
+                Console.WriteLine("Failed to find an TMX ID data.");
+                return false;
+            }
+
+            var download = DownloadReplayFromTMX(trackId);
+            if (!download)
+            {
+                Console.WriteLine("Package download failed!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static string TMXCheck(string trackName)
+        {
             Console.WriteLine("Fetching data from TMX...");
 
-            var tmxSearchResult = $"https://nations.tm-exchange.com/tracksearch?query={convertedTrackName}";
+            var queryTrackName = ConvertTrackNameToQuery(trackName);
+
+            var tmxSearchResult = $"https://tmnf.exchange/api/tracks?name={queryTrackName}&count=40&fields=TrackId%2CTrackName%2CAuthors%5B%5D%2CTags%5B%5D%2CAuthorTime%2CRoutes%2CDifficulty%2CEnvironment%2CCar%2CPrimaryType%2CMood%2CAwards%2CHasThumbnail%2CImages%5B%5D%2CIsPublic%2CWRReplay.User.UserId%2CWRReplay.User.Name%2CWRReplay.ReplayTime%2CWRReplay.ReplayScore%2CReplayType%2CUploader.UserId%2CUploader.Name";
 
             var response = _network.HttpRequestAsStringSync(tmxSearchResult);
             if (response == null)
-                return false;
+                return null;
 
-            //TODO: Split response by /trackshow/XXXXX">, get it and download replay
+            var searchDto = JsonConvert.DeserializeObject<SearchDto>(response);
 
-            return true;
+            return searchDto.Results.FirstOrDefault().TrackId.ToString();
+        }
+
+        private static string ConvertTrackNameToQuery(string trackName)
+        {
+            var convertRule = new List<List<string>>()
+            {
+                new List<string>(){ " ", "%20" },
+                new List<string>(){ "!", "%21" },
+                new List<string>(){ "#", "%23" },
+                new List<string>(){ "$", "%24" },
+                new List<string>(){ "%", "%25" },
+                new List<string>(){ "&", "%26" },
+                new List<string>(){ "'", "%27" },
+                new List<string>(){ "(", "%28" },
+                new List<string>(){ ")", "%29" },
+                new List<string>(){ "*", "%2A" },
+                new List<string>(){ "+", "%2B" },
+                new List<string>(){ ",", "%2C" },
+                new List<string>(){ "/", "%2F" },
+                new List<string>(){ ":", "%3A" },
+                new List<string>(){ ";", "%3B" },
+                new List<string>(){ "=", "%3D" },
+                new List<string>(){ "?", "%3F" },
+                new List<string>(){ "@", "%40" },
+                new List<string>(){ "[", "%5B" },
+                new List<string>(){ "]", "%5D" },
+            };
+
+            var convertedTrackName = "";
+            foreach (var character in trackName)
+            {
+                var characterToChange = convertRule.FirstOrDefault(x => x.Any(y => y[0].Equals(character)));
+                if (characterToChange == null) 
+                { 
+                    convertedTrackName += character;
+                    continue;
+                }
+
+                convertedTrackName += characterToChange[1];
+            }
+
+            return convertedTrackName;
         }
     }
 }

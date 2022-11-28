@@ -52,16 +52,21 @@ namespace Executor
                     continue;
                 }
 
-/*                var xasecoApproach = DownloadReplayUsingXasecoApproach(trackInfo);
+                var xasecoApproach = DownloadReplayUsingXasecoApproach(trackInfo);
                 if (xasecoApproach)
                 {
                     Console.WriteLine("Downloading replay usign Xaseco data fetch sucessful!");
                     InjectReplay();
                     continue;
-                }*/
+                }
 
                 var tmxApproach = DownloadReplayUsingTMXApproach(trackInfo);
-
+                if (tmxApproach)
+                {
+                    Console.WriteLine("Downloading replay usign TMX fetch by track name successful!");
+                    InjectReplay();
+                    continue;
+                }
             }
         }
 
