@@ -4,8 +4,9 @@ namespace Configurator
 {
     public class LogHandler
     {
-        private TextBlock _tb;
-        private ScrollViewer _sv;
+        private readonly TextBlock _tb;
+        private readonly ScrollViewer _sv;
+
         public LogHandler(TextBlock texBox, ScrollViewer scrollViewer)
         {
             _tb = texBox;
@@ -18,6 +19,8 @@ namespace Configurator
         {
             _tb.Text += $"{log} \r";
         }
+
+
 
         public void Clean()
         {
