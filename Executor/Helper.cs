@@ -164,33 +164,39 @@ namespace Executor
 
         public static TrackDataDto PacketDataToTrackDto(string dataString)
         {
-            var pFrom = dataString.IndexOf("<ident ") + "<ident ".Length;
-            var pTo = dataString.LastIndexOf("/><desc");
-
-            if (pTo - pFrom < 0)
-                return null;
-
-            var indentString = dataString.Substring(pFrom, pTo - pFrom);
-
-            var escapedUid = indentString.Replace("uid=\"", "");
-            var escapedName = escapedUid.Replace("\" name=\"", "%^%^");
-            var escapedAuthor = escapedName.Replace("\" author=\"", "%^%^");
-            var removeLastChar = escapedAuthor.Remove(escapedAuthor.Length - 1);
-
-            var splited = removeLastChar.Split("%^%^");
-
-            var track = new TrackDataDto()
+            try
             {
-                UID = splited[0],
-                TrackName = splited[1],
-                AuthorName = splited[2]
-            };
+                var pFrom = dataString.IndexOf("<ident ") + "<ident ".Length;
+                var pTo = dataString.LastIndexOf("/><desc");
 
-            Console.WriteLine();
-            Console.WriteLine($"Found a new track packet!");
-            Console.WriteLine($"UID = {track.UID} TRACKNAME={track.TrackName} AUTHOR={track.AuthorName}");
+                if (pTo - pFrom < 0)
+                    return null;
 
-            return track;
+                var indentString = dataString.Substring(pFrom, pTo - pFrom);
+
+                var escapedUid = indentString.Replace("uid=\"", "");
+                var escapedName = escapedUid.Replace("\" name=\"", "%^%^");
+                var escapedAuthor = escapedName.Replace("\" author=\"", "%^%^");
+                var removeLastChar = escapedAuthor.Remove(escapedAuthor.Length - 1);
+
+                var splited = removeLastChar.Split("%^%^");
+
+                var track = new TrackDataDto()
+                {
+                    UID = splited[0],
+                    TrackName = splited[1],
+                    AuthorName = splited[2]
+                };
+
+                Console.WriteLine();
+                Console.WriteLine($"Found a new track packet!");
+                Console.WriteLine($"UID = {track.UID} TRACKNAME={track.TrackName} AUTHOR={track.AuthorName}");
+                return track;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static string XasecoCheck(TrackDataDto track)
@@ -212,12 +218,19 @@ namespace Executor
                 return null;
             }
 
-            var splitedContent = response.Split("&id=");
-            var split = splitedContent[1].Split("\">TMX");
-            var onlyId = split[0];
+            try
+            {
+                var splitedContent = response.Split("&id=");
+                var split = splitedContent[1].Split("\">TMX");
+                var onlyId = split[0];
 
-            Console.WriteLine($"Found a track TXM ID: {onlyId}");
-            return onlyId;
+                Console.WriteLine($"Found a track TXM ID: {onlyId}");
+                return onlyId;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static bool DownloadReplayFromTMX(string trackId)
@@ -355,9 +368,9 @@ namespace Executor
             bool isHex;
             foreach (var c in chars)
             {
-                isHex = ((c >= '0' && c <= '9') ||
+                isHex = (c >= '0' && c <= '9') ||
                          (c >= 'a' && c <= 'f') ||
-                         (c >= 'A' && c <= 'F'));
+                         (c >= 'A' && c <= 'F');
 
                 if (!isHex)
                     return false;
@@ -401,7 +414,15 @@ namespace Executor
 
             var searchDto = JsonConvert.DeserializeObject<SearchDto>(response);
 
-            return searchDto.Results.FirstOrDefault().TrackId.ToString();
+            try
+            {
+                return searchDto.Results.FirstOrDefault().TrackId.ToString();
+            }
+            catch 
+            {
+                Console.WriteLine("This track does not have a replay:(");
+                return null;
+            }
         }
 
         private static string ConvertTrackNameToQuery(string trackName)

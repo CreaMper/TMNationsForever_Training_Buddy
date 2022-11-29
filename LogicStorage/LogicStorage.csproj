@@ -20,6 +20,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="wpcap.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Runtime\wpcap.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="packetnet-connections" Version="1.3.0" />
   </ItemGroup>
