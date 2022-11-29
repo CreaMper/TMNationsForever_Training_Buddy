@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="TMNationsForever Training Buddy Configurator | Created by CreaMper" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
-    
+
     <Grid Height="317" VerticalAlignment="Center" Width="668">
         <Rectangle HorizontalAlignment="Left" Height="195" Margin="5,117,0,0" Stroke="Black" VerticalAlignment="Top" Width="489" Fill="#FFE8E8E8"/>
 
@@ -14,18 +14,13 @@
         <ComboBox x:Name="dd_internetInterfaces" HorizontalAlignment="Left" Margin="22,43,0,0" VerticalAlignment="Top" Width="356" Height="23" SelectionChanged="dd_internetInterfaces_SelectionChanged"/>
         <Button x:Name="btn_interfaceAuto" Content="Auto Detect" HorizontalAlignment="Left" Margin="156,76,0,0" VerticalAlignment="Top" Width="106" Click="btn_interfaceAuto_Click" Height="28"/>
         <CheckBox x:Name="chk_showAllInterfaces" Content="Show all Interfaces" HorizontalAlignment="Left" Margin="22,73,0,0" VerticalAlignment="Top" Checked="chk_showAllInterfaces_Checked" Unchecked="chk_showAllInterfaces_Checked" ClickMode="Release"/>
-        <ScrollViewer x:Name="sv_log" VerticalScrollBarVisibility="Visible"  Margin="13,126,0,0" Height="180" VerticalAlignment="Top" HorizontalAlignment="Left" Width="475">
-            <TextBlock  x:Name="tb_logBox" Text="Program Initialise" TextWrapping="Wrap"  AllowDrop="False" Background="Black" Foreground="White"  FontFamily="Consolas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="True" RenderTransformOrigin="0.5,0.5" FontSize="11">
-                <TextBlock.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="0.014"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </TextBlock.RenderTransform>
-            </TextBlock>
-        </ScrollViewer>
+        <RichTextBox x:Name="rtxt_logBox" FontFamily="Consolas" FontSize="11" Background="#FF0A0000" Foreground="White" Focusable="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" UseLayoutRounding="False" BorderBrush="White" SelectionBrush="{x:Null}" SelectionTextBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False" Margin="17,127,0,0" HorizontalAlignment="Left" Width="465" Height="176" VerticalAlignment="Top">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text=""/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
         <Button x:Name="btn_connectionTest" Content="Test Connection" HorizontalAlignment="Left" Margin="272,76,0,0" VerticalAlignment="Top" Click="btn_connectionTest_Click" Height="28" Width="106"/>
         <Label x:Name="lbl_connectionConfigStatus" Content="NOT CONFIGURED" HorizontalAlignment="Left" Margin="148,6,0,0" VerticalAlignment="Top" Height="26" Width="128" Foreground="Red" FontSize="11"/>
         <Rectangle HorizontalAlignment="Left" Height="108" Margin="396,4,0,0" Stroke="Black" VerticalAlignment="Top" Width="266" Opacity="0.45" Fill="#FFCBCBCB"/>

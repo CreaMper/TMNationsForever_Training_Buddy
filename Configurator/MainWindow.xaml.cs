@@ -30,8 +30,7 @@ namespace Configurator
         public MainWindow()
         {
             InitializeComponent();
-            _log = new LogHandler(tb_logBox, sv_log);
-            _log.AddLog("Initialising...");
+            _log = new LogHandler(rtxt_logBox);
 
             _config = new ConfiguratorConfigDto()
             {
@@ -39,14 +38,14 @@ namespace Configurator
             };
 
             dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
-            _log.AddLog("Initialising done! Please, configure network interface and executable settings!");
+            _log.AddLog("Please, configure network interface and executable settings to start!", LogTypeEnum.Info);
         }
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(dd_internetInterfaces.SelectedItem));
             if (_device != null)
-                _log.AddLog($"Interface changed to: {_device.Name}");
+                _log.AddLog($"Interface changed to: {_device.Name}", LogTypeEnum.Info);
         }
 
         private void chk_showAllInterfaces_Checked(object sender, RoutedEventArgs e)
@@ -71,17 +70,17 @@ namespace Configurator
         {
             if (_device == null)
             {
-                _log.AddLog("You need to select interface to test it's connection!");
+                _log.AddLog("You need to select interface to test it's connection!", LogTypeEnum.Error);
                 return;
             }
 
-            _log.AddLog("Started interface challange...");
+            _log.AddLog("Started interface challange...", LogTypeEnum.Info);
 
             if (_network.ChallangeInterface(_device))
             {
                 lbl_connectionConfigStatus.Content = "CONFIGURED";
                 lbl_connectionConfigStatus.Foreground = Brushes.Green;
-                _log.AddLog("Interface challange successful!");
+                _log.AddLog("Interface challange successful!", LogTypeEnum.Success);
 
                 dd_internetInterfaces.IsEnabled = false;
                 chk_showAllInterfaces.IsEnabled = false;
@@ -95,7 +94,7 @@ namespace Configurator
             {
                 lbl_connectionConfigStatus.Content = "ERROR";
                 lbl_connectionConfigStatus.Foreground = Brushes.Red;
-                _log.AddLog("Interface challange failed - please select different one!");
+                _log.AddLog("Interface challange failed - please select different one!", LogTypeEnum.Error);
             }
         }
 
@@ -104,19 +103,19 @@ namespace Configurator
             var temporaryDevice = _network.GetDeviceList(false).FirstOrDefault();
             if (temporaryDevice == null)
             {
-                _log.AddLog("Cannot find interface automatically!");
+                _log.AddLog("Cannot find interface automatically!", LogTypeEnum.Error);
                 return;
             }
 
             _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
             dd_internetInterfaces.SelectedItem = temporaryDevice;
-            _log.AddLog($"Auto select: {temporaryDevice}");
+            _log.AddLog($"Auto select: {temporaryDevice}", LogTypeEnum.Info);
 
         }
 
         private void btn_startExe_Click(object sender, RoutedEventArgs e)
         {
-            _log.AddLog("Starting client...");
+            _log.AddLog("Starting client...", LogTypeEnum.Info);
 
             _clientProcess = new Process
             {
@@ -127,7 +126,7 @@ namespace Configurator
             };
             _clientProcess.Start();
 
-            _log.AddLog("Awaiting for client to fully load...");
+            _log.AddLog("Awaiting for client to fully load...", LogTypeEnum.Info);
             Thread.Sleep(5000);
 
             if (!_clientProcess.HasExited)
@@ -139,15 +138,15 @@ namespace Configurator
                 return;
             }
 
-            _log.AddLog("Cannot find a Trackmania process! Please, re-run and try again!");
+            _log.AddLog("Cannot find a Trackmania process! Please, re-run and try again!", LogTypeEnum.Error);
             return;
         }
 
         private void DisableGameExecutableSettings()
         {
-            _log.AddLog($"Found an Trackmania process! with PID {_clientProcess.Id}");
+            _log.AddLog($"Found an Trackmania process! with PID {_clientProcess.Id}", LogTypeEnum.Info);
             _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
-            _log.AddLog("Please, make sure that game is in WINDOWED mode!");
+            _log.AddLog("Please, make sure that game is in WINDOWED mode!", LogTypeEnum.Info);
 
             btn_startClient.IsEnabled = false;
             _config.ClientConfigured = true;
@@ -157,21 +156,21 @@ namespace Configurator
         private void ProgressChecker()
         {
             if (!_config.NetworkConfigured)
-                _log.AddLog("You still need to configure an Internet Interface before start!");
+                _log.AddLog("You still need to configure an Internet Interface before start!", LogTypeEnum.Info);
 
             if (!_config.ClientConfigured)
-                _log.AddLog("You still need to configure an Game Executable before start!");
+                _log.AddLog("You still need to configure an Game Executable before start!", LogTypeEnum.Info);
 
             if (_config.NetworkConfigured && _config.ClientConfigured)
             {
-                _log.AddLog("Configuration sucessfull! You can start the buddy and run a normal game client!");
+                _log.AddLog("Configuration sucessfull! You can start the buddy and run a normal game client!", LogTypeEnum.Success);
                 btn_startBuddy.IsEnabled = true;
             }
         }
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
-            var msgResult = MessageBox.Show("Configuration tooll will close and Buddy will start to assist you! Do you want me to open another game client for you?",
+            var msgResult = MessageBox.Show("Configuration tool will close and Buddy will start to assist you! Do you want me to open another game client for you?",
                 "Training Buddy",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Information);
@@ -215,19 +214,19 @@ namespace Configurator
             var dataStructure = _client.VerifyClientFileStructure();
             if (!dataStructure)
             {
-                _log.AddLog("Cannot find a game client! Please make sure that Training Buddy is in the same directory as game client!");
+                _log.AddLog("Cannot find a game client! Please make sure that Training Buddy is in the same directory as game client!", LogTypeEnum.Error);
                 return;
             }
 
             var obsoleteGameClients = _client.GetGameClientProcess();
             if (obsoleteGameClients != null)
             {
-                _log.AddLog("Please, exit all trackmania clients before proceed!");
+                _log.AddLog("Please, exit all trackmania clients before proceed!", LogTypeEnum.Error);
                 return;
             }
 
             lbl_executableConfigStatus.Content = "CLIENT NOT FOUND";
-            _log.AddLog("Client executable found! Please, start the client using button above!");
+            _log.AddLog("Client executable found! Please, start the client using button above!", LogTypeEnum.Error);
 
             btn_exeAutoDetect.IsEnabled = false;
             btn_startClient.IsEnabled = true;

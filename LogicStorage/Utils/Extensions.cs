@@ -30,5 +30,6 @@ namespace LogicStorage.Utils
             stream.Position = 0;
             return stream;
         }
+
     }
 }

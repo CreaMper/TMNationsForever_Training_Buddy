@@ -1,30 +1,54 @@
-﻿using System.Windows.Controls;
+﻿using LogicStorage.Utils;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Configurator.Utils;
 
 namespace Configurator
 {
     public class LogHandler
     {
-        private readonly TextBlock _tb;
-        private readonly ScrollViewer _sv;
+        private RichTextBox _rtb;
 
-        public LogHandler(TextBlock texBox, ScrollViewer scrollViewer)
+        public LogHandler(RichTextBox richTextBox)
         {
-            _tb = texBox;
-            _tb.Text = "";
-            _sv = scrollViewer;
-            _sv.ScrollToEnd();
+            _rtb = richTextBox;
         }
 
         public void AddLog(string log)
         {
-            _tb.Text += $"{log} \r";
+            _rtb.AppendText($"{log} \r");
         }
 
-
-
-        public void Clean()
+        public void AddLog(string log, LogTypeEnum type)
         {
-            _tb.Text = "";
+            var prefix = "";
+            if (type.Equals(LogTypeEnum.Info)) 
+            {
+                prefix = "[Info]";
+                _rtb.SelectionTextBrush = Brushes.Blue;
+                _rtb.AppendText($"{prefix} ", "lightblue");
+            }
+            else if (type.Equals(LogTypeEnum.Success)) 
+            {
+                prefix = "[Ok]";
+                _rtb.SelectionTextBrush = Brushes.Green;
+                _rtb.AppendText($"{prefix} ", "green");
+            }
+            else if (type.Equals(LogTypeEnum.Error)) 
+            {
+                prefix = "[Error]";
+                _rtb.SelectionTextBrush = Brushes.DarkRed;
+                _rtb.AppendText($"{prefix} ", "red");
+            }
+            else if (type.Equals(LogTypeEnum.CRITICAL)) 
+            {
+                prefix = "[CRITICAL]";
+                _rtb.SelectionTextBrush = Brushes.Red;
+                _rtb.AppendText($"{prefix} ", "red");
+            }
+
+            _rtb.AppendText($"{log} \r", "white");
+            _rtb.ScrollToEnd();
         }
     }
 }
