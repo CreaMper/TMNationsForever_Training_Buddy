@@ -32,7 +32,7 @@ Try to change a packet listening intensity. The higher value you set, the more a
 
 #### Buddy does not start at all!
 
-Buddy requires a WinCap dependency to work properly. On most PC it is already installed but not allways. Please, use an installer that is included in release package!
+Buddy requires a WinCap dependency to work properly. On most PC it is already installed but not allways (f.e if you previously installed WireShark you should already have all dependencies). Please, use an installer that is included in release package!
 
 #### I cannot login into my account after using Buddy!
 
