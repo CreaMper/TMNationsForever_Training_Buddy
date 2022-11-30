@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	<PublishSingleFile>true</PublishSingleFile>
-	<Version>1.2.0</Version>
-	<AssemblyVersion>1.2.0.0</AssemblyVersion>
+	<Version>1.3.0</Version>
+	<AssemblyVersion>1.3.0.0</AssemblyVersion>
 	<Product>TMNationsForever Training Buddy Logic</Product>
 	<Authors>CreaMper</Authors>
 	<Platforms>AnyCPU;x86</Platforms>
-	<FileVersion>1.2.0.0</FileVersion>
+	<FileVersion>1.3.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
