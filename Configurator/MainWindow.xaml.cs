@@ -34,11 +34,46 @@ namespace Configurator
 
             _config = new ConfiguratorConfigDto()
             {
-                ListeningIntensivityLevel = 6
+                ListeningIntensivityLevel = 10
             };
 
-            dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
-            _log.AddLog("Please, configure network interface and executable settings to start!", LogTypeEnum.Info);
+            var configFromFile = _serializer.DeserializeExecutorConfig();
+            if (configFromFile != null)
+            {
+                try
+                {
+                    var dataStructure = _client.VerifyClientFileStructure();
+                    if (!dataStructure)
+                        return;
+                    _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(configFromFile.NetworkInterfaceName));
+
+                    lbl_connectionConfigStatus.Content = "CONFIGURED";
+                    lbl_connectionConfigStatus.Foreground = Brushes.Green;
+
+                    dd_internetInterfaces.IsEnabled = false;
+                    chk_showAllInterfaces.IsEnabled = false;
+                    btn_interfaceAuto.IsEnabled = false;
+                    btn_connectionTest.IsEnabled = false;
+                    _config.NetworkConfigured = true;
+
+                    lbl_executableConfigStatus.Content = "CLIENT NOT FOUND";
+
+                    btn_exeAutoDetect.IsEnabled = false;
+                    btn_startClient.IsEnabled = true;
+                }
+                catch
+                {
+                    return;
+                }
+
+                _log.AddLog("Found a previous configuration file! If you wish to hard-reset this settings, please remove config.json file!", LogTypeEnum.Info);
+                _log.AddLog("Please, start the Buddy client!", LogTypeEnum.Info);
+            }
+            else
+            {
+                dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
+                _log.AddLog("Hi! Please, use two sections above to configure your Internet Interfaces and Game Executable!", LogTypeEnum.Info);
+            }
         }
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -88,7 +123,6 @@ namespace Configurator
                 btn_connectionTest.IsEnabled = false;
                 _config.NetworkConfigured = true;
                 ProgressChecker();
-
             }
             else
             {
@@ -109,8 +143,6 @@ namespace Configurator
 
             _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
             dd_internetInterfaces.SelectedItem = temporaryDevice;
-            _log.AddLog($"Auto select: {temporaryDevice}", LogTypeEnum.Info);
-
         }
 
         private void btn_startExe_Click(object sender, RoutedEventArgs e)
@@ -119,10 +151,7 @@ namespace Configurator
 
             _clientProcess = new Process
             {
-                StartInfo =
-                    {
-                        FileName = "TmForever.exe"
-                    }
+                StartInfo = { FileName = "TmForever.exe" }
             };
             _clientProcess.Start();
 
@@ -170,6 +199,16 @@ namespace Configurator
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
+            var checkForBuddyClient = _client.GetGameClientProcess();
+            if (checkForBuddyClient == null)
+            {
+                _log.AddLog("Buddy client was not found! Please, start buddy client once again!", LogTypeEnum.Error);
+                btn_startClient.IsEnabled = true;
+                btn_startBuddy.IsEnabled = false;
+                _config.ClientConfigured = false;
+                return;
+            }
+
             var msgResult = MessageBox.Show("Configuration tool will close and Buddy will start to assist you! Do you want me to open another game client for you?",
                 "Training Buddy",
                 MessageBoxButton.YesNo,
@@ -226,7 +265,7 @@ namespace Configurator
             }
 
             lbl_executableConfigStatus.Content = "CLIENT NOT FOUND";
-            _log.AddLog("Client executable found! Please, start the client using button above!", LogTypeEnum.Error);
+            _log.AddLog("Client executable found! Please, start the client using button above!", LogTypeEnum.Info);
 
             btn_exeAutoDetect.IsEnabled = false;
             btn_startClient.IsEnabled = true;

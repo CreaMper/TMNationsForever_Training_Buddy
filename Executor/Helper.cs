@@ -28,6 +28,7 @@ namespace Executor
         public static ILiveDevice _device;
 
         public static string _initFailMsg = "";
+        public static TrackStatsResultDto _trackRecord;
 
         public static bool ProgramInitialize()
         {
@@ -41,7 +42,7 @@ namespace Executor
             _config = _serializer.DeserializeExecutorConfig();
             if (_config == null)
             {
-                Console.WriteLine("Cannot find configuration file, trying to start AUTO setup...");
+                Log("Cannot find configuration file, trying to start AUTO setup...", LogTypeEnum.Info);
 
                 var deviceList = _network.GetDeviceList(false);
                 var deviceName = deviceList.FirstOrDefault();
@@ -61,11 +62,11 @@ namespace Executor
                 var process = _client.GetGameClientProcess();
                 if (process == null)
                 {
-                    _initFailMsg = "Cannot find a game client!";
+                    _initFailMsg = "Cannot find a running Buddy client!";
                     return false;
                 }
 
-                Console.WriteLine("Program initialized successfully from AUTO configuration!");
+                Log("Program initialized successfully from AUTO configuration!", LogTypeEnum.Success);
 
                 _device = device;
                 _clientProcess = process;
@@ -78,11 +79,11 @@ namespace Executor
                     MinimaliseExecutor = false
                 };
 
-                Console.WriteLine("Since configuration files was not found, executor will stay un-minimalised!");
+                Log("Since configuration files was not found, executor will stay un-minimalised!", LogTypeEnum.Info);
             } 
             else
             {
-                Console.WriteLine("Found a configuration file!");
+                Log("Found a configuration file!", LogTypeEnum.Info);
 
                 try
                 {
@@ -101,11 +102,9 @@ namespace Executor
                     return false;
                 }
 
-                Console.WriteLine("Program initialized successfully from a configuration file!");
+                Log("Program initialized successfully from a configuration file!", LogTypeEnum.Success);
             }
 
-            Console.WriteLine($"Interface: {_device.Name}");
-            Console.WriteLine($"Game Client PID: {_clientProcess.Id}");
             Console.WriteLine();
 
             return true;
@@ -188,9 +187,7 @@ namespace Executor
                     AuthorName = splited[2]
                 };
 
-                Console.WriteLine();
-                Console.WriteLine($"Found a new track packet!");
-                Console.WriteLine($"UID = {track.UID} TRACKNAME={track.TrackName} AUTHOR={track.AuthorName}");
+                Log($"I see that you changed a track to {track.UID}!", LogTypeEnum.Info);
                 return track;
             }
             catch
@@ -201,20 +198,20 @@ namespace Executor
 
         public static string XasecoCheck(TrackDataDto track)
         {
-            Console.WriteLine("Checking Xaseco for data...");
+            Log("Trying to get a map data from Xaseco!", LogTypeEnum.Info);
 
             var xasecoURL = $"https://www.xaseco.org/uidfinder.php?uid={track.UID}";
 
             var response = _network.HttpRequestAsStringSync(xasecoURL);
             if (response == null)
             {
-                Console.WriteLine("Request failed! Loading aborted...");
+                Log("Cannot request data from Xaseco...", LogTypeEnum.Error);
                 return null;
             }
 
             if (response.Contains("This UId cannot be found on TMX"))
             {
-                Console.WriteLine("Unfortunatelly, Xaseco does not have this map mapped to TMX data :(");
+                Log("Unfortunatelly, Xaseco does not have TMX data maped for this track :(", LogTypeEnum.Error);
                 return null;
             }
 
@@ -224,7 +221,7 @@ namespace Executor
                 var split = splitedContent[1].Split("\">TMX");
                 var onlyId = split[0];
 
-                Console.WriteLine($"Found a track TXM ID: {onlyId}");
+                Log($"Xaseco provided a TXM Track ID {onlyId}!", LogTypeEnum.Success);
                 return onlyId;
             }
             catch
@@ -233,13 +230,41 @@ namespace Executor
             }
         }
 
+        private static ApiTypeEnum ApiTypeConverter(string apiCall)
+        {
+            if (apiCall.Contains("tmuf.exchange"))
+                return ApiTypeEnum.TMUF;
+            else if (apiCall.Contains("tmnf.exchange"))
+                return ApiTypeEnum.TMNF;
+            else if  (apiCall.Contains("nations.tm-exchange"))
+                return ApiTypeEnum.TMUF;
+
+            return ApiTypeEnum.TMNF;
+        }
+
         public static bool DownloadReplayFromTMX(string trackId)
         {
-            Console.WriteLine("Fetching data form TMX...");
+            Log("Trying to download a map data using TMX Api!", LogTypeEnum.Info);
 
-            var xasecoURL = $"https://tmnf.exchange/api/replays?trackId={trackId}&best=1&count=10&fields=ReplayId%2CUser.UserId%2CUser.Name%2CReplayTime%2CReplayScore%2CReplayRespawns%2CTrackAt%2CScore%2CTrack.Type%2CPosition%2CIsBest%2CIsLeaderboard%2CReplayAt";
+            var apiUrls = new List<string>()
+            {
+                $"https://tmuf.exchange/api/replays?trackId={trackId}&best=1&count=10&fields=ReplayId%2CUser.UserId%2CUser.Name%2CReplayTime%2CReplayScore%2CReplayRespawns%2CTrackAt%2CScore%2CTrack.Type%2CPosition%2CIsBest%2CIsLeaderboard%2CReplayAt",
+                $"https://tmnf.exchange/api/replays?trackId={trackId}&best=1&count=10&fields=ReplayId%2CUser.UserId%2CUser.Name%2CReplayTime%2CReplayScore%2CReplayRespawns%2CTrackAt%2CScore%2CTrack.Type%2CPosition%2CIsBest%2CIsLeaderboard%2CReplayAt",
+                $"https://nations.tm-exchange.com/api/replays?trackId={trackId}&best=1&count=10&fields=ReplayId%2CUser.UserId%2CUser.Name%2CReplayTime%2CReplayScore%2CReplayRespawns%2CTrackAt%2CScore%2CTrack.Type%2CPosition%2CIsBest%2CIsLeaderboard%2CReplayAt"
+            };
 
-            var response = _network.HttpRequestAsStringSync(xasecoURL);
+            string response = null;
+            ApiTypeEnum apiType = ApiTypeEnum.TMNF;
+            foreach (var url in apiUrls)
+            {
+                response = _network.HttpRequestAsStringSync(url);
+                if (response != null) 
+                {
+                    apiType = ApiTypeConverter(url);
+                    break;
+                }
+            }
+            
             if (response == null)
                 return false;
 
@@ -247,11 +272,16 @@ namespace Executor
             if (trackStats == null)
                 return false;
 
-            Console.WriteLine("Downloading package from TMX...");
-
             var topOneReplayId = trackStats.Results.FirstOrDefault().ReplayId;
+            _trackRecord = trackStats.Results.FirstOrDefault();
 
-            var apiDownloadLink = $"https://tmnf.exchange/recordgbx/{topOneReplayId}";
+            var apiDownloadLink = "";
+            if (apiType.Equals(ApiTypeEnum.TMNF))
+                apiDownloadLink = $"https://tmnf.exchange/recordgbx/{topOneReplayId}";
+            else if (apiType.Equals(ApiTypeEnum.TMUF))
+                apiDownloadLink = $"https://tmuf.exchange/recordgbx/{topOneReplayId}";
+            else if (apiType.Equals(ApiTypeEnum.EXCHANGE))
+                apiDownloadLink = $"https://nations.tm-exchange/recordgbx/{topOneReplayId}";
 
             var packageStream = _network.HttpRequestAsStreamSync(apiDownloadLink);
             if (packageStream == null)
@@ -266,13 +296,14 @@ namespace Executor
             packageStream.Close();
             fileStream.Close();
 
-            Console.WriteLine("Download complete! Injecting...");
+            Log("Download completed!",LogTypeEnum.Success);
             return true;
         }
 
         public static void InjectReplay()
         {
             _importer.UseSetForegroundWindow(_clientProcess.MainWindowHandle);
+            _importer.UseSetWindowText(_clientProcess.MainWindowHandle, $"TM Training Buddy Client | Replay by {_trackRecord.User.Name} | Time {_trackRecord.ReplayTime}");
 
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(_packageUrl)
@@ -281,7 +312,7 @@ namespace Executor
             };
             p.Start();
 
-            Console.WriteLine("Process Injected! Check a buddy client!");
+            Log("Process Injected! Check a buddy client!", LogTypeEnum.Success);
         }
 
         public static string BytesToStringConverted(byte[] bytes)
@@ -300,14 +331,14 @@ namespace Executor
             var trackId = XasecoCheck(trackInfo);
             if (trackId == null)
             {
-                Console.WriteLine("Failed to find an TMX ID data.");
+                Log("There was an error while fetching data from Xaseco! :(", LogTypeEnum.Error);
                 return false;
             }
 
             var download = DownloadReplayFromTMX(trackId);
             if (!download)
             {
-                Console.WriteLine("Package download failed!");
+                Log("Error occured while downloading package using Xaseco data!", LogTypeEnum.Error);
                 return false;
             }
 
@@ -381,19 +412,16 @@ namespace Executor
         public static bool DownloadReplayUsingTMXApproach(TrackDataDto trackInfo)
         {
             var convertedTrackName = ConvertTrackName(trackInfo.TrackName);
-            Console.WriteLine($"Parsed Track name: {convertedTrackName}");
+            Log($"Trying to get a map data from TMX using map name {convertedTrackName}", LogTypeEnum.Info);
 
             var trackId = TMXCheck(convertedTrackName);
             if (trackId == null)
-            {
-                Console.WriteLine("Failed to find an TMX ID data.");
                 return false;
-            }
 
             var download = DownloadReplayFromTMX(trackId);
             if (!download)
             {
-                Console.WriteLine("Package download failed!");
+                Log("Error occured while downloading package using TMX data!", LogTypeEnum.Error);
                 return false;
             }
 
@@ -402,8 +430,6 @@ namespace Executor
 
         private static string TMXCheck(string trackName)
         {
-            Console.WriteLine("Fetching data from TMX...");
-
             var queryTrackName = ConvertTrackNameToQuery(trackName);
 
             var tmxSearchResult = $"https://tmnf.exchange/api/tracks?name={queryTrackName}&count=40&fields=TrackId%2CTrackName%2CAuthors%5B%5D%2CTags%5B%5D%2CAuthorTime%2CRoutes%2CDifficulty%2CEnvironment%2CCar%2CPrimaryType%2CMood%2CAwards%2CHasThumbnail%2CImages%5B%5D%2CIsPublic%2CWRReplay.User.UserId%2CWRReplay.User.Name%2CWRReplay.ReplayTime%2CWRReplay.ReplayScore%2CReplayType%2CUploader.UserId%2CUploader.Name";
@@ -416,11 +442,13 @@ namespace Executor
 
             try
             {
-                return searchDto.Results.FirstOrDefault().TrackId.ToString();
+                var trackId = searchDto.Results.FirstOrDefault().TrackId.ToString();
+                Log($"Found a track data using TMX Search! ID {trackId}", LogTypeEnum.CRITICAL);
+                return trackId;
             }
             catch 
             {
-                Console.WriteLine("This track does not have a replay:(");
+                Log("This track does not have any replay uploaded on TMX!", LogTypeEnum.CRITICAL);
                 return null;
             }
         }
@@ -465,6 +493,39 @@ namespace Executor
             }
 
             return convertedTrackName;
+        }
+
+        public static void Log(string msg, LogTypeEnum type)
+        {
+            if (type.Equals(LogTypeEnum.Info))
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("[INFO] ");
+            }
+            else if (type.Equals(LogTypeEnum.Error))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("[ERROR] ");
+            }
+            else if (type.Equals(LogTypeEnum.CRITICAL))
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.Write("[CRITICAL] ");
+            }
+            else if (type.Equals(LogTypeEnum.Success))
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("[OK] ");
+            }
+
+            Console.ResetColor();
+            Console.WriteLine(msg);
+        }
+
+        public static void LogSeparator()
+        {
+            Console.WriteLine();
+            Console.WriteLine();
         }
     }
 }

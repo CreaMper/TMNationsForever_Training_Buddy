@@ -12,9 +12,8 @@ namespace Executor
         {
             if (!ProgramInitialize())
             {
-                Console.WriteLine("Program Initialize Failed!");
-                Console.WriteLine(_initFailMsg);
-                Console.WriteLine("Please, run the configuration tool... Exiting in 5 seconds...");
+                Log(_initFailMsg, LogTypeEnum.CRITICAL);
+                Log("Please, run the configuration tool... Exiting in 5 seconds...", LogTypeEnum.Error);
                 Thread.Sleep(5000);
 
                 System.Environment.Exit(1);
@@ -26,7 +25,7 @@ namespace Executor
             {
                 if (_clientProcess.HasExited)
                 {
-                    Console.WriteLine("Client buddy has been closed! Exiting executor in 5 seconds...");
+                    Log("Client buddy has been closed! Exiting executor in 5 seconds...", LogTypeEnum.CRITICAL);
                     Thread.Sleep(5000);
                     System.Environment.Exit(1);
                 }
@@ -45,17 +44,18 @@ namespace Executor
                 if (!PacketDataCheck(dataString))
                     continue;
 
+                LogSeparator();
+
                 var trackInfo = PacketDataToTrackDto(dataString);
                 if (trackInfo == null)
                 {
-                    Console.WriteLine("Track packet seems to be corrupted. Please, re-enter to race!");
+                    Log("Unfortunately data packet seems to be wrong! Please re-enter race! :(", LogTypeEnum.CRITICAL);
                     continue;
                 }
 
                 var xasecoApproach = DownloadReplayUsingXasecoApproach(trackInfo);
                 if (xasecoApproach)
                 {
-                    Console.WriteLine("Downloading replay usign Xaseco data fetch sucessful!");
                     InjectReplay();
                     continue;
                 }
@@ -63,7 +63,6 @@ namespace Executor
                 var tmxApproach = DownloadReplayUsingTMXApproach(trackInfo);
                 if (tmxApproach)
                 {
-                    Console.WriteLine("Downloading replay usign TMX fetch by track name successful!");
                     InjectReplay();
                     continue;
                 }
