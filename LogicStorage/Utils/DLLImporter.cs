@@ -14,11 +14,37 @@ namespace LogicStorage.Utils
         }
 
         [DllImport("user32.dll")]
-        internal static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
-        public void UseSetForegroundWindow(IntPtr hWnd)
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
+        public void UseSetForegroundWindow(IntPtr windowHandle)
         {
-            SetForegroundWindow(hWnd);
+            if (GetForegroundWindow() == windowHandle)
+                return;
+
+            IntPtr foregroundWindowHandle = GetForegroundWindow();
+            uint currentThreadId = GetCurrentThreadId();
+            uint temp;
+            uint foregroundThreadId = GetWindowThreadProcessId(foregroundWindowHandle, out temp);
+            AttachThreadInput(currentThreadId, foregroundThreadId, true);
+            SetForegroundWindow(windowHandle);
+            AttachThreadInput(currentThreadId, foregroundThreadId, false);
+
+            while (GetForegroundWindow() != windowHandle)
+            {
+            }
         }
     }
 }
