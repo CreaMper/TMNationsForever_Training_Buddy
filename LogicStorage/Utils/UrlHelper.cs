@@ -5,8 +5,8 @@ namespace LogicStorage.Utils
 {
     public static class URLHelper
     {
-        private const string _tmnf = "https://tmnf.exchange";
-        private const string _tmuf = "https://tmuf.exchange";
+        private const string _tmnf = "http://tmnforever.tm-exchange.com";
+        private const string _tmuf = "http://united.tm-exchange.com";
         private const string _nations = "http://nations.tm-exchange.com";
 
         public static ApiTypeEnum ApiTypeMapper(string httpResponse)

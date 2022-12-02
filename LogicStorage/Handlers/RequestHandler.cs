@@ -72,15 +72,25 @@ namespace LogicStorage.Handlers
             if (trackStats == null)
                 return null;
 
+            if (trackStats.Results.Count() == 0)
+                return null;
+
             var topReplay = trackStats.Results.FirstOrDefault();
 
-            return new ReplayDataAndSourceDto()
+            try
             {
-                Source = trackData.Source,
-                ReplayId = topReplay.ReplayId.ToString(),
-                Author = topReplay.User.Name,
-                Time = topReplay.ReplayTime.ToString()
-            };
+                return new ReplayDataAndSourceDto()
+                {
+                    Source = trackData.Source,
+                    ReplayId = topReplay.ReplayId.ToString(),
+                    Author = topReplay.User.Name,
+                    Time = topReplay.ReplayTime.ToString()
+                };
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public bool DownloadReplay(ReplayDataAndSourceDto replayData)
@@ -135,20 +145,19 @@ namespace LogicStorage.Handlers
                 if (response == null)
                     continue;
 
-                try
-                {
-                    var searchDto = JsonConvert.DeserializeObject<SearchDto>(response);
-                    var trackId = searchDto.Results.FirstOrDefault().TrackId.ToString();
-                    return new TrackIdAndSourceDto()
-                    {
-                        Source = URLHelper.ApiTypeMapper(response),
-                        TrackId = trackId
-                    };
-                }
-                catch
-                {
+                var searchDto = JsonConvert.DeserializeObject<SearchDto>(response);
+
+                var searchResults = searchDto.Results;
+                if (searchResults.Count() == 0)
                     continue;
-                }
+
+                var trackId = searchDto.Results.FirstOrDefault().TrackId.ToString();
+                return new TrackIdAndSourceDto()
+                {
+                    Source = URLHelper.ApiTypeMapper(response),
+                    TrackId = trackId
+                };
+
             }
 
             return null;
