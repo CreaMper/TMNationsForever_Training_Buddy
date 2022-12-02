@@ -1,4 +1,5 @@
-﻿using LogicStorage.Utils;
+﻿using LogicStorage.Dtos;
+using LogicStorage.Utils;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -49,10 +50,10 @@ namespace LogicStorage.Handlers
             return true;
         }
 
-        public void InjectReplay(Process process)
+        public void InjectReplay(Process process, ReplayDataAndSourceDto replay)
         {
             _importer.UseSetForegroundWindow(process.MainWindowHandle);
-            //_importer.UseSetWindowText(process.MainWindowHandle, $"TM Training Buddy Client | Replay by {trackRecord.User.Name} | Time {trackRecord.ReplayTime}");
+            _importer.UseSetWindowText(process.MainWindowHandle, $"TM Training Buddy Client | Replay by {replay.Author} | Time {replay.Time}");
 
             var p = new Process();
             p.StartInfo = new ProcessStartInfo("replay.gbx")

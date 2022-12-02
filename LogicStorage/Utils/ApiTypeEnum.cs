@@ -4,6 +4,6 @@
     {
         TMNF,
         TMUF,
-        EXCHANGE
+        NATIONS
     }
 }
