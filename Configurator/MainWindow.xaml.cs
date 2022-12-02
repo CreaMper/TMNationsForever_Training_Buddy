@@ -22,9 +22,9 @@ namespace Configurator
         private Process _clientProcess;
 
         private static NetworkHandler _network = new NetworkHandler();
-        private static ClientHandler _client = new ClientHandler();
-        private static LogHandler _log;
         private static DLLImporter _importer = new DLLImporter();
+        private static ClientHandler _client = new ClientHandler(_importer);
+        private static LogHandler _log;
         private static Serializer _serializer = new Serializer();
 
         public MainWindow()

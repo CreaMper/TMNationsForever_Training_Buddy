@@ -1,93 +1,70 @@
-﻿using LogicStorage.Dtos;
-using LogicStorage.Dtos.TrackData;
-using LogicStorage.Handlers;
+﻿using LogicStorage;
 using LogicStorage.Utils;
 using PacketDotNet;
 using SharpPcap;
 using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Executor
 {
     class Program
     {
-        private static ExecutorConfigDto _config;
-        private static Serializer _serializer;
-        private static NetworkHandler _network;
-        private static ClientHandler _client;
-        private static RequestHandler _request;
-
-        private static Process _clientProcess;
-        private static ILiveDevice _device;
-
-        private static string _initFailMsg = "";
-        private static TrackStatsResultDto _trackRecord;
+        private static Factory _factory;
 
         static void Main(string[] args)
         {
-            _network = new NetworkHandler();
-            _serializer = new Serializer();
-            _client = new ClientHandler();
-            _request = new RequestHandler();
+            _factory = new Factory();
+
+            if (!RuntimeCheck.Check(_factory))
+                throw new Exception("Executor init failed!");
 
             Console.Title = "TMNationsForever Training Buddy Executor | Created by CreaMper";
-            
-            _config = _serializer.DeserializeExecutorConfig();
-            if (!RuntimeCheck.Check(_config))
-            {
-                Logger.Log(_initFailMsg, LogTypeEnum.CRITICAL);
-                Logger.Log("Please, run the configuration tool... Exiting in 5 seconds...", LogTypeEnum.Error);
-                Thread.Sleep(5000);
 
-                System.Environment.Exit(1);
-            }
-
-            _device.Open(DeviceModes.Promiscuous, (100 * _config.ListeningIntensivityLevel) - 1100);
+            _factory.Network.Device.Open(DeviceModes.Promiscuous, (100 * _factory.ExecutorConfig.ListeningIntensivityLevel) - 1100);
 
             while (true)
             {
-                if (_clientProcess.HasExited)
+                if (_factory.Client.BuddyClient.HasExited)
                 {
                     Logger.Log("Client buddy has been closed! Exiting executor in 5 seconds...", LogTypeEnum.CRITICAL);
                     Thread.Sleep(5000);
                     System.Environment.Exit(1);
                 }
 
-                var packetStatus = _device.GetNextPacket(out PacketCapture pc);
+                var packetStatus = _factory.Network.Device.GetNextPacket(out PacketCapture pc);
                 if (packetStatus != GetPacketStatus.PacketRead)
                     continue;
 
                 var rawCapture = pc.GetPacket();
                 var parsedPacket = Packet.ParsePacket(rawCapture.GetLinkLayers(), rawCapture.Data).ToString();
 
-                if (_network.IsPacketFromCorrectSource(parsedPacket))
+                if (_factory.Network.IsPacketFromCorrectSource(parsedPacket))
                     continue;
 
                 var dataString = Converters.BytesToStringConverter(rawCapture.Data);
-                if (!_network.IsPacketDataCorrect(dataString))
+                if (!_factory.Network.IsPacketDataCorrect(dataString))
                     continue;
 
                 Logger.LogSeparator();
 
-                var trackInfo = _request.ExtractTrackDataFromRequest(dataString);
+                var trackInfo = _factory.Request.ExtractTrackDataFromRequest(dataString);
                 if (trackInfo == null)
                 {
                     Logger.Log("Unfortunately data packet seems to be wrong! Please re-enter race! :(", LogTypeEnum.CRITICAL);
                     continue;
                 }
 
-                var xasecoApproach = _request.DownloadReplayUsingXasecoApproach(trackInfo);
+                var xasecoApproach = _factory.Request.DownloadReplayUsingXasecoApproach(trackInfo);
                 if (xasecoApproach)
                 {
-                    _client.InjectReplay(_clientProcess, _trackRecord);
+                    _factory.Client.InjectReplay(_factory.Client.BuddyClient);
                     continue;
                 }
 
-                var tmxApproach = _request.DownloadReplayUsingTMXApproach(trackInfo);
+                var tmxApproach = _factory.Request.DownloadReplayUsingTMXApproach(trackInfo);
                 if (tmxApproach)
                 {
-                    _client.InjectReplay(_clientProcess, _trackRecord);
+                    _factory.Client.InjectReplay(_factory.Client.BuddyClient);
                     continue;
                 }
             }

@@ -8,7 +8,19 @@ namespace LogicStorage.Handlers
 {
     public class ClientHandler
     {
-        private static DLLImporter _importer =  new DLLImporter();
+        private readonly DLLImporter _importer;
+
+        public ClientHandler(DLLImporter importer)
+        {
+            _importer = importer;
+        }
+
+        private Process _buddyClient;
+        public Process BuddyClient
+        {
+            get { return _buddyClient; }
+            set { _buddyClient = value; }
+        }
         
         public Process GetGameClientProcess()
         {
@@ -38,10 +50,10 @@ namespace LogicStorage.Handlers
             return true;
         }
 
-        public void InjectReplay(Process process, TrackStatsResultDto trackRecord)
+        public void InjectReplay(Process process)
         {
             _importer.UseSetForegroundWindow(process.MainWindowHandle);
-            _importer.UseSetWindowText(process.MainWindowHandle, $"TM Training Buddy Client | Replay by {trackRecord.User.Name} | Time {trackRecord.ReplayTime}");
+            //_importer.UseSetWindowText(process.MainWindowHandle, $"TM Training Buddy Client | Replay by {trackRecord.User.Name} | Time {trackRecord.ReplayTime}");
 
             var p = new Process();
             p.StartInfo = new ProcessStartInfo("replay.gbx")

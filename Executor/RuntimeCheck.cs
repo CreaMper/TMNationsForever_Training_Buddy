@@ -1,7 +1,6 @@
-﻿using LogicStorage.Dtos;
-using LogicStorage.Handlers;
+﻿using LogicStorage;
+using LogicStorage.Dtos;
 using LogicStorage.Utils;
-using SharpPcap;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -10,50 +9,42 @@ namespace Executor
 {
     public static class RuntimeCheck
     {
-        private static ExecutorConfigDto _config;
-        private static Serializer _serializer;
-        private static NetworkHandler _network;
-        private static ClientHandler _client;
-        private static RequestHandler _request;
-
-        private static Process _clientProcess;
-        private static ILiveDevice _device;
-        private static string _initFailMsg = "";
-
-        public static bool Check(ExecutorConfigDto config)
+        public static bool Check(Factory factory)
         {
-            if (config == null)
+            var failMessage = string.Empty;
+
+            if (factory.ExecutorConfig == null)
             {
                 Logger.Log("Cannot find configuration file, trying to start AUTO setup...", LogTypeEnum.Info);
 
-                var deviceList = _network.GetDeviceList(false);
+                var deviceList = factory.Network.GetDeviceList(false);
                 var deviceName = deviceList.FirstOrDefault();
                 if (deviceName == null)
                 {
-                    _initFailMsg = "Cannot find any suitable internet interface!";
+                    failMessage = "Cannot find any suitable internet interface!";
                     return false;
                 }
-                var device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(deviceName));
+                var device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(deviceName));
 
-                if (!_network.ChallangeInterface(device))
+                if (!factory.Network.ChallangeInterface(device))
                 {
-                    _initFailMsg = "Interface Challange failed!";
+                    failMessage = "Interface Challange failed!";
                     return false;
                 }
 
-                var process = _client.GetGameClientProcess();
+                var process = factory.Client.GetGameClientProcess();
                 if (process == null)
                 {
-                    _initFailMsg = "Cannot find a running Buddy client!";
+                    failMessage = "Cannot find a running Buddy client!";
                     return false;
                 }
 
                 Logger.Log("Program initialized successfully from AUTO configuration!", LogTypeEnum.Success);
 
-                _device = device;
-                _clientProcess = process;
+                factory.Network.Device = device;
+                factory.Client.BuddyClient = process;
 
-                _config = new ExecutorConfigDto()
+                factory.ExecutorConfig = new ExecutorConfigDto()
                 {
                     ClientPID = process.Id,
                     NetworkInterfaceName = device.Name,
@@ -69,18 +60,18 @@ namespace Executor
 
                 try
                 {
-                    _clientProcess = Process.GetProcessById(_config.ClientPID);
-                    if (_clientProcess.HasExited)
+                    factory.Client.BuddyClient = Process.GetProcessById(factory.ExecutorConfig.ClientPID);
+                    if (factory.Client.BuddyClient.HasExited)
                     {
-                        _initFailMsg = "It seems that you closed a Buddy Client!";
+                        failMessage = "It seems that you closed a Buddy Client!";
                         return false;
                     }
 
-                    _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(_config.NetworkInterfaceName));
+                    factory.Network.Device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(factory.ExecutorConfig.NetworkInterfaceName));
                 }
                 catch
                 {
-                    _initFailMsg = "Configuration file data is obsolete/corrupted!";
+                    failMessage = "Configuration file data is obsolete/corrupted!";
                     return false;
                 }
 

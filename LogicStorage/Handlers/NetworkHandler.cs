@@ -16,6 +16,14 @@ namespace LogicStorage.Handlers
         public NetworkHandler()
         {
             DeviceList = CaptureDeviceList.Instance;
+            _device = DeviceList.First();
+        }
+
+        private ILiveDevice _device;
+        public ILiveDevice Device
+        {
+            get { return _device; }
+            set { _device = value; }
         }
 
         public ILiveDevice SelectDevice()
