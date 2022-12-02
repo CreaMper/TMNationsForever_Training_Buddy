@@ -1,5 +1,4 @@
-﻿using LogicStorage.Dtos.TrackData;
-using LogicStorage.Utils;
+﻿using LogicStorage.Utils;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,11 +14,11 @@ namespace LogicStorage.Handlers
             _importer = importer;
         }
 
-        private Process _buddyClient;
-        public Process BuddyClient
+        private Process _buddy;
+        public Process Buddy
         {
-            get { return _buddyClient; }
-            set { _buddyClient = value; }
+            get { return _buddy; }
+            set { _buddy = value; }
         }
         
         public Process GetGameClientProcess()

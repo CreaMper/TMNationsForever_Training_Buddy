@@ -1,7 +1,6 @@
-﻿using LogicStorage.Dtos;
-using LogicStorage.Handlers;
+﻿using LogicStorage;
+using LogicStorage.Dtos;
 using LogicStorage.Utils;
-using SharpPcap;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -17,19 +16,16 @@ namespace Configurator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ILiveDevice _device;
-        private ConfiguratorConfigDto _config;
-        private Process _clientProcess;
-
-        private static NetworkHandler _network = new NetworkHandler();
-        private static DLLImporter _importer = new DLLImporter();
-        private static ClientHandler _client = new ClientHandler(_importer);
         private static LogHandler _log;
-        private static Serializer _serializer = new Serializer();
+        private Factory _factory;
+
+        private ConfiguratorConfigDto _config;
 
         public MainWindow()
         {
             InitializeComponent();
+            _factory = new Factory();
+
             _log = new LogHandler(rtxt_logBox);
 
             _config = new ConfiguratorConfigDto()
@@ -37,15 +33,15 @@ namespace Configurator
                 ListeningIntensivityLevel = 10
             };
 
-            var configFromFile = _serializer.DeserializeExecutorConfig();
+            var configFromFile = _factory.Serializer.DeserializeExecutorConfig();
             if (configFromFile != null)
             {
                 try
                 {
-                    var dataStructure = _client.VerifyClientFileStructure();
+                    var dataStructure = _factory.Client.VerifyClientFileStructure();
                     if (!dataStructure)
                         return;
-                    _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(configFromFile.NetworkInterfaceName));
+                    _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(configFromFile.NetworkInterfaceName));
 
                     lbl_connectionConfigStatus.Content = "CONFIGURED";
                     lbl_connectionConfigStatus.Foreground = Brushes.Green;
@@ -71,16 +67,16 @@ namespace Configurator
             }
             else
             {
-                dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
+                dd_internetInterfaces.ItemsSource = _factory.Network.GetDeviceList(_config.ShowAllInterfaces);
                 _log.AddLog("Hi! Please, use two sections above to configure your Internet Interfaces and Game Executable!", LogTypeEnum.Info);
             }
         }
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(dd_internetInterfaces.SelectedItem));
-            if (_device != null)
-                _log.AddLog($"Interface changed to: {_device.Name}", LogTypeEnum.Info);
+            _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(dd_internetInterfaces.SelectedItem));
+            if (_factory.Network.Device != null)
+                _log.AddLog($"Interface changed to: {_factory.Network.Device.Name}", LogTypeEnum.Info);
         }
 
         private void chk_showAllInterfaces_Checked(object sender, RoutedEventArgs e)
@@ -89,21 +85,21 @@ namespace Configurator
             {
                 _config.ShowAllInterfaces = true;
                 dd_internetInterfaces.SelectedItem = null;
-                _device = null;
-                dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
+                _factory.Network.Device = null;
+                dd_internetInterfaces.ItemsSource = _factory.Network.GetDeviceList(_config.ShowAllInterfaces);
             }
             else
             {
                 _config.ShowAllInterfaces = false;
                 dd_internetInterfaces.SelectedItem = null;
-                _device = null;
-                dd_internetInterfaces.ItemsSource = _network.GetDeviceList(_config.ShowAllInterfaces);
+                _factory.Network.Device = null;
+                dd_internetInterfaces.ItemsSource = _factory.Network.GetDeviceList(_config.ShowAllInterfaces);
             }
         }
 
         private void btn_connectionTest_Click(object sender, RoutedEventArgs e)
         {
-            if (_device == null)
+            if (_factory.Network.Device == null)
             {
                 _log.AddLog("You need to select interface to test it's connection!", LogTypeEnum.Error);
                 return;
@@ -111,7 +107,7 @@ namespace Configurator
 
             _log.AddLog("Started interface challange...", LogTypeEnum.Info);
 
-            if (_network.ChallangeInterface(_device))
+            if (_factory.Network.ChallangeInterface(_factory.Network.Device))
             {
                 lbl_connectionConfigStatus.Content = "CONFIGURED";
                 lbl_connectionConfigStatus.Foreground = Brushes.Green;
@@ -134,14 +130,14 @@ namespace Configurator
 
         private void btn_interfaceAuto_Click(object sender, RoutedEventArgs e)
         {
-            var temporaryDevice = _network.GetDeviceList(false).FirstOrDefault();
+            var temporaryDevice = _factory.Network.GetDeviceList(false).FirstOrDefault();
             if (temporaryDevice == null)
             {
                 _log.AddLog("Cannot find interface automatically!", LogTypeEnum.Error);
                 return;
             }
 
-            _device = _network.DeviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
+            _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
             dd_internetInterfaces.SelectedItem = temporaryDevice;
         }
 
@@ -149,16 +145,16 @@ namespace Configurator
         {
             _log.AddLog("Starting client...", LogTypeEnum.Info);
 
-            _clientProcess = new Process
+            _factory.Client.Buddy = new Process
             {
                 StartInfo = { FileName = "TmForever.exe" }
             };
-            _clientProcess.Start();
+            _factory.Client.Buddy.Start();
 
             _log.AddLog("Awaiting for client to fully load...", LogTypeEnum.Info);
             Thread.Sleep(5000);
 
-            if (!_clientProcess.HasExited)
+            if (!_factory.Client.Buddy.HasExited)
             {
                 lbl_executableConfigStatus.Content = "CONFIGURED";
                 lbl_executableConfigStatus.Foreground = Brushes.Green;
@@ -173,8 +169,8 @@ namespace Configurator
 
         private void DisableGameExecutableSettings()
         {
-            _log.AddLog($"Found an Trackmania process! with PID {_clientProcess.Id}", LogTypeEnum.Info);
-            _importer.UseSetWindowText(_clientProcess.MainWindowHandle, "TM Training Buddy Client");
+            _log.AddLog($"Found an Trackmania process! with PID {_factory.Client.Buddy.Id}", LogTypeEnum.Info);
+            _factory.Importer.UseSetWindowText(_factory.Client.Buddy.MainWindowHandle, "TM Training Buddy Client");
             _log.AddLog("Please, make sure that game is in WINDOWED mode!", LogTypeEnum.Info);
 
             btn_startClient.IsEnabled = false;
@@ -199,7 +195,7 @@ namespace Configurator
 
         private void btn_monitorStart_Click(object sender, RoutedEventArgs e)
         {
-            var checkForBuddyClient = _client.GetGameClientProcess();
+            var checkForBuddyClient = _factory.Client.GetGameClientProcess();
             if (checkForBuddyClient == null)
             {
                 _log.AddLog("Buddy client was not found! Please, start buddy client once again!", LogTypeEnum.Error);
@@ -228,9 +224,9 @@ namespace Configurator
             }
 
 
-            _config.ClientPID = _clientProcess.Id;
-            _config.NetworkInterfaceName = _device.Name;
-            _serializer.SerializeExecutorConfig(_config);
+            _config.ClientPID = _factory.Client.Buddy.Id;
+            _config.NetworkInterfaceName = _factory.Network.Device.Name;
+            _factory.Serializer.SerializeExecutorConfig(_config);
 
             var process = new Process
             {
@@ -250,14 +246,14 @@ namespace Configurator
 
         private void btn_exeAutoDetect_Click(object sender, RoutedEventArgs e)
         {
-            var dataStructure = _client.VerifyClientFileStructure();
+            var dataStructure = _factory.Client.VerifyClientFileStructure();
             if (!dataStructure)
             {
                 _log.AddLog("Cannot find a game client! Please make sure that Training Buddy is in the same directory as game client!", LogTypeEnum.Error);
                 return;
             }
 
-            var obsoleteGameClients = _client.GetGameClientProcess();
+            var obsoleteGameClients = _factory.Client.GetGameClientProcess();
             if (obsoleteGameClients != null)
             {
                 _log.AddLog("Please, exit all trackmania clients before proceed!", LogTypeEnum.Error);

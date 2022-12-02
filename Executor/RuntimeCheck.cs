@@ -42,7 +42,7 @@ namespace Executor
                 Logger.Log("Program initialized successfully from AUTO configuration!", LogTypeEnum.Success);
 
                 factory.Network.Device = device;
-                factory.Client.BuddyClient = process;
+                factory.Client.Buddy = process;
 
                 factory.ExecutorConfig = new ExecutorConfigDto()
                 {
@@ -60,8 +60,8 @@ namespace Executor
 
                 try
                 {
-                    factory.Client.BuddyClient = Process.GetProcessById(factory.ExecutorConfig.ClientPID);
-                    if (factory.Client.BuddyClient.HasExited)
+                    factory.Client.Buddy = Process.GetProcessById(factory.ExecutorConfig.ClientPID);
+                    if (factory.Client.Buddy.HasExited)
                     {
                         failMessage = "It seems that you closed a Buddy Client!";
                         return false;

@@ -24,7 +24,7 @@ namespace Executor
 
             while (true)
             {
-                if (_factory.Client.BuddyClient.HasExited)
+                if (_factory.Client.Buddy.HasExited)
                 {
                     Logger.Log("Client buddy has been closed! Exiting executor in 5 seconds...", LogTypeEnum.CRITICAL);
                     Thread.Sleep(5000);
@@ -57,14 +57,14 @@ namespace Executor
                 var xasecoApproach = _factory.Request.DownloadReplayUsingXasecoApproach(trackInfo);
                 if (xasecoApproach)
                 {
-                    _factory.Client.InjectReplay(_factory.Client.BuddyClient);
+                    _factory.Client.InjectReplay(_factory.Client.Buddy);
                     continue;
                 }
 
                 var tmxApproach = _factory.Request.DownloadReplayUsingTMXApproach(trackInfo);
                 if (tmxApproach)
                 {
-                    _factory.Client.InjectReplay(_factory.Client.BuddyClient);
+                    _factory.Client.InjectReplay(_factory.Client.Buddy);
                     continue;
                 }
             }
