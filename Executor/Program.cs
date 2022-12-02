@@ -1,6 +1,5 @@
 ﻿using LogicStorage;
 using LogicStorage.Utils;
-using PacketDotNet;
 using SharpPcap;
 using System;
 using System.Threading;
@@ -16,11 +15,15 @@ namespace Executor
             _factory = new Factory();
 
             if (!RuntimeCheck.Check(_factory))
-                throw new Exception("Executor init failed!");
+            {
+                Logger.Log("Initialisation failed! Exiting in 5 seconds...", LogTypeEnum.CRITICAL);
+                Thread.Sleep(5000);
+                Environment.Exit(69);
+            }
 
             Console.Title = "TMNationsForever Training Buddy Executor | Created by CreaMper";
 
-            _factory.Network.Device.Open(DeviceModes.Promiscuous, (100 * _factory.ExecutorConfig.ListeningIntensivityLevel) - 1100);
+            _factory.Network.Device.Open(DeviceModes.Promiscuous, _factory.ExecutorConfig.ListeningIntensivityMiliseconds);
 
             while (true)
             {
@@ -31,23 +34,13 @@ namespace Executor
                     System.Environment.Exit(1);
                 }
 
-                var packetStatus = _factory.Network.Device.GetNextPacket(out PacketCapture pc);
-                if (packetStatus != GetPacketStatus.PacketRead)
-                    continue;
-
-                var rawCapture = pc.GetPacket();
-                var parsedPacket = Packet.ParsePacket(rawCapture.GetLinkLayers(), rawCapture.Data).ToString();
-
-                if (_factory.Network.IsPacketFromCorrectSource(parsedPacket))
-                    continue;
-
-                var dataString = Converters.BytesToStringConverter(rawCapture.Data);
-                if (!_factory.Network.IsPacketDataCorrect(dataString))
+                var packetData = PacketSniffer.Sniff(_factory.Network);
+                if (packetData == null)
                     continue;
 
                 Logger.LogSeparator();
 
-                var trackInfo = _factory.Request.ExtractTrackDataFromRequest(dataString);
+                var trackInfo = Converters.PacketStringToTrackDataConverter(packetData);
                 if (trackInfo == null)
                 {
                     Logger.Log("Unfortunately data packet seems to be wrong! Please re-enter race! :(", LogTypeEnum.CRITICAL);

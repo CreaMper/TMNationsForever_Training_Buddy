@@ -9,5 +9,10 @@ namespace LogicStorage.Dtos
         public string NetworkInterfaceName { get; set; }
         public int ListeningIntensivityLevel { get; set; }
         public bool MinimaliseExecutor { get; set; }
+
+        public int ListeningIntensivityMiliseconds 
+        { 
+            get { return 100 * ListeningIntensivityLevel - 1100; } 
+        }
     }
 }
