@@ -43,18 +43,21 @@ namespace Executor
                     continue;
 
                 Logger.LogSeparator();
+                Logger.Log("Found a new map Packet!", LogTypeEnum.Info);
+                Logger.Log($"Author: {trackInfo.AuthorName} | Trackname: {trackInfo.TrackName} | UID: {trackInfo.UID}", LogTypeEnum.Info);
 
-                var xasecoApproach = _factory.Request.DownloadReplayUsingXasecoApproach(trackInfo);
-                if (xasecoApproach)
-                {
-                    _factory.Client.InjectReplay(_factory.Client.Buddy);
+                var trackIdAndSource = _factory.Request.GetTrackIdAndSource(trackInfo);
+                if (trackIdAndSource == null)
                     continue;
-                }
 
-                var tmxApproach = _factory.Request.DownloadReplayUsingTMXApproach(trackInfo);
-                if (tmxApproach)
+                var replayDataAndSource = _factory.Request.GetReplayId(trackIdAndSource);
+                if (replayDataAndSource == null)
+                    continue;
+
+                var downloadSuccessful = _factory.Request.DownloadReplay(replayDataAndSource);
+                if (downloadSuccessful)
                 {
-                    _factory.Client.InjectReplay(_factory.Client.Buddy);
+                    _factory.Client.InjectReplay(_factory.Client.Buddy, replayDataAndSource);
                     continue;
                 }
             }
