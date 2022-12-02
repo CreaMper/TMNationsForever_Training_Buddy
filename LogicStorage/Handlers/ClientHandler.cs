@@ -1,4 +1,5 @@
-﻿using LogicStorage.Utils;
+﻿using LogicStorage.Dtos.TrackData;
+using LogicStorage.Utils;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -35,6 +36,19 @@ namespace LogicStorage.Handlers
                 return false;
 
             return true;
+        }
+
+        public void InjectReplay(Process process, TrackStatsResultDto trackRecord)
+        {
+            _importer.UseSetForegroundWindow(process.MainWindowHandle);
+            _importer.UseSetWindowText(process.MainWindowHandle, $"TM Training Buddy Client | Replay by {trackRecord.User.Name} | Time {trackRecord.ReplayTime}");
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo("replay.gbx")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
         }
     }
 }

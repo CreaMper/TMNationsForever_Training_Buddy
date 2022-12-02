@@ -1,20 +1,21 @@
 ﻿using SharpPcap;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 
 namespace LogicStorage.Handlers
 {
     public class NetworkHandler
     {
         public CaptureDeviceList DeviceList { get; set; }
-        private static HttpClient _httpClient { get; set; }
 
         public NetworkHandler()
         {
             DeviceList = CaptureDeviceList.Instance;
-            _httpClient = new HttpClient();
         }
 
         public ILiveDevice SelectDevice()
@@ -69,24 +70,55 @@ namespace LogicStorage.Handlers
             return deviceNamesList;
         }
 
-        public string HttpRequestAsStringSync(string url)
+        public bool IsPacketFromCorrectSource(string parsedPacket)
         {
-            var response = _httpClient.GetAsync(url).Result;
+            var filteredContent = new List<string>()
+            {
+                $" SourceAddress={GetLocalIPAddress()}"
+            };
 
-            if (response.IsSuccessStatusCode)
-                return response.Content.ReadAsStringAsync().Result;
-            else
-                return null;
+            foreach (var item in filteredContent)
+                if (parsedPacket.Contains(item))
+                    return false;
+
+            return true;
         }
 
-        public Stream HttpRequestAsStreamSync(string url)
+        public bool IsPacketDataCorrect(string dataString)
         {
-            var response = _httpClient.GetAsync(url).Result;
+            var required = new List<string>()
+            {
+                "<header ",
+                "</header>"
+            };
 
-            if (response.IsSuccessStatusCode)
-                return response.Content.ReadAsStreamAsync().Result;
-            else
-                return null;
+            foreach (var item in required)
+                if (!dataString.Contains(item))
+                    return false;
+
+            var notAllowed = new List<string>()
+            {
+                "<div/>"
+            };
+
+            foreach (var item in notAllowed)
+                if (dataString.Contains(item))
+                    return false;
+
+            return true;
+        }
+
+        public string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
     }
 }
