@@ -38,14 +38,11 @@ namespace Executor
                 if (packetData == null)
                     continue;
 
-                Logger.LogSeparator();
-
                 var trackInfo = Converters.PacketStringToTrackDataConverter(packetData);
                 if (trackInfo == null)
-                {
-                    Logger.Log("Unfortunately data packet seems to be wrong! Please re-enter race! :(", LogTypeEnum.CRITICAL);
                     continue;
-                }
+
+                Logger.LogSeparator();
 
                 var xasecoApproach = _factory.Request.DownloadReplayUsingXasecoApproach(trackInfo);
                 if (xasecoApproach)

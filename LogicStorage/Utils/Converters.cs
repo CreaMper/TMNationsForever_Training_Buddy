@@ -141,10 +141,13 @@ namespace LogicStorage.Utils
 
         public static string BytesToStringConverter(byte[] bytes)
         {
-            var stream = new MemoryStream(bytes);
-            var streamReader = new StreamReader(stream);
-
-            return streamReader.ReadToEnd();
+            using (var stream = new MemoryStream(bytes))
+            {
+                using (var streamReader = new StreamReader(stream))
+                {
+                    return streamReader.ReadToEnd();
+                }
+            }
         }
 
         public static TrackDataDto PacketStringToTrackDataConverter(string packetString)

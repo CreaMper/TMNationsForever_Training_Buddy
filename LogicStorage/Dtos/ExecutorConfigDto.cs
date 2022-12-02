@@ -12,7 +12,7 @@ namespace LogicStorage.Dtos
 
         public int ListeningIntensivityMiliseconds 
         { 
-            get { return 100 * ListeningIntensivityLevel - 1100; } 
+            get { return 1100 - (100 * ListeningIntensivityLevel); } 
         }
     }
 }

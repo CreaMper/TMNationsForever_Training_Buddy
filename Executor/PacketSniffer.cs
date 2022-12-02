@@ -1,5 +1,4 @@
-﻿using LogicStorage.Dtos.TrackData;
-using LogicStorage.Handlers;
+﻿using LogicStorage.Handlers;
 using LogicStorage.Utils;
 using PacketDotNet;
 using SharpPcap;
@@ -17,11 +16,11 @@ namespace Executor
             var bytePacketData = pc.GetPacket();
             var stringPacketData = Packet.ParsePacket(bytePacketData.GetLinkLayers(), bytePacketData.Data).ToString();
 
-            if (network.IsPacketFromCorrectSource(stringPacketData))
+            if (!network.IsPacketFromCorrectSource(stringPacketData))
                 return null;
 
             var packetString = Converters.BytesToStringConverter(bytePacketData.Data);
-            if (network.IsPacketDataCorrect(packetString))
+            if (!network.IsPacketDataCorrect(packetString))
                 return null;
 
             return packetString;
