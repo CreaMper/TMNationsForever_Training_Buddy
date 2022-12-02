@@ -1,19 +1,43 @@
-﻿using LogicStorage.Utils;
+﻿using LogicStorage.Dtos;
+using LogicStorage.Dtos.TrackData;
+using LogicStorage.Handlers;
+using LogicStorage.Utils;
 using PacketDotNet;
 using SharpPcap;
 using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Executor
 {
-    class Program : Helper
+    class Program
     {
+        private static ExecutorConfigDto _config;
+        private static Serializer _serializer;
+        private static NetworkHandler _network;
+        private static ClientHandler _client;
+        private static RequestHandler _request;
+
+        private static Process _clientProcess;
+        private static ILiveDevice _device;
+
+        private static string _initFailMsg = "";
+        private static TrackStatsResultDto _trackRecord;
+
         static void Main(string[] args)
         {
-            if (!ProgramInitialize())
+            _network = new NetworkHandler();
+            _serializer = new Serializer();
+            _client = new ClientHandler();
+            _request = new RequestHandler();
+
+            Console.Title = "TMNationsForever Training Buddy Executor | Created by CreaMper";
+            
+            _config = _serializer.DeserializeExecutorConfig();
+            if (!RuntimeCheck.Check(_config))
             {
-                Log(_initFailMsg, LogTypeEnum.CRITICAL);
-                Log("Please, run the configuration tool... Exiting in 5 seconds...", LogTypeEnum.Error);
+                Logger.Log(_initFailMsg, LogTypeEnum.CRITICAL);
+                Logger.Log("Please, run the configuration tool... Exiting in 5 seconds...", LogTypeEnum.Error);
                 Thread.Sleep(5000);
 
                 System.Environment.Exit(1);
@@ -25,7 +49,7 @@ namespace Executor
             {
                 if (_clientProcess.HasExited)
                 {
-                    Log("Client buddy has been closed! Exiting executor in 5 seconds...", LogTypeEnum.CRITICAL);
+                    Logger.Log("Client buddy has been closed! Exiting executor in 5 seconds...", LogTypeEnum.CRITICAL);
                     Thread.Sleep(5000);
                     System.Environment.Exit(1);
                 }
@@ -37,37 +61,36 @@ namespace Executor
                 var rawCapture = pc.GetPacket();
                 var parsedPacket = Packet.ParsePacket(rawCapture.GetLinkLayers(), rawCapture.Data).ToString();
 
-                if (!PacketCheck(parsedPacket))
+                if (_network.IsPacketFromCorrectSource(parsedPacket))
                     continue;
 
-                var dataString = BytesToStringConverted(rawCapture.Data);
-                if (!PacketDataCheck(dataString))
+                var dataString = Converters.BytesToStringConverter(rawCapture.Data);
+                if (!_network.IsPacketDataCorrect(dataString))
                     continue;
 
-                LogSeparator();
+                Logger.LogSeparator();
 
-                var trackInfo = PacketDataToTrackDto(dataString);
+                var trackInfo = _request.ExtractTrackDataFromRequest(dataString);
                 if (trackInfo == null)
                 {
-                    Log("Unfortunately data packet seems to be wrong! Please re-enter race! :(", LogTypeEnum.CRITICAL);
+                    Logger.Log("Unfortunately data packet seems to be wrong! Please re-enter race! :(", LogTypeEnum.CRITICAL);
                     continue;
                 }
 
-                var xasecoApproach = DownloadReplayUsingXasecoApproach(trackInfo);
+                var xasecoApproach = _request.DownloadReplayUsingXasecoApproach(trackInfo);
                 if (xasecoApproach)
                 {
-                    InjectReplay();
+                    _client.InjectReplay(_clientProcess, _trackRecord);
                     continue;
                 }
 
-                var tmxApproach = DownloadReplayUsingTMXApproach(trackInfo);
+                var tmxApproach = _request.DownloadReplayUsingTMXApproach(trackInfo);
                 if (tmxApproach)
                 {
-                    InjectReplay();
+                    _client.InjectReplay(_clientProcess, _trackRecord);
                     continue;
                 }
             }
         }
-
     }
 }
