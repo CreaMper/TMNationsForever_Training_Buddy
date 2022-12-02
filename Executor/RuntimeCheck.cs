@@ -1,7 +1,6 @@
 ﻿using LogicStorage;
 using LogicStorage.Dtos;
 using LogicStorage.Utils;
-using System;
 using System.Diagnostics;
 using System.Linq;
 
@@ -11,35 +10,31 @@ namespace Executor
     {
         public static bool Check(Factory factory)
         {
-            var failMessage = string.Empty;
-
             if (factory.ExecutorConfig == null)
             {
                 Logger.Log("Cannot find configuration file, trying to start AUTO setup...", LogTypeEnum.Info);
 
-                var deviceList = factory.Network.GetDeviceList(false);
-                var deviceName = deviceList.FirstOrDefault();
+                var availableDevicesList = factory.Network.GetDeviceList();
+                var deviceName = availableDevicesList.FirstOrDefault();
                 if (deviceName == null)
                 {
-                    failMessage = "Cannot find any suitable internet interface!";
+                    Logger.Log("Cannot find any suitable internet interface!", LogTypeEnum.CRITICAL);
                     return false;
                 }
-                var device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(deviceName));
 
+                var device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(deviceName));
                 if (!factory.Network.ChallangeInterface(device))
                 {
-                    failMessage = "Interface Challange failed!";
+                    Logger.Log("Interface Challange failed!", LogTypeEnum.CRITICAL);
                     return false;
                 }
 
                 var process = factory.Client.GetGameClientProcess();
                 if (process == null)
                 {
-                    failMessage = "Cannot find a running Buddy client!";
+                    Logger.Log("Cannot find a running Buddy client!", LogTypeEnum.CRITICAL);
                     return false;
                 }
-
-                Logger.Log("Program initialized successfully from AUTO configuration!", LogTypeEnum.Success);
 
                 factory.Network.Device = device;
                 factory.Client.Buddy = process;
@@ -52,6 +47,7 @@ namespace Executor
                     MinimaliseExecutor = false
                 };
 
+                Logger.Log("Program initialized successfully from AUTO configuration!", LogTypeEnum.Success);
                 Logger.Log("Since configuration files was not found, executor will stay un-minimalised!", LogTypeEnum.Info);
             }
             else
@@ -61,24 +57,24 @@ namespace Executor
                 try
                 {
                     factory.Client.Buddy = Process.GetProcessById(factory.ExecutorConfig.ClientPID);
-                    if (factory.Client.Buddy.HasExited)
-                    {
-                        failMessage = "It seems that you closed a Buddy Client!";
-                        return false;
-                    }
-
-                    factory.Network.Device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(factory.ExecutorConfig.NetworkInterfaceName));
                 }
                 catch
                 {
-                    failMessage = "Configuration file data is obsolete/corrupted!";
+                    Logger.Log("Cannot find a previous Buddy client running!", LogTypeEnum.CRITICAL);
+                    return false;
+                }
+
+                factory.Network.Device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(factory.ExecutorConfig?.NetworkInterfaceName));
+                if (factory.Network.Device == null)
+                {
+                    Logger.Log("Network Interface name is corrupted!", LogTypeEnum.CRITICAL);
                     return false;
                 }
 
                 Logger.Log("Program initialized successfully from a configuration file!", LogTypeEnum.Success);
             }
 
-            Console.WriteLine();
+            Logger.LogSeparator();
 
             return true;
         }

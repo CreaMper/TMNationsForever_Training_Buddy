@@ -128,6 +128,9 @@ namespace LogicStorage.Utils
 
         public static TrackDataDto TrackDataConverter(string[] dataArray)
         {
+            if (dataArray == null || dataArray.Length != 3)
+                return null;
+
             return new TrackDataDto()
             {
                 UID = dataArray[0],
@@ -138,13 +141,28 @@ namespace LogicStorage.Utils
 
         public static string BytesToStringConverter(byte[] bytes)
         {
-            using (var stream = new MemoryStream(bytes))
-            {
-                using (var streamReader = new StreamReader(stream))
-                {
-                    return streamReader.ReadToEnd();
-                }
-            }
+            var stream = new MemoryStream(bytes);
+            var streamReader = new StreamReader(stream);
+
+            return streamReader.ReadToEnd();
+        }
+
+        public static TrackDataDto PacketStringToTrackDataConverter(string packetString)
+        {
+            var start = packetString.IndexOf("<ident ") + "<ident ".Length;
+            var end = packetString.LastIndexOf("/><desc");
+
+            if (end - start < 0)
+                return null;
+
+            var trackIdentificationString = packetString[start..end];
+
+            var escapedUid = trackIdentificationString.Replace("uid=\"", "");
+            var escapedName = escapedUid.Replace("\" name=\"", "%^%^");
+            var escapedAuthor = escapedName.Replace("\" author=\"", "%^%^");
+            var removeLastChar = escapedAuthor.Remove(escapedAuthor.Length - 1);
+
+            return Converters.TrackDataConverter(removeLastChar.Split("%^%^"));
         }
     }
 }

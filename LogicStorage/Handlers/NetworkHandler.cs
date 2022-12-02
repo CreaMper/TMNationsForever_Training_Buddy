@@ -57,7 +57,7 @@ namespace LogicStorage.Handlers
                 return true;
         }
 
-        public List<string> GetDeviceList(bool showAll)
+        public List<string> GetDeviceList(bool showAll = false)
         {
             var deviceNamesList = new List<string>();
 

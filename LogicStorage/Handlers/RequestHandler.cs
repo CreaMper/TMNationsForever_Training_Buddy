@@ -18,33 +18,6 @@ namespace LogicStorage.Handlers
             _httpClient = new HttpClient();
         }
 
-        public TrackDataDto ExtractTrackDataFromRequest(string dataString)
-        {
-            try
-            {
-                var pFrom = dataString.IndexOf("<ident ") + "<ident ".Length;
-                var pTo = dataString.LastIndexOf("/><desc");
-
-                if (pTo - pFrom < 0)
-                    return null;
-
-                var indentString = dataString.Substring(pFrom, pTo - pFrom);
-
-                var escapedUid = indentString.Replace("uid=\"", "");
-                var escapedName = escapedUid.Replace("\" name=\"", "%^%^");
-                var escapedAuthor = escapedName.Replace("\" author=\"", "%^%^");
-                var removeLastChar = escapedAuthor.Remove(escapedAuthor.Length - 1);
-
-                var splited = removeLastChar.Split("%^%^");
-
-                return Converters.TrackDataConverter(splited);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
         public string XasecoCheck(TrackDataDto track)
         {
 
