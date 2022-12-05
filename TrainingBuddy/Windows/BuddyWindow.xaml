@@ -20,8 +20,8 @@
         <Rectangle HorizontalAlignment="Left" Height="140" Margin="2,305,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
         <Label Content="Buddy Client" HorizontalAlignment="Left" Margin="10,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Your Client" HorizontalAlignment="Left" Margin="10,312,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
-        <Button x:Name="btn_buddyStart" Content="Start" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top" Height="29" Width="116"/>
-        <Button x:Name="btn_buddyReloadReplay" Content="Reload Replay" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Height="29" Width="116"/>
+        <Button x:Name="btn_buddyStart" Content="Start" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top" Height="29" Width="116" Click="btn_buddyStart_Click"/>
+        <Button x:Name="btn_buddyReloadReplay" Content="Reload Replay" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Height="29" Width="116" IsEnabled="False"/>
         <Button x:Name="btn_userStart" Content="Start" HorizontalAlignment="Left" Margin="10,346,0,0" VerticalAlignment="Top" Height="29" Width="116"/>
         <Slider x:Name="sld_intensivity" HorizontalAlignment="Left" Margin="10,410,0,0" VerticalAlignment="Top" Width="116" Value="10" ValueChanged="Slider_ValueChanged" IsSnapToTickEnabled="True" SmallChange="1" TickPlacement="BottomRight" Minimum="1"/>
         <Label x:Name="lbl_listeningIntensivityLevel" Content="10" HorizontalAlignment="Left" Margin="103,389,0,0" VerticalAlignment="Top" Width="23"/>
@@ -32,12 +32,12 @@
         <Label Content="PID" HorizontalAlignment="Left" Margin="162,167,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Track" HorizontalAlignment="Left" Margin="162,202,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Time" HorizontalAlignment="Left" Margin="162,245,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
-        <Label x:Name="lbl_buddyPid" Content="---" HorizontalAlignment="Left" Margin="250,181,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
-        <Label x:Name="lbl_buddyLastTrack" Content="---" HorizontalAlignment="Left" Margin="250,225,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
-        <Label x:Name="lbl_buddyTime" Content="---" HorizontalAlignment="Left" Margin="250,263,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
-        <Label x:Name="lbl_userPid" Content="---" HorizontalAlignment="Left" Margin="250,326,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
-        <Label x:Name="lbl_userSessionTime" Content="---" HorizontalAlignment="Left" Margin="250,369,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
-        <Label x:Name="lbl_userMapCount" Content="---" HorizontalAlignment="Left" Margin="250,416,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
+        <Label x:Name="lbl_buddyPid" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="148,181,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="132"/>
+        <Label x:Name="lbl_buddyLastTrack" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="148,225,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="132"/>
+        <Label x:Name="lbl_buddyTime" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="148,263,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="132"/>
+        <Label x:Name="lbl_userPid" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="148,326,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="132"/>
+        <Label x:Name="lbl_userSessionTime" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="148,369,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="132"/>
+        <Label x:Name="lbl_userMapCount" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="194,416,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="86"/>
         <Rectangle HorizontalAlignment="Left" Height="285" Margin="298,160,0,0" Stroke="Black" VerticalAlignment="Top" Width="500" Fill="LightBlue"/>
         <ListBox x:Name="lb_LastReplays" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="308,196,356,12" FontFamily="Consolas" Background="White" VerticalContentAlignment="Center" BorderBrush="Black" SelectionChanged="lb_LastReplays_SelectionChanged"/>
         <Label Content="Replay Info" HorizontalAlignment="Left" Margin="308,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
@@ -52,8 +52,8 @@
                 </ListView.View>
             </ListView>
         </Grid>
-        <Button x:Name="btn_stopWatch" Content="Session STOP" HorizontalAlignment="Left" Margin="684,196,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas"/>
-        <Button x:Name="btn_startWatch_Copy" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas"/>
-        <Button x:Name="btn_replayLoad" Content="Load Replay" HorizontalAlignment="Left" Margin="449,198,0,0" VerticalAlignment="Top" Height="26" Width="88" FontFamily="Consolas"/>
+        <Button x:Name="btn_stopWatch" Content="Session STOP" HorizontalAlignment="Left" Margin="684,196,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" IsEnabled="False"/>
+        <Button x:Name="btn_startWatch_Copy" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" IsEnabled="False"/>
+        <Button x:Name="btn_replayLoad" Content="Load Replay" HorizontalAlignment="Left" Margin="449,198,0,0" VerticalAlignment="Top" Height="26" Width="88" FontFamily="Consolas" IsEnabled="False"/>
     </Grid>
 </Window>

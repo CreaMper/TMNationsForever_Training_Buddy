@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -114,8 +115,6 @@ namespace TrainingBuddy.Windows
             //lb_LastReplays.ItemsSource = fakeTrackData.Select(x => x.Name);
 
             #endregion
-
-
         }
 
         private void WindowDrag(object sender, MouseButtonEventArgs e)
@@ -141,6 +140,45 @@ namespace TrainingBuddy.Windows
                 lv_replayData.ItemsSource = replaysData;
             }
 
+        }
+
+        private void btn_buddyStart_Click(object sender, RoutedEventArgs e)
+        {
+            if (_factory.Client.GetGameClientProcess() == null && (_factory.Client.Buddy == null || _factory.Client.Buddy.HasExited))
+            {
+                _log.AddLog("Starting Buddy Client...", LogTypeEnum.Info);
+
+                _factory.Client.Buddy = new Process
+                {
+                    StartInfo = { FileName = "TmForever.exe" }
+                };
+                _factory.Client.Buddy.Start();
+
+                if (!_factory.Client.Buddy.HasExited)
+                {
+                    new Thread(UpdateBuddyWindowName).Start();
+                    btn_buddyStart.IsEnabled = false;
+
+                    lbl_buddyPid.Content = _factory.Client.Buddy.Id.ToString();
+                    _log.AddLog($"Found an Trackmania process! with PID {_factory.Client.Buddy.Id}", LogTypeEnum.Info);
+                    _log.AddLog("Please, make sure that game is in WINDOWED mode!", LogTypeEnum.Info);
+                    return;
+                }
+            }
+            else
+            {
+                _log.AddLog("Buddy Client already started! Use this button ONLY for re-run the Buddy Client!", LogTypeEnum.Error);
+            }
+        }
+
+        private void UpdateBuddyWindowName()
+        {
+            Thread.Sleep(3000);
+            _factory.Importer.UseSetWindowText(_factory.Client.Buddy.MainWindowHandle, "TM Training Buddy Client");
+            Dispatcher.Invoke(()=>{
+                btn_buddyStart.IsEnabled = true;
+                _log.AddLog("Buddy client started!", LogTypeEnum.Success);
+            });
         }
     }
 }
