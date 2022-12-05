@@ -11,11 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\roboIcon.ico" />
+    <None Remove="Assets\kofi.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\roboIcon.ico" />
+    <Content Include="Assets\kofi.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -23,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\roboIcon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <None Update="Assets\roboIcon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

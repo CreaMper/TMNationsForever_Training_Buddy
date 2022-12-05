@@ -16,8 +16,8 @@
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
-        <Rectangle HorizontalAlignment="Left" Height="140" Margin="2,160,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="#FFE2E2E2"/>
-        <Rectangle HorizontalAlignment="Left" Height="140" Margin="2,305,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="#FFE2E2E2"/>
+        <Rectangle HorizontalAlignment="Left" Height="140" Margin="2,160,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
+        <Rectangle HorizontalAlignment="Left" Height="140" Margin="2,305,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
         <Label Content="Buddy Client" HorizontalAlignment="Left" Margin="10,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Your Client" HorizontalAlignment="Left" Margin="10,312,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Button x:Name="btn_buddyStart" Content="Start" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top" Height="29" Width="116"/>
@@ -38,5 +38,22 @@
         <Label x:Name="lbl_userPid" Content="---" HorizontalAlignment="Left" Margin="250,326,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
         <Label x:Name="lbl_userSessionTime" Content="---" HorizontalAlignment="Left" Margin="250,369,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
         <Label x:Name="lbl_userMapCount" Content="---" HorizontalAlignment="Left" Margin="250,416,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
+        <Rectangle HorizontalAlignment="Left" Height="285" Margin="298,160,0,0" Stroke="Black" VerticalAlignment="Top" Width="500" Fill="LightBlue"/>
+        <ListBox x:Name="lb_LastReplays" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="308,196,356,12" FontFamily="Consolas" Background="White" VerticalContentAlignment="Center" BorderBrush="Black" SelectionChanged="lb_LastReplays_SelectionChanged"/>
+        <Label Content="Replay Info" HorizontalAlignment="Left" Margin="308,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
+        <Grid>
+            <ListView Margin="443,228,11,12" x:Name="lv_replayData" BorderThickness="1,1,1,1" FontWeight="Bold" BorderBrush="Black">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Rank" Width="60" DisplayMemberBinding="{Binding Rank}" />
+                        <GridViewColumn Header="Player" Width="130" DisplayMemberBinding="{Binding Player}"/>
+                        <GridViewColumn Header="Time" Width="148" DisplayMemberBinding="{Binding Time}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+        <Button x:Name="btn_stopWatch" Content="Session STOP" HorizontalAlignment="Left" Margin="684,196,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas"/>
+        <Button x:Name="btn_startWatch_Copy" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas"/>
+        <Button x:Name="btn_replayLoad" Content="Load Replay" HorizontalAlignment="Left" Margin="449,198,0,0" VerticalAlignment="Top" Height="26" Width="88" FontFamily="Consolas"/>
     </Grid>
 </Window>

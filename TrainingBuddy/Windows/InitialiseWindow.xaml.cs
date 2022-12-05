@@ -2,6 +2,7 @@
 using LogicStorage.Dtos.Config;
 using LogicStorage.Utils;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -119,10 +120,19 @@ namespace TrainingBuddy
             }
 
             _log.AddLog("Initialisation complete! Say Hi to your new buddy in a few seconds!", LogTypeEnum.Success);
-            Thread.Sleep(2500);
+            Thread.Sleep(3000);
             Dispatcher.Invoke(() => {
                 new BuddyWindow().Show();
                 Close();
+            });
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://ko-fi.com/A0A0GM3N0",
+                UseShellExecute = true
             });
         }
     }
