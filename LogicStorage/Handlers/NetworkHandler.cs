@@ -1,22 +1,22 @@
 ﻿using SharpPcap;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LogicStorage.Handlers
 {
     public class NetworkHandler
     {
-        public CaptureDeviceList DeviceList { get; set; }
+        public CaptureDeviceList _deviceList { get; set; }
 
         public NetworkHandler()
         {
-            DeviceList = CaptureDeviceList.Instance;
-            _device = DeviceList.First();
+            _deviceList = CaptureDeviceList.Instance;
+            _device = null;
         }
 
         private ILiveDevice _device;
@@ -28,7 +28,14 @@ namespace LogicStorage.Handlers
 
         public ILiveDevice SelectDevice()
         {
-            return DeviceList.First();
+            return _deviceList.First();
+        }
+
+        public void AutoDeviceSelection()
+        {
+            foreach (var device in _deviceList)
+                if (ChallangeInterface(device))
+                    _device = device;
         }
 
         public bool ChallangeInterface(ILiveDevice device)
@@ -61,7 +68,7 @@ namespace LogicStorage.Handlers
         {
             var deviceNamesList = new List<string>();
 
-            foreach (var device in DeviceList)
+            foreach (var device in _deviceList)
             {
                 var deviceString = device.ToString();
 

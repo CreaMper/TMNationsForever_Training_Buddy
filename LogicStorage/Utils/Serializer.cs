@@ -50,7 +50,7 @@ namespace LogicStorage.Utils
 
             try
             {
-                var fileStream = File.ReadAllText(_configFileName);
+                var fileStream = File.ReadAllText(Path.Combine(_configPath, _configFileName));
                 var configuration = JsonConvert.DeserializeObject<BuddyConfigDto>(fileStream);
                 return configuration;
             }
@@ -58,6 +58,21 @@ namespace LogicStorage.Utils
             {
                 return null;
             }
+        }
+
+        public void SerializeBuddyConfig(BuddyConfigDto config)
+        {
+            var file = Path.Combine(_configPath, _configFileName);
+
+            if (!Directory.Exists(_configPath))
+                Directory.CreateDirectory(_configPath);
+
+            if (File.Exists(file))
+                File.Delete(file);
+
+            using var streamWriter = File.CreateText(file);
+            using var jsonWriter = new JsonTextWriter(streamWriter);
+            JsonSerializer.CreateDefault().Serialize(jsonWriter, config);
         }
 
         private ExecutorConfigDto Converter(ConfiguratorConfigDto configurator)

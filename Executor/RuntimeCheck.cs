@@ -1,5 +1,6 @@
 ﻿using LogicStorage;
 using LogicStorage.Dtos;
+using LogicStorage.Dtos.Config;
 using LogicStorage.Utils;
 using System.Diagnostics;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Executor
                     return false;
                 }
 
-                var device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(deviceName));
+                var device = factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(deviceName));
                 if (!factory.Network.ChallangeInterface(device))
                 {
                     Logger.Log("Interface Challange failed!", LogTypeEnum.CRITICAL);
@@ -64,7 +65,7 @@ namespace Executor
                     return false;
                 }
 
-                factory.Network.Device = factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(factory.ExecutorConfig?.NetworkInterfaceName));
+                factory.Network.Device = factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(factory.ExecutorConfig?.NetworkInterfaceName));
                 if (factory.Network.Device == null)
                 {
                     Logger.Log("Network Interface name is corrupted!", LogTypeEnum.CRITICAL);

@@ -41,7 +41,7 @@ namespace Configurator
                     var dataStructure = _factory.Client.VerifyClientFileStructure();
                     if (!dataStructure)
                         return;
-                    _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(configFromFile.NetworkInterfaceName));
+                    _factory.Network.Device = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(configFromFile.NetworkInterfaceName));
 
                     lbl_connectionConfigStatus.Content = "CONFIGURED";
                     lbl_connectionConfigStatus.Foreground = Brushes.Green;
@@ -74,7 +74,7 @@ namespace Configurator
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(dd_internetInterfaces.SelectedItem));
+            _factory.Network.Device = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(dd_internetInterfaces.SelectedItem));
             if (_factory.Network.Device != null)
                 _log.AddLog($"Interface changed to: {_factory.Network.Device.Name}", LogTypeEnum.Info);
         }
@@ -130,25 +130,15 @@ namespace Configurator
 
         private void btn_interfaceAuto_Click(object sender, RoutedEventArgs e)
         {
-/*            var temporaryDevice = _factory.Network.GetDeviceList(false).FirstOrDefault();
+            var temporaryDevice = _factory.Network.GetDeviceList(false).FirstOrDefault();
             if (temporaryDevice == null)
             {
                 _log.AddLog("Cannot find interface automatically!", LogTypeEnum.Error);
                 return;
             }
 
-            _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
-            dd_internetInterfaces.SelectedItem = temporaryDevice;*/
-
-/*            _factory.Importer.UseSetForegroundWindow(_factory.Client.Buddy.MainWindowHandle);
-            _factory.Importer.UseSetWindowText(_factory.Client.Buddy.MainWindowHandle, $"test");*/
-           var p = new Process();
-            p.StartInfo = new ProcessStartInfo("replay.gbx")
-            {
-                UseShellExecute = true
-            };
-            p.Start();
-
+            _factory.Network.Device = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
+            dd_internetInterfaces.SelectedItem = temporaryDevice;
         }
 
         private void btn_startExe_Click(object sender, RoutedEventArgs e)

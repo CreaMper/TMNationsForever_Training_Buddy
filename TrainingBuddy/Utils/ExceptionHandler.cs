@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Threading;
-using System.Xml.Linq;
 using TrainingBuddy.Handlers;
 
 namespace TrainingBuddy.Utils
@@ -10,6 +9,7 @@ namespace TrainingBuddy.Utils
     {
         private LogHandler _log;
         private Dispatcher _dispather;
+        private bool _exceptionOccured;
 
         public ExceptionHandler(LogHandler log, Dispatcher dispather)
         {
@@ -17,8 +17,14 @@ namespace TrainingBuddy.Utils
             _dispather = dispather;
         }
 
+        public bool ExceptionOccured
+        {
+            get { return _exceptionOccured; }
+        }
+
         public void CriticalThrow()
         {
+            _exceptionOccured = true;
             new Thread(Critical).Start();
         }
 
