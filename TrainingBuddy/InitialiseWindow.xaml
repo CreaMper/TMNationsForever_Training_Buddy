@@ -8,7 +8,7 @@
         Title="Initialisation" Height="157" Width="638" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" Focusable="False">
     <Grid Height="153" VerticalAlignment="Center" Margin="0,0,0,0">
         <Label x:Name="lbl_welcome" Content="Training Buddy is starting..." Margin="12,9,0,0" FontSize="16" FontWeight="Bold" FontFamily="Consolas" HorizontalAlignment="Left" Width="439" Height="28" VerticalAlignment="Top"/>
-        <RichTextBox x:Name="rbx_log" Margin="0,42,0,0" Height="105" VerticalAlignment="Top" HorizontalAlignment="Center" Width="616" FontFamily="Consolas" Background="Black" Foreground="White" AllowDrop="False" IsUndoEnabled="False" IsHitTestVisible="False" SelectionBrush="White" IsDocumentEnabled="True" IsReadOnly="True" BorderThickness="1,1,1,1">
+        <RichTextBox x:Name="rbx_log" Margin="0,42,0,0" Height="105" VerticalAlignment="Top" HorizontalAlignment="Center" Width="616" FontFamily="Consolas" Background="Black" Foreground="White" AllowDrop="False" IsUndoEnabled="False" IsHitTestVisible="False" SelectionBrush="White" IsDocumentEnabled="True" BorderThickness="1,1,1,1" IsReadOnly="True" VerticalScrollBarVisibility="Visible">
             <FlowDocument>
                 <Paragraph>
                     <Run Text=""/>
