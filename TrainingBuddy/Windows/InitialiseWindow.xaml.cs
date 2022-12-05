@@ -6,8 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using TrainingBuddy.Handlers;
 using TrainingBuddy.Utils;
+using TrainingBuddy.Windows;
 
 namespace TrainingBuddy
 {
@@ -118,7 +120,10 @@ namespace TrainingBuddy
 
             _log.AddLog("Initialisation complete! Say Hi to your new buddy in a few seconds!", LogTypeEnum.Success);
             Thread.Sleep(2500);
-            Environment.Exit(0);
+            Dispatcher.Invoke(() => {
+                new BuddyWindow().Show();
+                Close();
+            });
         }
     }
 }
