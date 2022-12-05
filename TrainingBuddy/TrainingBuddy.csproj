@@ -7,10 +7,25 @@
     <UseWPF>true</UseWPF>
     <StartupObject>TrainingBuddy.App</StartupObject>
     <PlatformTarget>x86</PlatformTarget>
+    <ApplicationIcon>Assets\roboIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\roboIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\roboIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LogicStorage\LogicStorage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\roboIcon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

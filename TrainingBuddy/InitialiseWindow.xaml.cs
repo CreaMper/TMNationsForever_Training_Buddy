@@ -3,6 +3,7 @@ using LogicStorage.Dtos.Config;
 using LogicStorage.Utils;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using TrainingBuddy.Handlers;
@@ -82,7 +83,42 @@ namespace TrainingBuddy
             else
             {
                 _log.AddLog("Configuration file found! Loading settings...", LogTypeEnum.Success);
+
+                var deviceFromConfig = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(_factory.BuddyConfig.InterfaceName));
+                if (!_factory.Network.ChallangeInterface(deviceFromConfig))
+                {
+                    _log.AddLog("Cannot load internet interface from config! Corrupted config will be deleted!", LogTypeEnum.CRITICAL);
+                    if (!_factory.Serializer.RemoveCorruptedBuddyConfig())
+                    {
+                        _log.AddLog("Cannot remove config file! Please, do it manualy!", LogTypeEnum.CRITICAL);
+                    }
+                    _exception.CriticalThrow();
+                }
+
+                if (_factory.BuddyConfig.ClientPath.Equals(string.Empty) || !_factory.Client.VerifyClientFileStructure())
+                {
+                    _log.AddLog("Cannot read a executable path from config file! Corrupted config will be deleted!", LogTypeEnum.CRITICAL);
+                    if (!_factory.Serializer.RemoveCorruptedBuddyConfig())
+                    {
+                        _log.AddLog("Cannot remove config file! Please, do it manualy!", LogTypeEnum.CRITICAL);
+                    }
+                    _exception.CriticalThrow();
+                }
+
+                if (!Directory.Exists(_factory.BuddyConfig.ClientPath))
+                {
+                    _log.AddLog("Cannot read a executable path from config file! Corrupted config will be deleted!", LogTypeEnum.CRITICAL);
+                    if (!_factory.Serializer.RemoveCorruptedBuddyConfig())
+                    {
+                        _log.AddLog("Cannot remove config file! Please, do it manualy!", LogTypeEnum.CRITICAL);
+                    }
+                    _exception.CriticalThrow();
+                }
             }
+
+            _log.AddLog("Initialisation complete! Say Hi to your new buddy in a few seconds!", LogTypeEnum.Success);
+            Thread.Sleep(2500);
+            Environment.Exit(0);
         }
     }
 }

@@ -25,15 +25,12 @@ namespace TrainingBuddy.Utils
         public void CriticalThrow()
         {
             _exceptionOccured = true;
-            new Thread(Critical).Start();
+            Critical();
         }
 
         private void Critical()
         {
-            _dispather.Invoke(() =>
-            {
-                _log.AddLog("Critical error encountered! Exiting in 5 seconds...", LogicStorage.Utils.LogTypeEnum.CRITICAL);
-            });
+            _log.AddLog("Critical error encountered! Exiting in 5 seconds...", LogicStorage.Utils.LogTypeEnum.CRITICAL);
 
             Thread.Sleep(5000);
             Environment.Exit(69);

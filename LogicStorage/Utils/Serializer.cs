@@ -22,6 +22,23 @@ namespace LogicStorage.Utils
             JsonSerializer.CreateDefault().Serialize(jsonWriter, executorConfiguration);
         }
 
+        public bool RemoveCorruptedBuddyConfig()
+        {
+            try
+            {
+                var file = Path.Combine(_configPath, _configFileName);
+
+                if (File.Exists(file))
+                    File.Delete(file);
+            
+                return true;
+            } 
+            catch 
+            {
+                return false;
+            }
+        }
+
         public ExecutorConfigDto DeserializeExecutorConfig()
         {
             if (!File.Exists(_configFileName))
