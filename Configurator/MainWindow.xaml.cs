@@ -1,5 +1,5 @@
 ﻿using LogicStorage;
-using LogicStorage.Dtos;
+using LogicStorage.Dtos.Config;
 using LogicStorage.Utils;
 using System;
 using System.Diagnostics;
@@ -130,7 +130,7 @@ namespace Configurator
 
         private void btn_interfaceAuto_Click(object sender, RoutedEventArgs e)
         {
-            var temporaryDevice = _factory.Network.GetDeviceList(false).FirstOrDefault();
+/*            var temporaryDevice = _factory.Network.GetDeviceList(false).FirstOrDefault();
             if (temporaryDevice == null)
             {
                 _log.AddLog("Cannot find interface automatically!", LogTypeEnum.Error);
@@ -138,7 +138,17 @@ namespace Configurator
             }
 
             _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
-            dd_internetInterfaces.SelectedItem = temporaryDevice;
+            dd_internetInterfaces.SelectedItem = temporaryDevice;*/
+
+/*            _factory.Importer.UseSetForegroundWindow(_factory.Client.Buddy.MainWindowHandle);
+            _factory.Importer.UseSetWindowText(_factory.Client.Buddy.MainWindowHandle, $"test");*/
+           var p = new Process();
+            p.StartInfo = new ProcessStartInfo("replay.gbx")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+
         }
 
         private void btn_startExe_Click(object sender, RoutedEventArgs e)

@@ -1,4 +1,4 @@
-﻿using LogicStorage.Dtos;
+﻿using LogicStorage.Dtos.Config;
 using LogicStorage.Handlers;
 using LogicStorage.Utils;
 
@@ -15,6 +15,7 @@ namespace LogicStorage
             _serializer = new Serializer();
 
             _executorConfig = _serializer.DeserializeExecutorConfig();
+            _buddyConfig = _serializer.DeserializeBuddyConfig();
         }
 
         private readonly NetworkHandler _network;
@@ -52,6 +53,13 @@ namespace LogicStorage
         {
             get { return _executorConfig; }
             set { _executorConfig = value; }
+        }
+
+        private BuddyConfigDto _buddyConfig;
+        public BuddyConfigDto BuddyConfig
+        {
+            get { return _buddyConfig; }
+            set { _buddyConfig = value; }
         }
     }
 }
