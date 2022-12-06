@@ -97,6 +97,7 @@ namespace TrainingBuddy
                     }
                     _exception.CriticalThrow();
                 }
+                _factory.Network.Device = deviceFromConfig;
 
                 if (_factory.BuddyConfig.ClientPath.Equals(string.Empty) || !_factory.Client.VerifyClientFileStructure())
                 {
@@ -122,7 +123,7 @@ namespace TrainingBuddy
             _log.AddLog("Initialisation complete! Say Hi to your new buddy in a few seconds!", LogTypeEnum.Success);
             Thread.Sleep(3000);
             Dispatcher.Invoke(() => {
-                new BuddyWindow().Show();
+                new BuddyWindow(_factory).Show();
                 Close();
             });
         }

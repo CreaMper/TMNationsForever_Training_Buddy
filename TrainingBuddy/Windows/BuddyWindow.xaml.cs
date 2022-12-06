@@ -31,12 +31,13 @@ namespace TrainingBuddy.Windows
         private readonly LogHandler _log;
         private readonly ExceptionHandler _exception;
         private List<TrackDto> _data;
+        private bool _sessionStop = false;
 
-        public BuddyWindow()
+        public BuddyWindow(Factory factory)
         {
             InitializeComponent();
 
-            _factory = new Factory();
+            _factory = factory;
             _log = new LogHandler(rtb_log, Dispatcher);
             _exception = new ExceptionHandler(_log, Dispatcher);
             _data = new List<TrackDto>();
@@ -139,12 +140,11 @@ namespace TrainingBuddy.Windows
             {
                 lv_replayData.ItemsSource = replaysData;
             }
-
         }
 
         private void btn_buddyStart_Click(object sender, RoutedEventArgs e)
         {
-            if (_factory.Client.GetGameClientProcess() == null && (_factory.Client.Buddy == null || _factory.Client.Buddy.HasExited))
+            if (_factory.Client.Buddy == null || _factory.Client.Buddy.HasExited)
             {
                 _log.AddLog("Starting Buddy Client...", LogTypeEnum.Info);
 
@@ -174,7 +174,7 @@ namespace TrainingBuddy.Windows
         private void UpdateBuddyWindowName()
         {
             Thread.Sleep(3000);
-            _factory.Importer.UseSetWindowText(_factory.Client.Buddy.MainWindowHandle, "TM Training Buddy Client");
+            _factory.Importer.UseSetWindowText(_factory.Client.Buddy.MainWindowHandle, $"TM Training Buddy Client ( PID: {_factory.Client.Buddy.Id} )");
             Dispatcher.Invoke(()=>{
                 btn_buddyStart.IsEnabled = true;
                 _log.AddLog("Buddy Client started!", LogTypeEnum.Success);
@@ -184,6 +184,8 @@ namespace TrainingBuddy.Windows
         private void UpdateUserWindowName()
         {
             Thread.Sleep(3000);
+            _factory.Importer.UseSetWindowText(_factory.Client.User.MainWindowHandle, $"TM Training User Client ( PID: {_factory.Client.User.Id} )");
+
             Dispatcher.Invoke(() => {
                 btn_userStart.IsEnabled = true;
                 _log.AddLog("User Client started!", LogTypeEnum.Success);
@@ -192,7 +194,7 @@ namespace TrainingBuddy.Windows
 
         private void btn_userStart_Click(object sender, RoutedEventArgs e)
         {
-            if (_factory.Client.GetBuddyClientProcess() == null && (_factory.Client.User == null || _factory.Client.User.HasExited))
+            if (_factory.Client.User == null || _factory.Client.User.HasExited)
             {
                 _log.AddLog("Starting User Client...", LogTypeEnum.Info);
 
@@ -217,6 +219,127 @@ namespace TrainingBuddy.Windows
             {
                 _log.AddLog("User Client already started! Use this button ONLY for re-run the User Client!", LogTypeEnum.Error);
             }
+        }
+
+        private void btn_startWatch_Click(object sender, RoutedEventArgs e)
+        {
+            if (_factory.Client.Buddy == null || _factory.Client.User == null)
+            {
+                _log.AddLog("You must start both clients (Buddy and User) before session can be started!", LogTypeEnum.Error);
+                return;
+            }
+            else 
+            {
+                _sessionStop = false;
+                new Thread(WatchProcess).Start();
+            }
+        }
+
+        private void BreakWatchClientClose()
+        {
+            _sessionStop = true;
+            Dispatcher.Invoke(() => {
+                btn_startWatch.IsEnabled = true;
+                btn_stopWatch.IsEnabled = false;
+
+                if (_factory.Client.Buddy.HasExited)
+                {
+                    lbl_buddyPid.Content = "---";
+                    _factory.Client.Buddy = null;
+                }
+                else
+                {
+                    lbl_userPid.Content = "---";
+                    _factory.Client.User = null;
+                }
+            });
+        }
+
+        private void WatchProcess()
+        {
+            Dispatcher.Invoke(() => {
+                btn_startWatch.IsEnabled = false;
+                btn_stopWatch.IsEnabled = true;
+            });
+            _log.AddLog("Buddy has started to watch you! Start a map on a User Client and Buddy will download all data for you!", LogTypeEnum.Info);
+
+            while (true)
+            {
+                if (_factory.Client.Buddy.HasExited || _factory.Client.User.HasExited)
+                {
+                    _log.AddLog("User or Buddy client has been closed!", LogTypeEnum.CRITICAL);
+                    _log.AddLog("Please, start it once again!", LogTypeEnum.CRITICAL);
+                    BreakWatchClientClose();
+                    break;
+                }
+                if (_sessionStop)
+                    break;
+
+                var packetData = PacketSniffer.Sniff(_factory.Network);
+                if (packetData == null)
+                    continue;
+
+                var trackInfo = Converters.PacketStringToTrackDataConverter(packetData);
+                if (trackInfo == null)
+                    continue;
+
+                _log.AddLog("Found a new map Packet!", LogTypeEnum.Success);
+                _log.AddLog($"Author: {trackInfo.AuthorName} | Trackname: {Converters.TrackNameConverter(trackInfo.TrackName)} | UID: {trackInfo.UID}", LogTypeEnum.Info);
+
+
+/*
+                var packetData = PacketSniffer.Sniff(_factory.Network);
+                if (packetData == null)
+                    continue;
+
+                var trackInfo = Converters.PacketStringToTrackDataConverter(packetData);
+                if (trackInfo == null)
+                    continue;
+
+                _log.AddLog("Found a new map Packet!", LogTypeEnum.Success);
+                _log.AddLog($"Author: {trackInfo.AuthorName} | Trackname: {Converters.TrackNameConverter(trackInfo.TrackName)} | UID: {trackInfo.UID}", LogTypeEnum.Info);
+
+                var trackIdAndSource = _factory.Request.GetTrackIdAndSource(trackInfo);
+                if (trackIdAndSource == null)
+                {
+                    _log.AddLog("Cannot find a Track ID! Buddy won't work for this map...", LogTypeEnum.CRITICAL);
+                    continue;
+                }
+
+                _log.AddLog("Track ID found!", LogTypeEnum.Success);
+                _log.AddLog($"Track ID: {trackIdAndSource.TrackId} | Source: {trackIdAndSource.Source}", LogTypeEnum.Info);
+
+                var replayDataAndSource = _factory.Request.GetReplayId(trackIdAndSource);
+                if (replayDataAndSource == null)
+                {
+                    _log.AddLog("Cannot find a replay that would be updated to TMX! Buddy won't work for this map...", LogTypeEnum.CRITICAL);
+                    continue;
+                }
+
+                _log.AddLog("Replay ID found!", LogTypeEnum.Success);
+                _log.AddLog($"Replay by: {replayDataAndSource.Author} | Time: {replayDataAndSource.Time} | ReplayId: {replayDataAndSource.ReplayId} | Source: {replayDataAndSource.Source}", LogTypeEnum.Info);
+
+                var downloadSuccessful = _factory.Request.DownloadReplay(replayDataAndSource);
+                if (!downloadSuccessful)
+                {
+                    _log.AddLog("Error occured when downloading a replay file! Perhaps buddy doesn't have access to file?", LogTypeEnum.CRITICAL);
+                    continue;
+                }
+                else
+                {
+                    _log.AddLog("Replay downloaded successful! Injecting file to buddy client...", LogTypeEnum.Success);
+                    _factory.Client.InjectReplay(_factory.Client.Buddy, replayDataAndSource);
+                    continue;
+                }*/
+            }
+        }
+
+        private void btn_stopWatch_Click(object sender, RoutedEventArgs e)
+        {
+            _log.AddLog("Session stopped!", LogTypeEnum.Info);
+            _sessionStop = true;
+            btn_startWatch.IsEnabled = true;
+            btn_stopWatch.IsEnabled = false;
         }
     }
 }

@@ -40,15 +40,7 @@ namespace LogicStorage.Handlers
 
         public Process GetGameClientProcess()
         {
-            var legacy = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();
-            if (legacy != null)
-                return legacy;
-
-            var standaloneClient = Process.GetProcessesByName(System.IO.Path.GetFileName("TmForever")).FirstOrDefault();
-            if (standaloneClient != null)
-                return standaloneClient;
-
-            var process = Process.GetProcessesByName(System.IO.Path.GetFileName("TrackMania Nations Forever")).FirstOrDefault();
+            var process = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training User Client")).FirstOrDefault();
             if (process != null)
                 return process;
 

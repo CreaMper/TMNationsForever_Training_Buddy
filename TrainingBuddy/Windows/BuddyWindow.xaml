@@ -52,8 +52,8 @@
                 </ListView.View>
             </ListView>
         </Grid>
-        <Button x:Name="btn_stopWatch" Content="Session STOP" HorizontalAlignment="Left" Margin="684,196,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" IsEnabled="False"/>
-        <Button x:Name="btn_startWatch_Copy" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" IsEnabled="False"/>
+        <Button x:Name="btn_stopWatch" Content="Session STOP" HorizontalAlignment="Left" Margin="684,196,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" IsEnabled="False" Click="btn_stopWatch_Click"/>
+        <Button x:Name="btn_startWatch" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" Click="btn_startWatch_Click"/>
         <Button x:Name="btn_replayLoad" Content="Load Replay" HorizontalAlignment="Left" Margin="449,198,0,0" VerticalAlignment="Top" Height="26" Width="88" FontFamily="Consolas" IsEnabled="False"/>
     </Grid>
 </Window>
