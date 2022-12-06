@@ -42,7 +42,12 @@
         <ListBox x:Name="lb_LastReplays" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="308,196,356,12" FontFamily="Consolas" Background="White" VerticalContentAlignment="Center" BorderBrush="Black" SelectionChanged="lb_LastReplays_SelectionChanged"/>
         <Label Content="Replay Info" HorizontalAlignment="Left" Margin="308,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Grid>
-            <ListView Margin="443,228,11,12" x:Name="lv_replayData" BorderThickness="1,1,1,1" FontWeight="Bold" BorderBrush="Black">
+            <ListView Margin="443,228,11,12" x:Name="lv_replayData" BorderThickness="1,1,1,1" BorderBrush="Black" FontWeight="Bold">
+                <ListView.Resources>
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                </ListView.Resources>
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Rank" Width="60" DisplayMemberBinding="{Binding Rank}" />

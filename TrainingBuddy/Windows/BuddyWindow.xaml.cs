@@ -2,6 +2,7 @@
 using LogicStorage.Dtos.ReplayList;
 using LogicStorage.Dtos.TrackData;
 using LogicStorage.Utils;
+using SharpPcap;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,77 +46,6 @@ namespace TrainingBuddy.Windows
             _log.AddLog("Welcome to TrackMania Training Buddy! I will carefully watch, which map are you playing and then provide you with the best replay I can find!", LogTypeEnum.Info);
             _log.AddLog("But before that, you need to configure me... Start both clients, check all settings and click Watch!", LogTypeEnum.Info);
             _log.AddLog("If you don't know what to do or you encountered any problem - check README.MD", LogTypeEnum.Info);
-
-            //Fake track info
-            #region fakeTrackData
-            var fakeTrackData = new List<TrackDto>()
-            {
-                new TrackDto()
-                {
-                    Author = "Test author!2@",
-                    Guid = Guid.NewGuid(),
-                    Name = "Test map name",
-                    Source = ApiTypeEnum.TMNF,
-                    Time = "231112",
-                    TMXId = 74234443,
-                    Replays = new List<ReplayDto>()
-                    {
-                       new ReplayDto()
-                       {
-                           Player = "Test one replay",
-                           ReplayId = 1122663,
-                           Source = ApiTypeEnum.TMNF,
-                           Time = "22412",
-                           Rank = 1
-                       },
-                       new ReplayDto()
-                       {
-                           Player = "MoreReplayyys player",
-                           ReplayId = 86523,
-                           Source = ApiTypeEnum.TMNF,
-                           Time = "986111",
-                           Rank = 2
-                       }
-                    }
-                },
-                new TrackDto()
-                {
-                    Author = "Another test author",
-                    Guid = Guid.NewGuid(),
-                    Name = "Mapa dla gurbych grubasów",
-                    Source = ApiTypeEnum.NATIONS,
-                    Time = "98371",
-                    TMXId = 234661,
-                    Replays = new List<ReplayDto>()
-                    {
-                       new ReplayDto()
-                       {
-                           Player = "Test oneee replay",
-                           ReplayId = 1112362623,
-                           Source = ApiTypeEnum.NATIONS,
-                           Time = "224112",
-                           Rank = 1
-                       },
-                       new ReplayDto()
-                       {
-                           Player = "Ecven morrre",
-                           ReplayId = 8652321,
-                           Source = ApiTypeEnum.NATIONS,
-                           Time = "123333",
-                           Rank = 2
-                       }
-                    }
-                }
-            };
-
-            _data = fakeTrackData;
-            #endregion
-
-            #region DataInit
-
-            //lb_LastReplays.ItemsSource = fakeTrackData.Select(x => x.Name);
-
-            #endregion
         }
 
         private void WindowDrag(object sender, MouseButtonEventArgs e)
@@ -162,6 +92,12 @@ namespace TrainingBuddy.Windows
                     lbl_buddyPid.Content = _factory.Client.Buddy.Id.ToString();
                     _log.AddLog($"Found an Trackmania process! with PID {_factory.Client.Buddy.Id}", LogTypeEnum.Info);
                     _log.AddLog("Please, make sure that game is in WINDOWED mode!", LogTypeEnum.Info);
+
+                    if (_factory.Client.User != null)
+                    {
+                        _log.AddLog("Watch have started automatically! If you want to stop session, press Watch Stop!", LogTypeEnum.Success);
+                        StartWatch();
+                    }
                     return;
                 }
             }
@@ -212,6 +148,13 @@ namespace TrainingBuddy.Windows
                     lbl_userPid.Content = _factory.Client.User.Id.ToString();
                     _log.AddLog($"Found an Trackmania process! with PID {_factory.Client.User.Id}", LogTypeEnum.Info);
                     _log.AddLog("Please, make sure that game is in WINDOWED mode!", LogTypeEnum.Info);
+                    
+
+                    if(_factory.Client.Buddy != null)
+                    {
+                        _log.AddLog("Watch have started automatically! If you want to stop session, press Watch Stop!", LogTypeEnum.Success);
+                        StartWatch();
+                    }
                     return;
                 }
             }
@@ -223,12 +166,17 @@ namespace TrainingBuddy.Windows
 
         private void btn_startWatch_Click(object sender, RoutedEventArgs e)
         {
+            StartWatch();
+        }
+
+        private void StartWatch()
+        {
             if (_factory.Client.Buddy == null || _factory.Client.User == null)
             {
                 _log.AddLog("You must start both clients (Buddy and User) before session can be started!", LogTypeEnum.Error);
                 return;
             }
-            else 
+            else
             {
                 _sessionStop = false;
                 new Thread(WatchProcess).Start();
@@ -238,6 +186,8 @@ namespace TrainingBuddy.Windows
         private void BreakWatchClientClose()
         {
             _sessionStop = true;
+            _factory.Network.Device.Close();
+
             Dispatcher.Invoke(() => {
                 btn_startWatch.IsEnabled = true;
                 btn_stopWatch.IsEnabled = false;
@@ -262,6 +212,7 @@ namespace TrainingBuddy.Windows
                 btn_stopWatch.IsEnabled = true;
             });
             _log.AddLog("Buddy has started to watch you! Start a map on a User Client and Buddy will download all data for you!", LogTypeEnum.Info);
+            _factory.Network.Device.Open(DeviceModes.Promiscuous, 10);
 
             while (true)
             {
@@ -286,19 +237,6 @@ namespace TrainingBuddy.Windows
                 _log.AddLog("Found a new map Packet!", LogTypeEnum.Success);
                 _log.AddLog($"Author: {trackInfo.AuthorName} | Trackname: {Converters.TrackNameConverter(trackInfo.TrackName)} | UID: {trackInfo.UID}", LogTypeEnum.Info);
 
-
-/*
-                var packetData = PacketSniffer.Sniff(_factory.Network);
-                if (packetData == null)
-                    continue;
-
-                var trackInfo = Converters.PacketStringToTrackDataConverter(packetData);
-                if (trackInfo == null)
-                    continue;
-
-                _log.AddLog("Found a new map Packet!", LogTypeEnum.Success);
-                _log.AddLog($"Author: {trackInfo.AuthorName} | Trackname: {Converters.TrackNameConverter(trackInfo.TrackName)} | UID: {trackInfo.UID}", LogTypeEnum.Info);
-
                 var trackIdAndSource = _factory.Request.GetTrackIdAndSource(trackInfo);
                 if (trackIdAndSource == null)
                 {
@@ -309,16 +247,29 @@ namespace TrainingBuddy.Windows
                 _log.AddLog("Track ID found!", LogTypeEnum.Success);
                 _log.AddLog($"Track ID: {trackIdAndSource.TrackId} | Source: {trackIdAndSource.Source}", LogTypeEnum.Info);
 
-                var replayDataAndSource = _factory.Request.GetReplayId(trackIdAndSource);
-                if (replayDataAndSource == null)
+                var replayList = _factory.Request.GetReplayList(trackIdAndSource);
+                if (replayList == null)
                 {
                     _log.AddLog("Cannot find a replay that would be updated to TMX! Buddy won't work for this map...", LogTypeEnum.CRITICAL);
                     continue;
                 }
 
-                _log.AddLog("Replay ID found!", LogTypeEnum.Success);
-                _log.AddLog($"Replay by: {replayDataAndSource.Author} | Time: {replayDataAndSource.Time} | ReplayId: {replayDataAndSource.ReplayId} | Source: {replayDataAndSource.Source}", LogTypeEnum.Info);
+                var trackDto = new TrackDto()
+                {
+                    Uid = trackInfo.UID,
+                    Author = trackInfo.AuthorName,
+                    Name = Converters.TrackNameConverter(trackInfo.TrackName),
+                    TMXId = Int32.Parse(trackIdAndSource.TrackId),
+                    Source = trackIdAndSource.Source,
+                    Replays = replayList.Select(x => Converters.TrackStatsResultDtoToReplayDtoConverter(x, trackIdAndSource.Source))
+                };
 
+                _log.AddLog("Replay data found!", LogTypeEnum.Success);
+                _log.AddLog($"Best time by: {trackDto.Replays.First().Player} | Time: {trackDto.Replays.First().Time} | ReplayId: {trackDto.Replays.First().ReplayId} | Source: {trackDto.Replays.First().Source}", LogTypeEnum.Info);
+
+                _data.Insert(0, trackDto);
+                DataUpdate();
+/*
                 var downloadSuccessful = _factory.Request.DownloadReplay(replayDataAndSource);
                 if (!downloadSuccessful)
                 {
@@ -332,6 +283,14 @@ namespace TrainingBuddy.Windows
                     continue;
                 }*/
             }
+        }
+
+        private void DataUpdate()
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                lb_LastReplays.ItemsSource = _data.Select(x => x.Name);
+            }));
         }
 
         private void btn_stopWatch_Click(object sender, RoutedEventArgs e)

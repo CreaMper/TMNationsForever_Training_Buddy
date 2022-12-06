@@ -3,6 +3,7 @@ using LogicStorage.Dtos.SearchQuery;
 using LogicStorage.Dtos.TrackData;
 using LogicStorage.Utils;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -91,6 +92,24 @@ namespace LogicStorage.Handlers
             {
                 return null;
             }
+        }
+
+        public List<TrackStatsResultDto> GetReplayList(TrackIdAndSourceDto trackData)
+        {
+            var apiRequest = URLHelper.GetTopReplayUrl(trackData);
+
+            var mapRecordsApiResponse = HttpRequestAsStringSync(apiRequest);
+            if (mapRecordsApiResponse == null)
+                return null;
+
+            var trackStats = JsonConvert.DeserializeObject<TrackStatsDto>(mapRecordsApiResponse);
+            if (trackStats == null)
+                return null;
+
+            if (trackStats.Results.Count() == 0)
+                return null;
+
+            return trackStats.Results;
         }
 
         public bool DownloadReplay(ReplayDataAndSourceDto replayData)

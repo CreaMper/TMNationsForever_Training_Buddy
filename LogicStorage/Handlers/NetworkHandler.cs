@@ -58,6 +58,7 @@ namespace LogicStorage.Handlers
                 packetRecieved++;
             }
 
+            device.Close();
             if (packetRecieved == 0)
                 return false;
             else
