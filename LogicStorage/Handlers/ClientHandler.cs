@@ -29,6 +29,15 @@ namespace LogicStorage.Handlers
             set { _user = value; }
         }
 
+        public Process GetBuddyClientProcess()
+        {
+            var process = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();
+            if (process != null)
+                return process;
+
+            return null;
+        }
+
         public Process GetGameClientProcess()
         {
             var legacy = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();

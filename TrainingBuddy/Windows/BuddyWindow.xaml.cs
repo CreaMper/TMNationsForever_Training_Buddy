@@ -177,8 +177,46 @@ namespace TrainingBuddy.Windows
             _factory.Importer.UseSetWindowText(_factory.Client.Buddy.MainWindowHandle, "TM Training Buddy Client");
             Dispatcher.Invoke(()=>{
                 btn_buddyStart.IsEnabled = true;
-                _log.AddLog("Buddy client started!", LogTypeEnum.Success);
+                _log.AddLog("Buddy Client started!", LogTypeEnum.Success);
             });
+        }
+
+        private void UpdateUserWindowName()
+        {
+            Thread.Sleep(3000);
+            Dispatcher.Invoke(() => {
+                btn_userStart.IsEnabled = true;
+                _log.AddLog("User Client started!", LogTypeEnum.Success);
+            });
+        }
+
+        private void btn_userStart_Click(object sender, RoutedEventArgs e)
+        {
+            if (_factory.Client.GetBuddyClientProcess() == null && (_factory.Client.User == null || _factory.Client.User.HasExited))
+            {
+                _log.AddLog("Starting User Client...", LogTypeEnum.Info);
+
+                _factory.Client.User = new Process
+                {
+                    StartInfo = { FileName = "TmForever.exe" }
+                };
+                _factory.Client.User.Start();
+
+                if (!_factory.Client.User.HasExited)
+                {
+                    new Thread(UpdateUserWindowName).Start();
+                    btn_userStart.IsEnabled = false;
+
+                    lbl_userPid.Content = _factory.Client.User.Id.ToString();
+                    _log.AddLog($"Found an Trackmania process! with PID {_factory.Client.User.Id}", LogTypeEnum.Info);
+                    _log.AddLog("Please, make sure that game is in WINDOWED mode!", LogTypeEnum.Info);
+                    return;
+                }
+            }
+            else
+            {
+                _log.AddLog("User Client already started! Use this button ONLY for re-run the User Client!", LogTypeEnum.Error);
+            }
         }
     }
 }

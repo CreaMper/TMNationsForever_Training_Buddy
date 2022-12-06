@@ -22,7 +22,7 @@
         <Label Content="Your Client" HorizontalAlignment="Left" Margin="10,312,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Button x:Name="btn_buddyStart" Content="Start" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top" Height="29" Width="116" Click="btn_buddyStart_Click"/>
         <Button x:Name="btn_buddyReloadReplay" Content="Reload Replay" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Height="29" Width="116" IsEnabled="False"/>
-        <Button x:Name="btn_userStart" Content="Start" HorizontalAlignment="Left" Margin="10,346,0,0" VerticalAlignment="Top" Height="29" Width="116"/>
+        <Button x:Name="btn_userStart" Content="Start" HorizontalAlignment="Left" Margin="10,346,0,0" VerticalAlignment="Top" Height="29" Width="116" Click="btn_userStart_Click"/>
         <Slider x:Name="sld_intensivity" HorizontalAlignment="Left" Margin="10,410,0,0" VerticalAlignment="Top" Width="116" Value="10" ValueChanged="Slider_ValueChanged" IsSnapToTickEnabled="True" SmallChange="1" TickPlacement="BottomRight" Minimum="1"/>
         <Label x:Name="lbl_listeningIntensivityLevel" Content="10" HorizontalAlignment="Left" Margin="103,389,0,0" VerticalAlignment="Top" Width="23"/>
         <Label Content="Sensivity" HorizontalAlignment="Left" Margin="10,390,0,0" VerticalAlignment="Top" FontFamily="Consolas"/>
