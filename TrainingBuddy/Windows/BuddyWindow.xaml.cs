@@ -33,6 +33,7 @@ namespace TrainingBuddy.Windows
         private readonly ExceptionHandler _exception;
         private List<TrackDto> _data;
         private ReplayDto _selectedReplay;
+        private ReplayDto _lastReplay;
         private bool _sessionStop = false;
         
         public BuddyWindow(Factory factory)
@@ -53,15 +54,6 @@ namespace TrainingBuddy.Windows
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
-        }
-
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (lbl_listeningIntensivityLevel != null)
-            {
-                lbl_listeningIntensivityLevel.Content = sld_intensivity.Value;
-                _factory.BuddyConfig.SensivityLevel = Int32.Parse(sld_intensivity.Value.ToString());
-            }
         }
 
         private void lb_LastReplays_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -238,6 +230,13 @@ namespace TrainingBuddy.Windows
                 _log.AddLog("Found a new map Packet!", LogTypeEnum.Success);
                 _log.AddLog($"Author: {trackInfo.AuthorName} | Trackname: {Converters.TrackNameConverter(trackInfo.TrackName)} | UID: {trackInfo.UID}", LogTypeEnum.Info);
 
+                if(_data.Any(x => x.Uid.Equals(trackInfo.UID)))
+                {
+                    _log.AddLog("Track data already exists in Buddy! Bringing it to the top of the list...", LogTypeEnum.Info);
+                    _data.Move(_data.FindIndex(x => x.Uid.Equals(trackInfo.UID)), 0);
+                    continue;
+                }
+
                 var trackIdAndSource = _factory.Request.GetTrackIdAndSource(trackInfo);
                 if (trackIdAndSource == null)
                 {
@@ -281,10 +280,10 @@ namespace TrainingBuddy.Windows
                 btn_replayLoad.IsEnabled = false;
                 lb_LastReplays.SelectedIndex = 0;
 
-                if (lbl_userMapCount.Equals("---"))
+                if (lbl_userMapCount.Content.Equals("---"))
                     lbl_userMapCount.Content = "1";
                 else
-                    lbl_userMapCount.Content = Int32.Parse(lbl_userMapCount.ToString()) + 1;
+                    lbl_userMapCount.Content = Int32.Parse(lbl_userMapCount.Content.ToString()) + 1;
             }));
         }
 
@@ -307,7 +306,11 @@ namespace TrainingBuddy.Windows
             else
             {
                 _log.AddLog("Replay downloaded successful! Injecting file to buddy client...", LogTypeEnum.Success);
+                lbl_buddyLastTrack.Content = _selectedReplay.Player;
+                lbl_buddyTime.Content = _selectedReplay.Time;
                 _factory.Client.InjectReplay(_factory.Client.Buddy, _selectedReplay);
+                _lastReplay = _selectedReplay;
+                btn_buddyReloadReplay.IsEnabled = true;
             }
         }
 
@@ -318,10 +321,20 @@ namespace TrainingBuddy.Windows
             if(replayPool!= null)
             {
                 _selectedReplay = replayPool.FirstOrDefault(x => x.Rank.Equals(selectedIndex+1));
-                _log.AddLog($"Selected replay done by {_selectedReplay.Player} in time of {_selectedReplay.Time}", LogTypeEnum.Info);
+                if (_selectedReplay == null)
+                    _selectedReplay = replayPool.FirstOrDefault();
+                else
+                    _log.AddLog($"Selected replay done by {_selectedReplay.Player} in time of {_selectedReplay.Time}", LogTypeEnum.Info);
             }
 
             btn_replayLoad.IsEnabled = true;
+        }
+
+        private void btn_buddyReloadReplay_Click(object sender, RoutedEventArgs e)
+        {
+            _log.AddLog("Re-injecting last replay!", LogTypeEnum.Success);
+            _log.AddLog($"Last replay done by {_lastReplay.Player} in time of {_lastReplay.Time}", LogTypeEnum.Info);
+            _factory.Client.InjectReplay(_factory.Client.Buddy, _lastReplay);
         }
     }
 }
