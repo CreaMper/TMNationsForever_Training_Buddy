@@ -1,4 +1,5 @@
 ﻿using LogicStorage.Dtos;
+using LogicStorage.Dtos.ReplayList;
 using LogicStorage.Dtos.SearchQuery;
 using LogicStorage.Dtos.TrackData;
 using LogicStorage.Utils;
@@ -112,6 +113,26 @@ namespace LogicStorage.Handlers
             return trackStats.Results;
         }
 
+        public bool DownloadReplay(ReplayDto replayData)
+        {
+            var apiRequest = URLHelper.GetDownloadUrl(replayData);
+
+            var replayDataStream = HttpRequestAsStreamSync(apiRequest);
+            if (replayDataStream == null)
+                return false;
+
+            if (File.Exists("replay.gbx"))
+                File.Delete("replay.gbx");
+
+            var newFileStream = File.Create("replay.gbx");
+            replayDataStream.CopyTo(newFileStream);
+
+            replayDataStream.Close();
+            newFileStream.Close();
+
+            return true;
+        }
+
         public bool DownloadReplay(ReplayDataAndSourceDto replayData)
         {
             var apiRequest = URLHelper.GetDownloadUrl(replayData);
@@ -176,7 +197,6 @@ namespace LogicStorage.Handlers
                     Source = URLHelper.ApiTypeMapper(response),
                     TrackId = trackId
                 };
-
             }
 
             return null;

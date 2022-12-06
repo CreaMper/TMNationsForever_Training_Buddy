@@ -32,8 +32,9 @@ namespace TrainingBuddy.Windows
         private readonly LogHandler _log;
         private readonly ExceptionHandler _exception;
         private List<TrackDto> _data;
+        private ReplayDto _selectedReplay;
         private bool _sessionStop = false;
-
+        
         public BuddyWindow(Factory factory)
         {
             InitializeComponent();
@@ -269,19 +270,6 @@ namespace TrainingBuddy.Windows
 
                 _data.Insert(0, trackDto);
                 DataUpdate();
-/*
-                var downloadSuccessful = _factory.Request.DownloadReplay(replayDataAndSource);
-                if (!downloadSuccessful)
-                {
-                    _log.AddLog("Error occured when downloading a replay file! Perhaps buddy doesn't have access to file?", LogTypeEnum.CRITICAL);
-                    continue;
-                }
-                else
-                {
-                    _log.AddLog("Replay downloaded successful! Injecting file to buddy client...", LogTypeEnum.Success);
-                    _factory.Client.InjectReplay(_factory.Client.Buddy, replayDataAndSource);
-                    continue;
-                }*/
             }
         }
 
@@ -290,6 +278,13 @@ namespace TrainingBuddy.Windows
             Dispatcher.Invoke(new Action(() =>
             {
                 lb_LastReplays.ItemsSource = _data.Select(x => x.Name);
+                btn_replayLoad.IsEnabled = false;
+                lb_LastReplays.SelectedIndex = 0;
+
+                if (lbl_userMapCount.Equals("---"))
+                    lbl_userMapCount.Content = "1";
+                else
+                    lbl_userMapCount.Content = Int32.Parse(lbl_userMapCount.ToString()) + 1;
             }));
         }
 
@@ -299,6 +294,34 @@ namespace TrainingBuddy.Windows
             _sessionStop = true;
             btn_startWatch.IsEnabled = true;
             btn_stopWatch.IsEnabled = false;
+            lbl_userMapCount.Content = "---";
+        }
+
+        private void btn_replayLoad_Click(object sender, RoutedEventArgs e)
+        {
+            var downloadSuccessful = _factory.Request.DownloadReplay(_selectedReplay);
+            if (!downloadSuccessful)
+            {
+                _log.AddLog("Error occured when downloading a replay file! Perhaps buddy doesn't have access to file?", LogTypeEnum.CRITICAL);
+            }
+            else
+            {
+                _log.AddLog("Replay downloaded successful! Injecting file to buddy client...", LogTypeEnum.Success);
+                _factory.Client.InjectReplay(_factory.Client.Buddy, _selectedReplay);
+            }
+        }
+
+        private void lv_replayData_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedIndex = lv_replayData.SelectedIndex;
+            var replayPool = _data.FirstOrDefault(x => x.Name.Equals(lb_LastReplays.SelectedItem))?.Replays;
+            if(replayPool!= null)
+            {
+                _selectedReplay = replayPool.FirstOrDefault(x => x.Rank.Equals(selectedIndex+1));
+                _log.AddLog($"Selected replay done by {_selectedReplay.Player} in time of {_selectedReplay.Time}", LogTypeEnum.Info);
+            }
+
+            btn_replayLoad.IsEnabled = true;
         }
     }
 }
