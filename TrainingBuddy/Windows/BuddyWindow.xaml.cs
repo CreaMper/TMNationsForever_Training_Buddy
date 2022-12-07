@@ -161,6 +161,12 @@ namespace TrainingBuddy.Windows
             else
             {
                 _sessionStop = false;
+                if (_lastReplay != null)
+                    btn_buddyReloadReplay.IsEnabled = true;
+
+                if (_selectedReplay != null)
+                    btn_replayLoad.IsEnabled = true;
+
                 new Thread(WatchProcess).Start();
             }
         }
