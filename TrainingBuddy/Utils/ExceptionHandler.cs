@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Windows;
 using TrainingBuddy.Handlers;
 
 namespace TrainingBuddy.Utils
@@ -10,6 +11,11 @@ namespace TrainingBuddy.Utils
 
         public ExceptionHandler(LogHandler log)
         {
+            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+            {
+                MessageBox.Show($"Critical error occured! Buddy is going to die...! \n\n Message: {eventArgs.Exception.Message} \n\n EXCEPTION: {eventArgs.Exception}", "Exception thrown!", MessageBoxButton.OK, MessageBoxImage.Error);
+            };
+
             _log = log;
         }
 
