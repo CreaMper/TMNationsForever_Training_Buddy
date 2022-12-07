@@ -9,6 +9,12 @@ namespace LogicStorage.Utils
     {
         private static readonly MethodInfo GetLinkLayerType;
 
+        static Extensions()
+        {
+            var propertyInfo = typeof(RawCapture).GetProperty("LinkLayerType", BindingFlags.Public | BindingFlags.Instance);
+            GetLinkLayerType = propertyInfo?.GetMethod;
+        }
+
         public static LinkLayers GetLinkLayers(this RawCapture rawCapture)
         {
             // Allows using PacketDotNet versions other than the one used by SharpPcap.

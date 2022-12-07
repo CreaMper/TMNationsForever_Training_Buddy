@@ -22,9 +22,9 @@ namespace TrainingBuddy.Windows
     {
         private readonly Factory _factory;
         private readonly LogHandler _log;
-        private List<TrackDataDetailsDto> _data;
-        private ReplayDto _selectedReplay;
-        private ReplayDto _lastReplay;
+        private readonly List<TrackDataDetailsDto> _data;
+        private ReplayDto? _selectedReplay;
+        private ReplayDto? _lastReplay;
         private bool _sessionStop = false;
         
         public BuddyWindow(Factory factory)
@@ -46,7 +46,7 @@ namespace TrainingBuddy.Windows
                 this.DragMove();
         }
 
-        private void Lb_LastReplays_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void LastReplays_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var replaysData = _data.FirstOrDefault(x => x.Name.Equals(lb_LastReplays.SelectedItem))?.Replays;
             if(replaysData!= null)
@@ -55,7 +55,7 @@ namespace TrainingBuddy.Windows
             }
         }
 
-        private void Btn_buddyStart_Click(object sender, RoutedEventArgs e)
+        private void BuddyStart_Click(object sender, RoutedEventArgs e)
         {
             if (_factory.Client.Buddy == null || _factory.Client.Buddy.HasExited)
             {
@@ -111,7 +111,7 @@ namespace TrainingBuddy.Windows
             });
         }
 
-        private void Btn_userStart_Click(object sender, RoutedEventArgs e)
+        private void UserStart_Click(object sender, RoutedEventArgs e)
         {
             if (_factory.Client.User == null || _factory.Client.User.HasExited)
             {
@@ -146,7 +146,7 @@ namespace TrainingBuddy.Windows
             }
         }
 
-        private void Btn_startWatch_Click(object sender, RoutedEventArgs e)
+        private void StartWatch_Click(object sender, RoutedEventArgs e)
         {
             StartWatch();
         }
@@ -294,7 +294,7 @@ namespace TrainingBuddy.Windows
             }));
         }
 
-        private void Btn_stopWatch_Click(object sender, RoutedEventArgs e)
+        private void StopWatch_Click(object sender, RoutedEventArgs e)
         {
             _log.AddLog("Session stopped!", LogTypeEnum.Info);
             _sessionStop = true;
@@ -304,7 +304,7 @@ namespace TrainingBuddy.Windows
             lbl_userMapCount.Content = "---";
         }
 
-        private void Btn_replayLoad_Click(object sender, RoutedEventArgs e)
+        private void ReplayLoad_Click(object sender, RoutedEventArgs e)
         {
             DownloadAndInjectReplay(_selectedReplay);
         }
@@ -333,7 +333,7 @@ namespace TrainingBuddy.Windows
             }
         }
 
-        private void Lv_replayData_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ReplayData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedIndex = lv_replayData.SelectedIndex;
             var replayPool = _data.FirstOrDefault(x => x.Name.Equals(lb_LastReplays.SelectedItem))?.Replays;
@@ -349,14 +349,14 @@ namespace TrainingBuddy.Windows
             btn_replayLoad.IsEnabled = true;
         }
 
-        private void Btn_buddyReloadReplay_Click(object sender, RoutedEventArgs e)
+        private void BuddyReloadReplay_Click(object sender, RoutedEventArgs e)
         {
             _log.AddLog("Re-injecting last replay!", LogTypeEnum.Success);
-            _log.AddLog($"Last replay done by {_lastReplay.Player} in time of {_lastReplay.Time}", LogTypeEnum.Info);
+            _log.AddLog($"Last replay done by {_lastReplay?.Player} in time of {_lastReplay?.Time}", LogTypeEnum.Info);
             _factory.Client.InjectReplay(_factory.Client.Buddy);
         }
 
-        private void Btn_safeExit_Click(object sender, RoutedEventArgs e)
+        private void SafeExit_Click(object sender, RoutedEventArgs e)
         {
             _log.AddLog($"Thanks for playing with me! I hope you enjoyed! Performing safe exit...", LogTypeEnum.Success);
 
