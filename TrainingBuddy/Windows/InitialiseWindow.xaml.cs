@@ -1,5 +1,5 @@
 ﻿using LogicStorage;
-using LogicStorage.Dtos.Config;
+using LogicStorage.Dtos;
 using LogicStorage.Utils;
 using System;
 using System.Diagnostics;

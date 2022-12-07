@@ -22,8 +22,7 @@ namespace TrainingBuddy.Windows
     {
         private readonly Factory _factory;
         private readonly LogHandler _log;
-        private readonly ExceptionHandler _exception;
-        private List<TrackDto> _data;
+        private List<TrackDataDetailsDto> _data;
         private ReplayDto _selectedReplay;
         private ReplayDto _lastReplay;
         private bool _sessionStop = false;
@@ -34,8 +33,7 @@ namespace TrainingBuddy.Windows
 
             _factory = factory;
             _log = new LogHandler(rtb_log, Dispatcher);
-            _exception = new ExceptionHandler(_log, Dispatcher);
-            _data = new List<TrackDto>();
+            _data = new List<TrackDataDetailsDto>();
 
             _log.AddLog("Welcome to TrackMania Training Buddy! I will carefully watch, which map are you playing and then provide you with the best replay I can find!", LogTypeEnum.Info);
             _log.AddLog("But before that, you need to configure me... Start both clients, check all settings and click Watch!", LogTypeEnum.Info);
@@ -256,7 +254,7 @@ namespace TrainingBuddy.Windows
                     continue;
                 }
 
-                var trackDto = new TrackDto()
+                var trackDto = new TrackDataDetailsDto()
                 {
                     Uid = trackInfo.UID,
                     Author = trackInfo.AuthorName,
@@ -329,7 +327,7 @@ namespace TrainingBuddy.Windows
                 _log.AddLog("Replay downloaded successful! Injecting file to buddy client...", LogTypeEnum.Success);
                 lbl_buddyLastTrack.Content = replay.Player;
                 lbl_buddyTime.Content = replay.Time;
-                _factory.Client.InjectReplay(_factory.Client.Buddy, replay);
+                _factory.Client.InjectReplay(_factory.Client.Buddy);
                 _lastReplay = replay;
                 btn_buddyReloadReplay.IsEnabled = true;
             }
@@ -355,7 +353,7 @@ namespace TrainingBuddy.Windows
         {
             _log.AddLog("Re-injecting last replay!", LogTypeEnum.Success);
             _log.AddLog($"Last replay done by {_lastReplay.Player} in time of {_lastReplay.Time}", LogTypeEnum.Info);
-            _factory.Client.InjectReplay(_factory.Client.Buddy, _lastReplay);
+            _factory.Client.InjectReplay(_factory.Client.Buddy);
         }
 
         private void btn_safeExit_Click(object sender, RoutedEventArgs e)

@@ -1,6 +1,7 @@
-namespace LogicStorage.Dtos.SearchQuery{ 
+namespace LogicStorage.Dtos.ApiRequests.TMXSearch
+{
 
-    public class UploaderSearchDto
+    public class APISearchUserDto
     {
         public int UserId { get; set; }
         public string Name { get; set; }

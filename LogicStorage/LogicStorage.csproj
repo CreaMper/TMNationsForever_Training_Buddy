@@ -48,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Handlers\NetworkHandler.cs~RF535aa26.TMP" />
     <None Remove="wpcap.dll" />
   </ItemGroup>
 

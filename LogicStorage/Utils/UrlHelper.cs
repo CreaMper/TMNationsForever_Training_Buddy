@@ -1,5 +1,5 @@
-﻿using LogicStorage.Dtos;
-using LogicStorage.Dtos.ReplayList;
+﻿using LogicStorage.Dtos.ReplayList;
+using LogicStorage.Dtos.Track;
 using System.Collections.Generic;
 
 namespace LogicStorage.Utils
@@ -45,7 +45,7 @@ namespace LogicStorage.Utils
             return $"https://www.xaseco.org/uidfinder.php?uid={uid}";
         }
 
-        public static string GetTopReplayUrl(TrackIdAndSourceDto trackData)
+        public static string GetTopReplayUrl(TrackAndSourceDto trackData)
         {
             return $"{ApiTypeToReplayUrlDomain(trackData.Source)}/api/replays?trackId={trackData.TrackId}&best=1&count=10&fields=ReplayId%2CUser.UserId%2CUser.Name%2CReplayTime%2CReplayScore%2CReplayRespawns%2CTrackAt%2CScore%2CTrack.Type%2CPosition%2CIsBest%2CIsLeaderboard%2CReplayAt";
         }

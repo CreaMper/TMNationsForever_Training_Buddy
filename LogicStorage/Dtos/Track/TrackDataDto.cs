@@ -1,4 +1,4 @@
-﻿namespace LogicStorage.Dtos.TrackData
+﻿namespace LogicStorage.Dtos.Track
 {
     public class TrackDataDto
     {

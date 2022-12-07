@@ -1,7 +1,7 @@
-﻿using LogicStorage.Dtos;
+﻿using LogicStorage.Dtos.ApiRequests.TMXSearch;
+using LogicStorage.Dtos.ApiRequests.TMXTrackData;
 using LogicStorage.Dtos.ReplayList;
-using LogicStorage.Dtos.SearchQuery;
-using LogicStorage.Dtos.TrackData;
+using LogicStorage.Dtos.Track;
 using LogicStorage.Utils;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace LogicStorage.Handlers
             _httpClient = new HttpClient();
         }
 
-        public TrackIdAndSourceDto GetTrackIdAndSource(TrackDataDto trackData)
+        public TrackAndSourceDto GetTrackIdAndSource(TrackDataDto trackData)
         {
             var uidCheck = SearchByUID(trackData.UID);
             if (uidCheck != null)
@@ -33,7 +33,7 @@ namespace LogicStorage.Handlers
             return null;
         }
 
-        public TrackIdAndSourceDto SearchByUID(string uid)
+        public TrackAndSourceDto SearchByUID(string uid)
         {
             var xasecoURL = URLHelper.GetXasecoRequestUrl(uid);
 
@@ -50,7 +50,7 @@ namespace LogicStorage.Handlers
                 var contentRightCut = contentLeftCut[1].Split("\">TMX");
                 var trackId = contentRightCut[0];
 
-                return new TrackIdAndSourceDto() 
+                return new TrackAndSourceDto() 
                 {
                     Source = URLHelper.ApiTypeMapper(response),
                     TrackId = trackId
@@ -62,7 +62,7 @@ namespace LogicStorage.Handlers
             }
         }
 
-        public List<TrackStatsResultDto> GetReplayList(TrackIdAndSourceDto trackData)
+        public List<APITrackDataResultDto> GetReplayList(TrackAndSourceDto trackData)
         {
             var apiRequest = URLHelper.GetTopReplayUrl(trackData);
 
@@ -70,7 +70,7 @@ namespace LogicStorage.Handlers
             if (mapRecordsApiResponse == null)
                 return null;
 
-            var trackStats = JsonConvert.DeserializeObject<TrackStatsDto>(mapRecordsApiResponse);
+            var trackStats = JsonConvert.DeserializeObject<APITrackDataDto>(mapRecordsApiResponse);
             if (trackStats == null)
                 return null;
 
@@ -120,7 +120,7 @@ namespace LogicStorage.Handlers
                 return null;
         }
 
-        private TrackIdAndSourceDto SearchByTrackName(string trackName)
+        private TrackAndSourceDto SearchByTrackName(string trackName)
         {
             var converterTrackName = Converters.ConvertTrackNameToQuery(trackName);
 
@@ -132,14 +132,14 @@ namespace LogicStorage.Handlers
                 if (response == null)
                     continue;
 
-                var searchDto = JsonConvert.DeserializeObject<SearchDto>(response);
+                var searchDto = JsonConvert.DeserializeObject<APISearchDto>(response);
 
                 var searchResults = searchDto.Results;
                 if (searchResults.Count() == 0)
                     continue;
 
                 var trackId = searchDto.Results.FirstOrDefault().TrackId.ToString();
-                return new TrackIdAndSourceDto()
+                return new TrackAndSourceDto()
                 {
                     Source = URLHelper.ApiTypeMapper(response),
                     TrackId = trackId

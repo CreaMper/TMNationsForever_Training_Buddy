@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LogicStorage.Dtos.ReplayList
 {
-    public class TrackDto
+    public class TrackDataDetailsDto
     {
         public string Name { get; set; }
         public int TMXId { get; set; }
