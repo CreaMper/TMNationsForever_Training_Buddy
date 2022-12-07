@@ -1,4 +1,4 @@
-﻿namespace LogicStorage.Dtos.Config
+﻿namespace LogicStorage.Dtos
 {
     public class BuddyConfigDto
     {

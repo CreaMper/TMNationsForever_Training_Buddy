@@ -62,39 +62,6 @@ namespace LogicStorage.Handlers
             }
         }
 
-        public ReplayDataAndSourceDto GetReplayId(TrackIdAndSourceDto trackData)
-        {
-            var apiRequest = URLHelper.GetTopReplayUrl(trackData);
-
-            var mapRecordsApiResponse = HttpRequestAsStringSync(apiRequest);
-            if (mapRecordsApiResponse == null)
-                return null;
-
-            var trackStats = JsonConvert.DeserializeObject<TrackStatsDto>(mapRecordsApiResponse);
-            if (trackStats == null)
-                return null;
-
-            if (trackStats.Results.Count() == 0)
-                return null;
-
-            var topReplay = trackStats.Results.FirstOrDefault();
-
-            try
-            {
-                return new ReplayDataAndSourceDto()
-                {
-                    Source = trackData.Source,
-                    ReplayId = topReplay.ReplayId.ToString(),
-                    Author = topReplay.User.Name,
-                    Time = topReplay.ReplayTime.ToString()
-                };
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
         public List<TrackStatsResultDto> GetReplayList(TrackIdAndSourceDto trackData)
         {
             var apiRequest = URLHelper.GetTopReplayUrl(trackData);
@@ -114,26 +81,6 @@ namespace LogicStorage.Handlers
         }
 
         public bool DownloadReplay(ReplayDto replayData)
-        {
-            var apiRequest = URLHelper.GetDownloadUrl(replayData);
-
-            var replayDataStream = HttpRequestAsStreamSync(apiRequest);
-            if (replayDataStream == null)
-                return false;
-
-            if (File.Exists("replay.gbx"))
-                File.Delete("replay.gbx");
-
-            var newFileStream = File.Create("replay.gbx");
-            replayDataStream.CopyTo(newFileStream);
-
-            replayDataStream.Close();
-            newFileStream.Close();
-
-            return true;
-        }
-
-        public bool DownloadReplay(ReplayDataAndSourceDto replayData)
         {
             var apiRequest = URLHelper.GetDownloadUrl(replayData);
 

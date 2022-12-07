@@ -1,4 +1,4 @@
-﻿using LogicStorage.Dtos.Config;
+﻿using LogicStorage.Dtos;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -24,24 +24,6 @@ namespace LogicStorage.Utils
             catch 
             {
                 return false;
-            }
-        }
-
-        public ExecutorConfigDto DeserializeExecutorConfig()
-        {
-            if (!File.Exists(_configFileName))
-                return null;
-
-            try
-            {
-                var fileStream = File.ReadAllText(_configFileName);
-                var configuration = JsonConvert.DeserializeObject<ExecutorConfigDto>(fileStream);
-                return configuration;
-            }
-            catch
-            {
-                Console.WriteLine("Exception occured while deserialize config file!");
-                return null;
             }
         }
 

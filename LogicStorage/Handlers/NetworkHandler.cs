@@ -1,11 +1,8 @@
 ﻿using SharpPcap;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LogicStorage.Handlers
 {
@@ -24,11 +21,6 @@ namespace LogicStorage.Handlers
         {
             get { return _device; }
             set { _device = value; }
-        }
-
-        public ILiveDevice SelectDevice()
-        {
-            return _deviceList.First();
         }
 
         public void AutoDeviceSelection()
@@ -63,27 +55,6 @@ namespace LogicStorage.Handlers
                 return false;
             else
                 return true;
-        }
-
-        public List<string> GetDeviceList(bool showAll = false)
-        {
-            var deviceNamesList = new List<string>();
-
-            foreach (var device in _deviceList)
-            {
-                var deviceString = device.ToString();
-
-                if (showAll)
-                {
-                    deviceNamesList.Add(device.Name);
-                }
-                if (deviceString.Contains("Friendly") && deviceString.Contains("1) "))
-                {
-                    deviceNamesList.Add(device.Name);
-                }
-            }
-
-            return deviceNamesList;
         }
 
         public bool IsPacketFromCorrectSource(string parsedPacket)

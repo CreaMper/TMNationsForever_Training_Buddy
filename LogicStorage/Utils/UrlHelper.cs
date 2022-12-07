@@ -55,11 +55,6 @@ namespace LogicStorage.Utils
             return $"{ApiTypeToReplayUrlDomain(replayData.Source)}/recordgbx/{replayData.ReplayId}";
         }
 
-        public static string GetDownloadUrl(ReplayDataAndSourceDto replayData)
-        {
-            return $"{ApiTypeToReplayUrlDomain(replayData.Source)}/recordgbx/{replayData.ReplayId}";
-        }
-
         public static string GetSearchByTrackNameUrl(string domain, string trackName)
         {
             return $"{domain}/api/tracks?name={trackName}&count=40&fields=TrackId%2CTrackName%2CAuthors%5B%5D%2CTags%5B%5D%2CAuthorTime%2CRoutes%2CDifficulty%2CEnvironment%2CCar%2CPrimaryType%2CMood%2CAwards%2CHasThumbnail%2CImages%5B%5D%2CIsPublic%2CWRReplay.User.UserId%2CWRReplay.User.Name%2CWRReplay.ReplayTime%2CWRReplay.ReplayScore%2CReplayType%2CUploader.UserId%2CUploader.Name";
