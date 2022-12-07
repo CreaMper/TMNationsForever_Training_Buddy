@@ -7,8 +7,8 @@ namespace LogicStorage.Utils
 {
     public class Serializer
     {
-        private string _configFileName = "config.json";
-        string _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TrainingBuddy");
+        private readonly string _configFileName = "config.json";
+        readonly string _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TrainingBuddy");
 
         public bool RemoveCorruptedBuddyConfig()
         {

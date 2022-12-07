@@ -8,11 +8,11 @@ namespace LogicStorage.Handlers
 {
     public class NetworkHandler
     {
-        public CaptureDeviceList _deviceList { get; set; }
+        public CaptureDeviceList DeviceList { get; set; }
 
         public NetworkHandler()
         {
-            _deviceList = CaptureDeviceList.Instance;
+            DeviceList = CaptureDeviceList.Instance;
             _device = null;
         }
 
@@ -25,7 +25,7 @@ namespace LogicStorage.Handlers
 
         public void AutoDeviceSelection()
         {
-            foreach (var device in _deviceList)
+            foreach (var device in DeviceList)
                 if (ChallangeInterface(device))
                     _device = device;
         }

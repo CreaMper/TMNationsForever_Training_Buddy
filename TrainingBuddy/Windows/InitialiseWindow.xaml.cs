@@ -29,7 +29,7 @@ namespace TrainingBuddy
 
             _factory = new Factory();
             _log = new LogHandler(rbx_log, Dispatcher);
-            _exception = new ExceptionHandler(_log, Dispatcher);
+            _exception = new ExceptionHandler(_log);
         }
 
         private void OnContentRendered(object sender, EventArgs e)
@@ -87,7 +87,7 @@ namespace TrainingBuddy
             {
                 _log.AddLog("Configuration file found! Loading settings...", LogTypeEnum.Success);
 
-                var deviceFromConfig = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(_factory.BuddyConfig.InterfaceName));
+                var deviceFromConfig = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(_factory.BuddyConfig.InterfaceName));
                 if (!_factory.Network.ChallangeInterface(deviceFromConfig))
                 {
                     _log.AddLog("Cannot load internet interface from config! Corrupted config will be deleted!", LogTypeEnum.CRITICAL);

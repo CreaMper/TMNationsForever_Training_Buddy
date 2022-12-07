@@ -52,18 +52,6 @@ namespace LogicStorage.Utils
             return convertedTrackName;
         }
 
-        public static ApiTypeEnum ApiTypeConverter(string apiCall)
-        {
-            if (apiCall.Contains("tmuf.exchange"))
-                return ApiTypeEnum.TMUF;
-            else if (apiCall.Contains("tmnf.exchange"))
-                return ApiTypeEnum.TMNF;
-            else if (apiCall.Contains("nations.tm-exchange"))
-                return ApiTypeEnum.TMUF;
-
-            return ApiTypeEnum.TMNF;
-        }
-
         public static string TrackNameConverter(string name)
         {
             var specialCharToFilter = new List<string>()

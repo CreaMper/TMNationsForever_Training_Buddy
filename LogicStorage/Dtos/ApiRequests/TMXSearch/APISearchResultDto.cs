@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace LogicStorage.Dtos.ApiRequests.TMXSearch
 {
-
     public class APISearchResultDto
     {
         public int TrackId { get; set; }
@@ -24,5 +23,4 @@ namespace LogicStorage.Dtos.ApiRequests.TMXSearch
         public int ReplayType { get; set; }
         public APISearchUploaderDto Uploader { get; set; }
     }
-
 }

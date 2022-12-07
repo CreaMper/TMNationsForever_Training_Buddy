@@ -13,11 +13,11 @@ namespace LogicStorage.Handlers
 {
     public class RequestHandler
     {
-        private static HttpClient _httpClient { get; set; }
+        private static HttpClient HttpClient { get; set; }
 
         public RequestHandler()
         {
-            _httpClient = new HttpClient();
+            HttpClient = new HttpClient();
         }
 
         public TrackAndSourceDto GetTrackIdAndSource(TrackDataDto trackData)
@@ -102,7 +102,7 @@ namespace LogicStorage.Handlers
 
         public static string HttpRequestAsStringSync(string url)
         {
-            var response = _httpClient.GetAsync(url).Result;
+            var response = HttpClient.GetAsync(url).Result;
 
             if (response.IsSuccessStatusCode)
                 return response.Content.ReadAsStringAsync().Result;
@@ -112,7 +112,7 @@ namespace LogicStorage.Handlers
 
         public Stream HttpRequestAsStreamSync(string url)
         {
-            var response = _httpClient.GetAsync(url).Result;
+            var response = HttpClient.GetAsync(url).Result;
 
             if (response.IsSuccessStatusCode)
                 return response.Content.ReadAsStreamAsync().Result;

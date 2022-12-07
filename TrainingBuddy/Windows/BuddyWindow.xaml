@@ -20,9 +20,9 @@
         <Rectangle HorizontalAlignment="Left" Height="97" Margin="2,305,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
         <Label Content="Buddy Client" HorizontalAlignment="Left" Margin="10,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Your Client" HorizontalAlignment="Left" Margin="10,312,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
-        <Button x:Name="btn_buddyStart" Content="Start" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top" Height="29" Width="116" Click="btn_buddyStart_Click"/>
-        <Button x:Name="btn_buddyReloadReplay" Content="Reload Replay" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Height="29" Width="116" IsEnabled="False" Click="btn_buddyReloadReplay_Click"/>
-        <Button x:Name="btn_userStart" Content="Start" HorizontalAlignment="Left" Margin="10,354,0,0" VerticalAlignment="Top" Height="28" Width="116" Click="btn_userStart_Click"/>
+        <Button x:Name="btn_buddyStart" Content="Start" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top" Height="29" Width="116" Click="Btn_buddyStart_Click"/>
+        <Button x:Name="btn_buddyReloadReplay" Content="Reload Replay" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Height="29" Width="116" IsEnabled="False" Click="Btn_buddyReloadReplay_Click"/>
+        <Button x:Name="btn_userStart" Content="Start" HorizontalAlignment="Left" Margin="10,354,0,0" VerticalAlignment="Top" Height="28" Width="116" Click="Btn_userStart_Click"/>
         <Label Content="PID" HorizontalAlignment="Left" Margin="162,312,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Maps count" HorizontalAlignment="Left" Margin="162,352,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="PID" HorizontalAlignment="Left" Margin="162,167,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
@@ -34,10 +34,10 @@
         <Label x:Name="lbl_userPid" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="148,326,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="132"/>
         <Label x:Name="lbl_userMapCount" Content="---" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="194,378,0,0" VerticalAlignment="Top" FontFamily="Consolas" Width="86"/>
         <Rectangle HorizontalAlignment="Left" Height="285" Margin="298,160,0,0" Stroke="Black" VerticalAlignment="Top" Width="500" Fill="LightBlue"/>
-        <ListBox x:Name="lb_LastReplays" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="308,196,356,12" FontFamily="Consolas" Background="White" VerticalContentAlignment="Center" BorderBrush="Black" SelectionChanged="lb_LastReplays_SelectionChanged"/>
+        <ListBox x:Name="lb_LastReplays" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="308,196,356,12" FontFamily="Consolas" Background="White" VerticalContentAlignment="Center" BorderBrush="Black" SelectionChanged="Lb_LastReplays_SelectionChanged"/>
         <Label Content="Replay Info" HorizontalAlignment="Left" Margin="308,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Grid>
-            <ListView Margin="443,228,11,12" x:Name="lv_replayData" BorderThickness="1,1,1,1" BorderBrush="Black" FontWeight="Bold" SelectionChanged="lv_replayData_SelectionChanged">
+            <ListView Margin="443,228,11,12" x:Name="lv_replayData" BorderThickness="1,1,1,1" BorderBrush="Black" FontWeight="Bold" SelectionChanged="Lv_replayData_SelectionChanged">
                 <ListView.Resources>
                     <Style TargetType="{x:Type GridViewColumnHeader}">
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -52,15 +52,15 @@
                 </ListView.View>
             </ListView>
         </Grid>
-        <Button x:Name="btn_stopWatch" Content="Session STOP" HorizontalAlignment="Left" Margin="684,196,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" IsEnabled="False" Click="btn_stopWatch_Click"/>
-        <Button x:Name="btn_startWatch" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" Click="btn_startWatch_Click"/>
-        <Button x:Name="btn_replayLoad" Content="Load Replay" HorizontalAlignment="Left" Margin="449,198,0,0" VerticalAlignment="Top" Height="26" Width="88" FontFamily="Consolas" IsEnabled="False" Click="btn_replayLoad_Click"/>
+        <Button x:Name="btn_stopWatch" Content="Session STOP" HorizontalAlignment="Left" Margin="684,196,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" IsEnabled="False" Click="Btn_stopWatch_Click"/>
+        <Button x:Name="btn_startWatch" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" Click="Btn_startWatch_Click"/>
+        <Button x:Name="btn_replayLoad" Content="Load Replay" HorizontalAlignment="Left" Margin="449,198,0,0" VerticalAlignment="Top" Height="26" Width="88" FontFamily="Consolas" IsEnabled="False" Click="Btn_replayLoad_Click"/>
         <CheckBox x:Name="chk_replayAutoLoad" Content="Auto load" HorizontalAlignment="Left" Margin="449,177,0,0" VerticalAlignment="Top" FontFamily="Consolas" IsEnabled="False"/>
         <Rectangle HorizontalAlignment="Left" Height="37" Margin="2,407,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
         <Label Content="by CreaMper" HorizontalAlignment="Left" Margin="174,421,0,0" VerticalAlignment="Top" FontFamily="MV Boli" FontWeight="Bold" FontSize="11" Foreground="#FFFF4600"/>
         <Label Content="Training Buddy" HorizontalAlignment="Left" Margin="68,407,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Label x:Name="lbl_version" Content="2.0" HorizontalAlignment="Left" Margin="192,416,0,0" VerticalAlignment="Top" FontFamily="Consolas" FontSize="8"/>
-        <Button x:Name="btn_safeExit" Template="{StaticResource NoMouseOverButton}" Content="" HorizontalAlignment="Left"  VerticalAlignment="Top" Height="19" Width="21" RenderTransformOrigin="0.5,0.5" Visibility="Visible" BorderThickness="0,1,1,1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="{x:Null}" Foreground="{x:Null}" Focusable="False" Margin="14,417,0,0" Click="btn_safeExit_Click">
+        <Button x:Name="btn_safeExit" Template="{StaticResource NoMouseOverButton}" Content="" HorizontalAlignment="Left"  VerticalAlignment="Top" Height="19" Width="21" RenderTransformOrigin="0.5,0.5" Visibility="Visible" BorderThickness="0,1,1,1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="{x:Null}" Foreground="{x:Null}" Focusable="False" Margin="14,417,0,0" Click="Btn_safeExit_Click">
             <Button.Background>
                 <ImageBrush ImageSource="/Assets/exit.png" TileMode="FlipY" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox"/>
             </Button.Background>

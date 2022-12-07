@@ -17,11 +17,6 @@ namespace TrainingBuddy.Handlers
             _dispather = dispather;
         }
 
-        public void AddLog(string log)
-        {
-            _rtb.AppendText($"{log} \r");
-        }
-
         public void AddLog(string log, LogTypeEnum type)
         {
             _dispather.Invoke(() => {
