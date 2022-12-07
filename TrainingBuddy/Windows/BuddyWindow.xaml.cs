@@ -1,23 +1,15 @@
 ﻿using LogicStorage;
 using LogicStorage.Dtos.ReplayList;
-using LogicStorage.Dtos.TrackData;
 using LogicStorage.Utils;
 using SharpPcap;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TrainingBuddy.Handlers;
 using TrainingBuddy.Utils;
 
@@ -142,7 +134,6 @@ namespace TrainingBuddy.Windows
                     _log.AddLog($"Found an Trackmania process! with PID {_factory.Client.User.Id}", LogTypeEnum.Info);
                     _log.AddLog("Please, make sure that game is in WINDOWED mode!", LogTypeEnum.Info);
                     
-
                     if(_factory.Client.Buddy != null)
                     {
                         _log.AddLog("Watch have started automatically! If you want to stop session, press Watch Stop!", LogTypeEnum.Success);
@@ -203,6 +194,7 @@ namespace TrainingBuddy.Windows
             Dispatcher.Invoke(() => {
                 btn_startWatch.IsEnabled = false;
                 btn_stopWatch.IsEnabled = true;
+                chk_replayAutoLoad.IsEnabled = true;
             });
             _log.AddLog("Buddy has started to watch you! Start a map on a User Client and Buddy will download all data for you!", LogTypeEnum.Info);
             _factory.Network.Device.Open(DeviceModes.Promiscuous, 10);
@@ -268,6 +260,13 @@ namespace TrainingBuddy.Windows
                 _log.AddLog($"Best time by: {trackDto.Replays.First().Player} | Time: {trackDto.Replays.First().Time} | ReplayId: {trackDto.Replays.First().ReplayId} | Source: {trackDto.Replays.First().Source}", LogTypeEnum.Info);
 
                 _data.Insert(0, trackDto);
+
+                Dispatcher.Invoke(() => 
+                {
+                    if(chk_replayAutoLoad.IsChecked!.Value)
+                        DownloadAndInjectReplay(trackDto.Replays.FirstOrDefault());
+                });
+
                 DataUpdate();
             }
         }
@@ -283,7 +282,7 @@ namespace TrainingBuddy.Windows
                 if (lbl_userMapCount.Content.Equals("---"))
                     lbl_userMapCount.Content = "1";
                 else
-                    lbl_userMapCount.Content = Int32.Parse(lbl_userMapCount.Content.ToString()) + 1;
+                    lbl_userMapCount.Content = Int32.Parse(lbl_userMapCount.Content.ToString()!) + 1;
             }));
         }
 
@@ -293,12 +292,24 @@ namespace TrainingBuddy.Windows
             _sessionStop = true;
             btn_startWatch.IsEnabled = true;
             btn_stopWatch.IsEnabled = false;
+            chk_replayAutoLoad.IsEnabled = false;
             lbl_userMapCount.Content = "---";
         }
 
         private void btn_replayLoad_Click(object sender, RoutedEventArgs e)
         {
-            var downloadSuccessful = _factory.Request.DownloadReplay(_selectedReplay);
+            DownloadAndInjectReplay(_selectedReplay);
+        }
+
+        private void DownloadAndInjectReplay(ReplayDto? replay)
+        {
+            if(replay == null)
+            {
+                _log.AddLog("This track does not have any replay data!", LogTypeEnum.CRITICAL);
+                return;
+            }
+
+            var downloadSuccessful = _factory.Request.DownloadReplay(replay);
             if (!downloadSuccessful)
             {
                 _log.AddLog("Error occured when downloading a replay file! Perhaps buddy doesn't have access to file?", LogTypeEnum.CRITICAL);
@@ -306,10 +317,10 @@ namespace TrainingBuddy.Windows
             else
             {
                 _log.AddLog("Replay downloaded successful! Injecting file to buddy client...", LogTypeEnum.Success);
-                lbl_buddyLastTrack.Content = _selectedReplay.Player;
-                lbl_buddyTime.Content = _selectedReplay.Time;
-                _factory.Client.InjectReplay(_factory.Client.Buddy, _selectedReplay);
-                _lastReplay = _selectedReplay;
+                lbl_buddyLastTrack.Content = replay.Player;
+                lbl_buddyTime.Content = replay.Time;
+                _factory.Client.InjectReplay(_factory.Client.Buddy, replay);
+                _lastReplay = replay;
                 btn_buddyReloadReplay.IsEnabled = true;
             }
         }
@@ -320,9 +331,9 @@ namespace TrainingBuddy.Windows
             var replayPool = _data.FirstOrDefault(x => x.Name.Equals(lb_LastReplays.SelectedItem))?.Replays;
             if(replayPool!= null)
             {
-                _selectedReplay = replayPool.FirstOrDefault(x => x.Rank.Equals(selectedIndex+1));
+                _selectedReplay = replayPool.FirstOrDefault(x => x.Rank.Equals(selectedIndex+1))!;
                 if (_selectedReplay == null)
-                    _selectedReplay = replayPool.FirstOrDefault();
+                    _selectedReplay = replayPool.FirstOrDefault()!;
                 else
                     _log.AddLog($"Selected replay done by {_selectedReplay.Player} in time of {_selectedReplay.Time}", LogTypeEnum.Info);
             }
