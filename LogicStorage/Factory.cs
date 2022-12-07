@@ -1,4 +1,4 @@
-﻿using LogicStorage.Dtos.Config;
+﻿using LogicStorage.Dtos;
 using LogicStorage.Handlers;
 using LogicStorage.Utils;
 
@@ -14,7 +14,6 @@ namespace LogicStorage
             _request = new RequestHandler();
             _serializer = new Serializer();
 
-            _executorConfig = _serializer.DeserializeExecutorConfig();
             _buddyConfig = _serializer.DeserializeBuddyConfig();
         }
 
@@ -46,13 +45,6 @@ namespace LogicStorage
         public DLLImporter Importer
         {
             get { return _importer; }
-        }
-
-        private ExecutorConfigDto _executorConfig;
-        public ExecutorConfigDto ExecutorConfig
-        {
-            get { return _executorConfig; }
-            set { _executorConfig = value; }
         }
 
         private BuddyConfigDto _buddyConfig;

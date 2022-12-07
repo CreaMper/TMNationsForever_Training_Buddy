@@ -1,7 +1,7 @@
-﻿using LogicStorage.Dtos;
+﻿using LogicStorage.Dtos.ApiRequests.TMXSearch;
+using LogicStorage.Dtos.ApiRequests.TMXTrackData;
 using LogicStorage.Dtos.ReplayList;
-using LogicStorage.Dtos.SearchQuery;
-using LogicStorage.Dtos.TrackData;
+using LogicStorage.Dtos.Track;
 using LogicStorage.Utils;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -13,14 +13,14 @@ namespace LogicStorage.Handlers
 {
     public class RequestHandler
     {
-        private static HttpClient _httpClient { get; set; }
+        private static HttpClient HttpClient { get; set; }
 
         public RequestHandler()
         {
-            _httpClient = new HttpClient();
+            HttpClient = new HttpClient();
         }
 
-        public TrackIdAndSourceDto GetTrackIdAndSource(TrackDataDto trackData)
+        public TrackAndSourceDto GetTrackIdAndSource(TrackDataDto trackData)
         {
             var uidCheck = SearchByUID(trackData.UID);
             if (uidCheck != null)
@@ -33,7 +33,7 @@ namespace LogicStorage.Handlers
             return null;
         }
 
-        public TrackIdAndSourceDto SearchByUID(string uid)
+        public TrackAndSourceDto SearchByUID(string uid)
         {
             var xasecoURL = URLHelper.GetXasecoRequestUrl(uid);
 
@@ -50,7 +50,7 @@ namespace LogicStorage.Handlers
                 var contentRightCut = contentLeftCut[1].Split("\">TMX");
                 var trackId = contentRightCut[0];
 
-                return new TrackIdAndSourceDto() 
+                return new TrackAndSourceDto() 
                 {
                     Source = URLHelper.ApiTypeMapper(response),
                     TrackId = trackId
@@ -62,7 +62,7 @@ namespace LogicStorage.Handlers
             }
         }
 
-        public ReplayDataAndSourceDto GetReplayId(TrackIdAndSourceDto trackData)
+        public List<APITrackDataResultDto> GetReplayList(TrackAndSourceDto trackData)
         {
             var apiRequest = URLHelper.GetTopReplayUrl(trackData);
 
@@ -70,40 +70,7 @@ namespace LogicStorage.Handlers
             if (mapRecordsApiResponse == null)
                 return null;
 
-            var trackStats = JsonConvert.DeserializeObject<TrackStatsDto>(mapRecordsApiResponse);
-            if (trackStats == null)
-                return null;
-
-            if (trackStats.Results.Count() == 0)
-                return null;
-
-            var topReplay = trackStats.Results.FirstOrDefault();
-
-            try
-            {
-                return new ReplayDataAndSourceDto()
-                {
-                    Source = trackData.Source,
-                    ReplayId = topReplay.ReplayId.ToString(),
-                    Author = topReplay.User.Name,
-                    Time = topReplay.ReplayTime.ToString()
-                };
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public List<TrackStatsResultDto> GetReplayList(TrackIdAndSourceDto trackData)
-        {
-            var apiRequest = URLHelper.GetTopReplayUrl(trackData);
-
-            var mapRecordsApiResponse = HttpRequestAsStringSync(apiRequest);
-            if (mapRecordsApiResponse == null)
-                return null;
-
-            var trackStats = JsonConvert.DeserializeObject<TrackStatsDto>(mapRecordsApiResponse);
+            var trackStats = JsonConvert.DeserializeObject<APITrackDataDto>(mapRecordsApiResponse);
             if (trackStats == null)
                 return null;
 
@@ -133,29 +100,9 @@ namespace LogicStorage.Handlers
             return true;
         }
 
-        public bool DownloadReplay(ReplayDataAndSourceDto replayData)
-        {
-            var apiRequest = URLHelper.GetDownloadUrl(replayData);
-
-            var replayDataStream = HttpRequestAsStreamSync(apiRequest);
-            if (replayDataStream == null)
-                return false;
-
-            if (File.Exists("replay.gbx"))
-                File.Delete("replay.gbx");
-
-            var newFileStream = File.Create("replay.gbx");
-            replayDataStream.CopyTo(newFileStream);
-
-            replayDataStream.Close();
-            newFileStream.Close();
-
-            return true;
-        }
-
         public static string HttpRequestAsStringSync(string url)
         {
-            var response = _httpClient.GetAsync(url).Result;
+            var response = HttpClient.GetAsync(url).Result;
 
             if (response.IsSuccessStatusCode)
                 return response.Content.ReadAsStringAsync().Result;
@@ -165,7 +112,7 @@ namespace LogicStorage.Handlers
 
         public Stream HttpRequestAsStreamSync(string url)
         {
-            var response = _httpClient.GetAsync(url).Result;
+            var response = HttpClient.GetAsync(url).Result;
 
             if (response.IsSuccessStatusCode)
                 return response.Content.ReadAsStreamAsync().Result;
@@ -173,7 +120,7 @@ namespace LogicStorage.Handlers
                 return null;
         }
 
-        private TrackIdAndSourceDto SearchByTrackName(string trackName)
+        private TrackAndSourceDto SearchByTrackName(string trackName)
         {
             var converterTrackName = Converters.ConvertTrackNameToQuery(trackName);
 
@@ -185,14 +132,14 @@ namespace LogicStorage.Handlers
                 if (response == null)
                     continue;
 
-                var searchDto = JsonConvert.DeserializeObject<SearchDto>(response);
+                var searchDto = JsonConvert.DeserializeObject<APISearchDto>(response);
 
                 var searchResults = searchDto.Results;
                 if (searchResults.Count() == 0)
                     continue;
 
                 var trackId = searchDto.Results.FirstOrDefault().TrackId.ToString();
-                return new TrackIdAndSourceDto()
+                return new TrackAndSourceDto()
                 {
                     Source = URLHelper.ApiTypeMapper(response),
                     TrackId = trackId

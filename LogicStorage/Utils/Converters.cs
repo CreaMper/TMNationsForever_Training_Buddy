@@ -1,5 +1,6 @@
-﻿using LogicStorage.Dtos.ReplayList;
-using LogicStorage.Dtos.TrackData;
+﻿using LogicStorage.Dtos.ApiRequests.TMXTrackData;
+using LogicStorage.Dtos.ReplayList;
+using LogicStorage.Dtos.Track;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,18 +50,6 @@ namespace LogicStorage.Utils
             }
 
             return convertedTrackName;
-        }
-
-        public static ApiTypeEnum ApiTypeConverter(string apiCall)
-        {
-            if (apiCall.Contains("tmuf.exchange"))
-                return ApiTypeEnum.TMUF;
-            else if (apiCall.Contains("tmnf.exchange"))
-                return ApiTypeEnum.TMNF;
-            else if (apiCall.Contains("nations.tm-exchange"))
-                return ApiTypeEnum.TMUF;
-
-            return ApiTypeEnum.TMNF;
         }
 
         public static string TrackNameConverter(string name)
@@ -175,7 +164,7 @@ namespace LogicStorage.Utils
             return Converters.TrackDataConverter(removeLastChar.Split("%^%^"));
         }
 
-        public static ReplayDto TrackStatsResultDtoToReplayDtoConverter(TrackStatsResultDto trackStats, ApiTypeEnum source)
+        public static ReplayDto TrackStatsResultDtoToReplayDtoConverter(APITrackDataResultDto trackStats, ApiTypeEnum source)
         {
             return new ReplayDto
             {

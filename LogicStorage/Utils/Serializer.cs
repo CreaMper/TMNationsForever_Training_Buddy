@@ -1,4 +1,4 @@
-﻿using LogicStorage.Dtos.Config;
+﻿using LogicStorage.Dtos;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -7,40 +7,8 @@ namespace LogicStorage.Utils
 {
     public class Serializer
     {
-        private string _configFileName = "config.json";
-        string _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TrainingBuddy");
-
-        public void SerializeExecutorConfig(ConfiguratorConfigDto configurator)
-        {
-            var executorConfiguration = Converter(configurator);
-
-            if (File.Exists(_configFileName))
-                File.Delete(_configFileName);
-
-            using var streamWriter = File.CreateText(_configFileName);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer.CreateDefault().Serialize(jsonWriter, executorConfiguration);
-        }
-
-        public void SerializeExecutorConfig(ExecutorConfigDto configurator)
-        {
-            if (File.Exists(_configFileName))
-                File.Delete(_configFileName);
-
-            using var streamWriter = File.CreateText(_configFileName);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer.CreateDefault().Serialize(jsonWriter, configurator);
-        }
-
-        public void SerializeConfiguratorConfig(ConfiguratorConfigDto configurator)
-        {
-            if (File.Exists(_configFileName))
-                File.Delete(_configFileName);
-
-            using var streamWriter = File.CreateText(_configFileName);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer.CreateDefault().Serialize(jsonWriter, configurator);
-        }
+        private readonly string _configFileName = "config.json";
+        readonly string _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TrainingBuddy");
 
         public bool RemoveCorruptedBuddyConfig()
         {
@@ -56,24 +24,6 @@ namespace LogicStorage.Utils
             catch 
             {
                 return false;
-            }
-        }
-
-        public ExecutorConfigDto DeserializeExecutorConfig()
-        {
-            if (!File.Exists(_configFileName))
-                return null;
-
-            try
-            {
-                var fileStream = File.ReadAllText(_configFileName);
-                var configuration = JsonConvert.DeserializeObject<ExecutorConfigDto>(fileStream);
-                return configuration;
-            }
-            catch
-            {
-                Console.WriteLine("Exception occured while deserialize config file!");
-                return null;
             }
         }
 
@@ -110,17 +60,6 @@ namespace LogicStorage.Utils
             using var streamWriter = File.CreateText(file);
             using var jsonWriter = new JsonTextWriter(streamWriter);
             JsonSerializer.CreateDefault().Serialize(jsonWriter, config);
-        }
-
-        private ExecutorConfigDto Converter(ConfiguratorConfigDto configurator)
-        {
-            return new ExecutorConfigDto()
-            {
-                ClientPID = configurator.ClientPID,
-                NetworkInterfaceName = configurator.NetworkInterfaceName,
-                ListeningIntensivityLevel = configurator.ListeningIntensivityLevel,
-                MinimaliseExecutor = configurator.MinimaliseExecutor
-            };
         }
     }
 }

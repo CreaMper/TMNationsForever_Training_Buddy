@@ -1,21 +1,18 @@
 ﻿using SharpPcap;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LogicStorage.Handlers
 {
     public class NetworkHandler
     {
-        public CaptureDeviceList _deviceList { get; set; }
+        public CaptureDeviceList DeviceList { get; set; }
 
         public NetworkHandler()
         {
-            _deviceList = CaptureDeviceList.Instance;
+            DeviceList = CaptureDeviceList.Instance;
             _device = null;
         }
 
@@ -26,14 +23,9 @@ namespace LogicStorage.Handlers
             set { _device = value; }
         }
 
-        public ILiveDevice SelectDevice()
-        {
-            return _deviceList.First();
-        }
-
         public void AutoDeviceSelection()
         {
-            foreach (var device in _deviceList)
+            foreach (var device in DeviceList)
                 if (ChallangeInterface(device))
                     _device = device;
         }
@@ -63,27 +55,6 @@ namespace LogicStorage.Handlers
                 return false;
             else
                 return true;
-        }
-
-        public List<string> GetDeviceList(bool showAll = false)
-        {
-            var deviceNamesList = new List<string>();
-
-            foreach (var device in _deviceList)
-            {
-                var deviceString = device.ToString();
-
-                if (showAll)
-                {
-                    deviceNamesList.Add(device.Name);
-                }
-                if (deviceString.Contains("Friendly") && deviceString.Contains("1) "))
-                {
-                    deviceNamesList.Add(device.Name);
-                }
-            }
-
-            return deviceNamesList;
         }
 
         public bool IsPacketFromCorrectSource(string parsedPacket)
