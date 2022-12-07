@@ -10,38 +10,6 @@ namespace LogicStorage.Utils
         private string _configFileName = "config.json";
         string _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TrainingBuddy");
 
-        public void SerializeExecutorConfig(ConfiguratorConfigDto configurator)
-        {
-            var executorConfiguration = Converter(configurator);
-
-            if (File.Exists(_configFileName))
-                File.Delete(_configFileName);
-
-            using var streamWriter = File.CreateText(_configFileName);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer.CreateDefault().Serialize(jsonWriter, executorConfiguration);
-        }
-
-        public void SerializeExecutorConfig(ExecutorConfigDto configurator)
-        {
-            if (File.Exists(_configFileName))
-                File.Delete(_configFileName);
-
-            using var streamWriter = File.CreateText(_configFileName);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer.CreateDefault().Serialize(jsonWriter, configurator);
-        }
-
-        public void SerializeConfiguratorConfig(ConfiguratorConfigDto configurator)
-        {
-            if (File.Exists(_configFileName))
-                File.Delete(_configFileName);
-
-            using var streamWriter = File.CreateText(_configFileName);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer.CreateDefault().Serialize(jsonWriter, configurator);
-        }
-
         public bool RemoveCorruptedBuddyConfig()
         {
             try
@@ -110,17 +78,6 @@ namespace LogicStorage.Utils
             using var streamWriter = File.CreateText(file);
             using var jsonWriter = new JsonTextWriter(streamWriter);
             JsonSerializer.CreateDefault().Serialize(jsonWriter, config);
-        }
-
-        private ExecutorConfigDto Converter(ConfiguratorConfigDto configurator)
-        {
-            return new ExecutorConfigDto()
-            {
-                ClientPID = configurator.ClientPID,
-                NetworkInterfaceName = configurator.NetworkInterfaceName,
-                ListeningIntensivityLevel = configurator.ListeningIntensivityLevel,
-                MinimaliseExecutor = configurator.MinimaliseExecutor
-            };
         }
     }
 }
