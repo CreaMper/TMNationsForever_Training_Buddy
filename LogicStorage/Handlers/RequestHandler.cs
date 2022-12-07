@@ -1,8 +1,10 @@
 ﻿using LogicStorage.Dtos;
+using LogicStorage.Dtos.ReplayList;
 using LogicStorage.Dtos.SearchQuery;
 using LogicStorage.Dtos.TrackData;
 using LogicStorage.Utils;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -93,6 +95,44 @@ namespace LogicStorage.Handlers
             }
         }
 
+        public List<TrackStatsResultDto> GetReplayList(TrackIdAndSourceDto trackData)
+        {
+            var apiRequest = URLHelper.GetTopReplayUrl(trackData);
+
+            var mapRecordsApiResponse = HttpRequestAsStringSync(apiRequest);
+            if (mapRecordsApiResponse == null)
+                return null;
+
+            var trackStats = JsonConvert.DeserializeObject<TrackStatsDto>(mapRecordsApiResponse);
+            if (trackStats == null)
+                return null;
+
+            if (trackStats.Results.Count() == 0)
+                return null;
+
+            return trackStats.Results;
+        }
+
+        public bool DownloadReplay(ReplayDto replayData)
+        {
+            var apiRequest = URLHelper.GetDownloadUrl(replayData);
+
+            var replayDataStream = HttpRequestAsStreamSync(apiRequest);
+            if (replayDataStream == null)
+                return false;
+
+            if (File.Exists("replay.gbx"))
+                File.Delete("replay.gbx");
+
+            var newFileStream = File.Create("replay.gbx");
+            replayDataStream.CopyTo(newFileStream);
+
+            replayDataStream.Close();
+            newFileStream.Close();
+
+            return true;
+        }
+
         public bool DownloadReplay(ReplayDataAndSourceDto replayData)
         {
             var apiRequest = URLHelper.GetDownloadUrl(replayData);
@@ -157,7 +197,6 @@ namespace LogicStorage.Handlers
                     Source = URLHelper.ApiTypeMapper(response),
                     TrackId = trackId
                 };
-
             }
 
             return null;

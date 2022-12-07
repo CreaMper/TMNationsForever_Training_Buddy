@@ -1,5 +1,5 @@
 ﻿using LogicStorage;
-using LogicStorage.Dtos;
+using LogicStorage.Dtos.Config;
 using LogicStorage.Utils;
 using System;
 using System.Diagnostics;
@@ -41,7 +41,7 @@ namespace Configurator
                     var dataStructure = _factory.Client.VerifyClientFileStructure();
                     if (!dataStructure)
                         return;
-                    _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(configFromFile.NetworkInterfaceName));
+                    _factory.Network.Device = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(configFromFile.NetworkInterfaceName));
 
                     lbl_connectionConfigStatus.Content = "CONFIGURED";
                     lbl_connectionConfigStatus.Foreground = Brushes.Green;
@@ -74,7 +74,7 @@ namespace Configurator
 
         private void dd_internetInterfaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(dd_internetInterfaces.SelectedItem));
+            _factory.Network.Device = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(dd_internetInterfaces.SelectedItem));
             if (_factory.Network.Device != null)
                 _log.AddLog($"Interface changed to: {_factory.Network.Device.Name}", LogTypeEnum.Info);
         }
@@ -137,7 +137,7 @@ namespace Configurator
                 return;
             }
 
-            _factory.Network.Device = _factory.Network.DeviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
+            _factory.Network.Device = _factory.Network._deviceList.FirstOrDefault(x => x.Name.Equals(temporaryDevice));
             dd_internetInterfaces.SelectedItem = temporaryDevice;
         }
 

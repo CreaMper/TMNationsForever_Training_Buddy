@@ -1,4 +1,5 @@
-﻿using LogicStorage.Dtos.TrackData;
+﻿using LogicStorage.Dtos.ReplayList;
+using LogicStorage.Dtos.TrackData;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -89,18 +90,23 @@ namespace LogicStorage.Utils
             var parsedName = "";
             foreach (var split in splittedName)
             {
-                var parseColor = $"{split[0]}{split[1]}{split[2]}";
-                if (IsHex(parseColor))
-                    split.Remove(0, 2);
-
+                if (split.Count() >= 3) 
+                {
+                    var parseColor = $"{split[0]}{split[1]}{split[2]}";
+                    if (IsHex(parseColor))
+                        split.Remove(0, 2);
+                }
                 parsedName += split;
             }
 
             for (int i = 0; i < splittedName.Count(); i++)
             {
-                var parseColor = $"{splittedName[i][0]}{splittedName[i][1]}{splittedName[i][2]}";
-                if (IsHex(parseColor))
-                    splittedName[i] = splittedName[i].Remove(0, 3);
+                if (splittedName[i].Count() >= 3)
+                {
+                    var parseColor = $"{splittedName[i][0]}{splittedName[i][1]}{splittedName[i][2]}";
+                    if (IsHex(parseColor))
+                        splittedName[i] = splittedName[i].Remove(0, 3);
+                }
             }
 
             var gluedName = "";
@@ -109,6 +115,7 @@ namespace LogicStorage.Utils
                 gluedName += item;
 
             return gluedName;
+
         }
 
         private static bool IsHex(IEnumerable<char> chars)
@@ -166,6 +173,40 @@ namespace LogicStorage.Utils
             var removeLastChar = escapedAuthor.Remove(escapedAuthor.Length - 1);
 
             return Converters.TrackDataConverter(removeLastChar.Split("%^%^"));
+        }
+
+        public static ReplayDto TrackStatsResultDtoToReplayDtoConverter(TrackStatsResultDto trackStats, ApiTypeEnum source)
+        {
+            return new ReplayDto
+            {
+                Player = trackStats.User.Name,
+                ReplayId = trackStats.ReplayId,
+                Source = source,
+                Time = MilisecondsToTimeConverter(trackStats.ReplayTime),
+                Rank = trackStats.Position + 1
+            };
+        }
+
+        public static string MilisecondsToTimeConverter(int miliseconds)
+        {
+            var seconds = miliseconds / 1000;
+            var minutes = (seconds / 60) % 60;
+            var milisecondsModulo = (miliseconds % 1000).ToString();
+            var finalMiliseconds = milisecondsModulo;
+            if (milisecondsModulo.Count() == 2)
+            {
+                finalMiliseconds = $"0{milisecondsModulo}";
+            }
+            else if (milisecondsModulo.Count() == 1)
+            {
+                milisecondsModulo.Insert(0, "0");
+                finalMiliseconds = $"00{milisecondsModulo}";
+            }
+
+            if (minutes != 0)
+                return $"{minutes}:{seconds}:{finalMiliseconds}";
+            else
+                return $"{seconds}:{finalMiliseconds}";
         }
     }
 }

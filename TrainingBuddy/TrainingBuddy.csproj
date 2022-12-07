@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <StartupObject>TrainingBuddy.App</StartupObject>
+    <PlatformTarget>x86</PlatformTarget>
+    <ApplicationIcon>Assets\roboIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\exit.png" />
+    <None Remove="Assets\kofi.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\kofi.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogicStorage\LogicStorage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\exit.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\roboIcon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

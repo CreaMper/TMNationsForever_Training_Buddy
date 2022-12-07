@@ -1,4 +1,5 @@
 ﻿using LogicStorage.Dtos;
+using LogicStorage.Dtos.ReplayList;
 using LogicStorage.Utils;
 using System.Diagnostics;
 using System.IO;
@@ -21,18 +22,26 @@ namespace LogicStorage.Handlers
             get { return _buddy; }
             set { _buddy = value; }
         }
-        
+
+        private Process _user;
+        public Process User
+        {
+            get { return _user; }
+            set { _user = value; }
+        }
+
+        public Process GetBuddyClientProcess()
+        {
+            var process = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();
+            if (process != null)
+                return process;
+
+            return null;
+        }
+
         public Process GetGameClientProcess()
         {
-            var legacy = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training Buddy Client")).FirstOrDefault();
-            if (legacy != null)
-                return legacy;
-
-            var standaloneClient = Process.GetProcessesByName(System.IO.Path.GetFileName("TmForever")).FirstOrDefault();
-            if (standaloneClient != null)
-                return standaloneClient;
-
-            var process = Process.GetProcessesByName(System.IO.Path.GetFileName("TrackMania Nations Forever")).FirstOrDefault();
+            var process = Process.GetProcessesByName(System.IO.Path.GetFileName("TM Training User Client")).FirstOrDefault();
             if (process != null)
                 return process;
 
@@ -50,10 +59,21 @@ namespace LogicStorage.Handlers
             return true;
         }
 
+        public void InjectReplay(Process process, ReplayDto replay)
+        {
+            _importer.UseSetForegroundWindow(process.MainWindowHandle);
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo("replay.gbx")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
         public void InjectReplay(Process process, ReplayDataAndSourceDto replay)
         {
             _importer.UseSetForegroundWindow(process.MainWindowHandle);
-            _importer.UseSetWindowText(process.MainWindowHandle, $"TM Training Buddy Client | Replay by {replay.Author} | Time {replay.Time}");
 
             var p = new Process();
             p.StartInfo = new ProcessStartInfo("replay.gbx")

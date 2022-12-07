@@ -1,4 +1,5 @@
 ﻿using LogicStorage.Dtos;
+using LogicStorage.Dtos.ReplayList;
 using System.Collections.Generic;
 
 namespace LogicStorage.Utils
@@ -47,6 +48,11 @@ namespace LogicStorage.Utils
         public static string GetTopReplayUrl(TrackIdAndSourceDto trackData)
         {
             return $"{ApiTypeToReplayUrlDomain(trackData.Source)}/api/replays?trackId={trackData.TrackId}&best=1&count=10&fields=ReplayId%2CUser.UserId%2CUser.Name%2CReplayTime%2CReplayScore%2CReplayRespawns%2CTrackAt%2CScore%2CTrack.Type%2CPosition%2CIsBest%2CIsLeaderboard%2CReplayAt";
+        }
+
+        public static string GetDownloadUrl(ReplayDto replayData)
+        {
+            return $"{ApiTypeToReplayUrlDomain(replayData.Source)}/recordgbx/{replayData.ReplayId}";
         }
 
         public static string GetDownloadUrl(ReplayDataAndSourceDto replayData)
