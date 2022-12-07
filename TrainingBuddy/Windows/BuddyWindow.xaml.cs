@@ -175,15 +175,20 @@ namespace TrainingBuddy.Windows
             Dispatcher.Invoke(() => {
                 btn_startWatch.IsEnabled = true;
                 btn_stopWatch.IsEnabled = false;
+                btn_buddyReloadReplay.IsEnabled = false;
+                chk_replayAutoLoad.IsEnabled = false;
+                btn_replayLoad.IsEnabled = false;
 
                 if (_factory.Client.Buddy.HasExited)
                 {
                     lbl_buddyPid.Content = "---";
                     _factory.Client.Buddy = null;
                 }
-                else
+                if(_factory.Client.User.HasExited)
                 {
                     lbl_userPid.Content = "---";
+                    lbl_buddyLastTrack.Content = "---";
+                    lbl_buddyTime.Content = "---";
                     _factory.Client.User = null;
                 }
             });
@@ -225,6 +230,11 @@ namespace TrainingBuddy.Windows
                 if(_data.Any(x => x.Uid.Equals(trackInfo.UID)))
                 {
                     _log.AddLog("Track data already exists in Buddy! Bringing it to the top of the list...", LogTypeEnum.Info);
+
+                    Dispatcher.Invoke(() => {
+                        lbl_userMapCount.Content = Int32.Parse(lbl_userMapCount.Content.ToString()!) + 1;
+                    });
+
                     _data.Move(_data.FindIndex(x => x.Uid.Equals(trackInfo.UID)), 0);
                     continue;
                 }
@@ -346,6 +356,27 @@ namespace TrainingBuddy.Windows
             _log.AddLog("Re-injecting last replay!", LogTypeEnum.Success);
             _log.AddLog($"Last replay done by {_lastReplay.Player} in time of {_lastReplay.Time}", LogTypeEnum.Info);
             _factory.Client.InjectReplay(_factory.Client.Buddy, _lastReplay);
+        }
+
+        private void btn_safeExit_Click(object sender, RoutedEventArgs e)
+        {
+            _log.AddLog($"Thanks for playing with me! I hope you enjoyed! Performing safe exit...", LogTypeEnum.Success);
+
+            var msgResult = MessageBox.Show("Do you want to exit Buddy? All clients will be closed as well...",
+                "Exit confirmation",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (msgResult.Equals(MessageBoxResult.Yes))
+            {
+                if (_factory.Client.Buddy != null)
+                    _factory.Client.Buddy.Kill();
+
+                if (_factory.Client.User != null)
+                    _factory.Client.User.Kill();
+
+                Environment.Exit(1);
+            }
         }
     }
 }

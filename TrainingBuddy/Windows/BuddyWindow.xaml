@@ -17,12 +17,12 @@
             </FlowDocument>
         </RichTextBox>
         <Rectangle HorizontalAlignment="Left" Height="140" Margin="2,160,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
-        <Rectangle HorizontalAlignment="Left" Height="140" Margin="2,305,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
+        <Rectangle HorizontalAlignment="Left" Height="97" Margin="2,305,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
         <Label Content="Buddy Client" HorizontalAlignment="Left" Margin="10,167,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Your Client" HorizontalAlignment="Left" Margin="10,312,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
         <Button x:Name="btn_buddyStart" Content="Start" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top" Height="29" Width="116" Click="btn_buddyStart_Click"/>
         <Button x:Name="btn_buddyReloadReplay" Content="Reload Replay" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Height="29" Width="116" IsEnabled="False" Click="btn_buddyReloadReplay_Click"/>
-        <Button x:Name="btn_userStart" Content="Start" HorizontalAlignment="Left" Margin="10,346,0,0" VerticalAlignment="Top" Height="29" Width="116" Click="btn_userStart_Click"/>
+        <Button x:Name="btn_userStart" Content="Start" HorizontalAlignment="Left" Margin="10,354,0,0" VerticalAlignment="Top" Height="28" Width="116" Click="btn_userStart_Click"/>
         <Label Content="PID" HorizontalAlignment="Left" Margin="162,312,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="Maps count" HorizontalAlignment="Left" Margin="162,352,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
         <Label Content="PID" HorizontalAlignment="Left" Margin="162,167,0,0" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
@@ -56,5 +56,14 @@
         <Button x:Name="btn_startWatch" Content="Session START" HorizontalAlignment="Left" Margin="684,167,0,0" VerticalAlignment="Top" Height="26" Width="106" FontFamily="Consolas" Click="btn_startWatch_Click"/>
         <Button x:Name="btn_replayLoad" Content="Load Replay" HorizontalAlignment="Left" Margin="449,198,0,0" VerticalAlignment="Top" Height="26" Width="88" FontFamily="Consolas" IsEnabled="False" Click="btn_replayLoad_Click"/>
         <CheckBox x:Name="chk_replayAutoLoad" Content="Auto load" HorizontalAlignment="Left" Margin="449,177,0,0" VerticalAlignment="Top" FontFamily="Consolas" IsEnabled="False"/>
+        <Rectangle HorizontalAlignment="Left" Height="37" Margin="2,407,0,0" Stroke="Black" VerticalAlignment="Top" Width="291" Fill="LightBlue"/>
+        <Label Content="by CreaMper" HorizontalAlignment="Left" Margin="174,421,0,0" VerticalAlignment="Top" FontFamily="MV Boli" FontWeight="Bold" FontSize="11" Foreground="#FFFF4600"/>
+        <Label Content="Training Buddy" HorizontalAlignment="Left" Margin="68,407,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Consolas" FontWeight="Bold"/>
+        <Label x:Name="lbl_version" Content="2.0" HorizontalAlignment="Left" Margin="192,416,0,0" VerticalAlignment="Top" FontFamily="Consolas" FontSize="8"/>
+        <Button x:Name="btn_safeExit" Template="{StaticResource NoMouseOverButton}" Content="" HorizontalAlignment="Left"  VerticalAlignment="Top" Height="19" Width="21" RenderTransformOrigin="0.5,0.5" Visibility="Visible" BorderThickness="0,1,1,1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="{x:Null}" Foreground="{x:Null}" Focusable="False" Margin="14,417,0,0" Click="btn_safeExit_Click">
+            <Button.Background>
+                <ImageBrush ImageSource="/Assets/exit.png" TileMode="FlipY" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox"/>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>
