@@ -300,7 +300,6 @@ namespace TrainingBuddy.Windows
             _sessionStop = true;
             btn_startWatch.IsEnabled = true;
             btn_stopWatch.IsEnabled = false;
-            chk_replayAutoLoad.IsEnabled = false;
             lbl_userMapCount.Content = "---";
         }
 
