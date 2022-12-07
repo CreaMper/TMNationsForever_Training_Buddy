@@ -22,6 +22,26 @@ namespace LogicStorage.Utils
             JsonSerializer.CreateDefault().Serialize(jsonWriter, executorConfiguration);
         }
 
+        public void SerializeExecutorConfig(ExecutorConfigDto configurator)
+        {
+            if (File.Exists(_configFileName))
+                File.Delete(_configFileName);
+
+            using var streamWriter = File.CreateText(_configFileName);
+            using var jsonWriter = new JsonTextWriter(streamWriter);
+            JsonSerializer.CreateDefault().Serialize(jsonWriter, configurator);
+        }
+
+        public void SerializeConfiguratorConfig(ConfiguratorConfigDto configurator)
+        {
+            if (File.Exists(_configFileName))
+                File.Delete(_configFileName);
+
+            using var streamWriter = File.CreateText(_configFileName);
+            using var jsonWriter = new JsonTextWriter(streamWriter);
+            JsonSerializer.CreateDefault().Serialize(jsonWriter, configurator);
+        }
+
         public bool RemoveCorruptedBuddyConfig()
         {
             try

@@ -226,7 +226,7 @@ namespace Configurator
 
             _config.ClientPID = _factory.Client.Buddy.Id;
             _config.NetworkInterfaceName = _factory.Network.Device.Name;
-            _factory.Serializer.SerializeExecutorConfig(_config);
+            _factory.Serializer.SerializeConfiguratorConfig(_config);
 
             var process = new Process
             {
