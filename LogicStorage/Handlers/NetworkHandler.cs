@@ -2,18 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace LogicStorage.Handlers
 {
     public class NetworkHandler
     {
         public CaptureDeviceList DeviceList { get; set; }
+        private Ping _ping;
 
         public NetworkHandler()
         {
             DeviceList = CaptureDeviceList.Instance;
             _device = null;
+            _ping = new Ping();
         }
 
         private ILiveDevice _device;
@@ -36,6 +40,7 @@ namespace LogicStorage.Handlers
                 return false;
 
             device.Open(DeviceModes.Promiscuous, 100);
+            PingDNS();
 
             var packetRecieved = 0;
 
@@ -48,6 +53,7 @@ namespace LogicStorage.Handlers
                     continue;
 
                 packetRecieved++;
+                Thread.Sleep(100);
             }
 
             device.Close();
@@ -55,6 +61,12 @@ namespace LogicStorage.Handlers
                 return false;
             else
                 return true;
+        }
+
+        private void PingDNS()
+        {
+            for (int i = 0; i < 11; i++)
+                _ping.Send("8.8.8.8", 100);
         }
 
         public bool IsPacketFromCorrectSource(string parsedPacket)
