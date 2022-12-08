@@ -1,22 +1,20 @@
 # TMNationForever Training Buddy! [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/) 
 
-Best tool for new players that wants to start with some help!
-With this tool, you are able to see a replay of a TOP1 player in a map using a separate game client!
+Best tool for a fresh and experienced players that will allow you to manage and load replays in real-time!
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A0GM3N0)
 
 # Installation
-This project does not need an installation. Extract Configurator and Executor into the game client folder and you are ready to go!
 
-NOTE: If Buddy won't run at all, please also use an installer which is added into the release package!
+This project, usually does not need an installation. Extract Buddy into the game client folder and you are ready to go!
 
-NOTE#2: Do not use any account on Buddy client (or just create a dummy one)!
+#### Project dependencies
+
+Buddy will require to have a wpcap.dll dependency installed. Not every system have it already (f.e. Wirehark uses this .dll), therefore an installer is included in release package.
+
+Properly associated .gbx files with a client is also required. If configured inccorectly, it will result to open another client instead of injecting to the current one! The easiest way to fix this issue is to remove all TM versions form pc, do a quick restart and then install a standalone TM client. Be sure that you selected an option with correct assosiation!
 
 ## FAQ
-
-#### I cannot set a game client!
-
-At this moment Buddy supports only a standalone client as well as the steam version. Support for other types of client will be added in the future.
 
 #### Is Buddy safe to play with? 
 
@@ -26,13 +24,9 @@ Yes! Nothing in client executable is being modified while using Buddy, therefore
 
 Map data is fetched directly from TMX. Sometimes map does not have any record recorded on TMX therefore replay canot be downloaded. Dedimania replay download is planned to be implemented in the future.
 
-#### Why sometimes replay does not load automatically and I have to re-join my race?
-
-Try to change a packet listening intensity. The higher value you set, the more accuracy Buddy will have with reading all map information but remember - more intensity requires more CPU resources. 
-
 #### Buddy does not start at all!
 
-Buddy requires a WinCap dependency to work properly. On most PC it is already installed but not allways (f.e if you previously installed WireShark you should already have all dependencies). Please, use an installer that is included in release package!
+Please, check the Project dependencies section.
 
 #### I cannot login into my account after using Buddy!
 
